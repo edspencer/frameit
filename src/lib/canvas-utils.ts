@@ -9,6 +9,7 @@ interface DrawConfig {
   titleColor: string
   subtitleColor: string
   logoOpacity: number
+  logoImage?: HTMLImageElement
 }
 
 /**
@@ -43,75 +44,32 @@ export function wrapText(
 }
 
 /**
- * Draws the BragDoc logo (B icon + text) on the canvas
+ * Draws a logo image on the canvas (top-right corner)
  */
-export function drawBragDocLogo(
+export function drawLogo(
   ctx: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement,
+  logoImage: HTMLImageElement,
   logoOpacity: number
 ): void {
   const logoPadding = canvas.width * 0.02
-  const iconSize = canvas.width * 0.06
-  const fontSize = canvas.width * 0.04
-  const gap = canvas.width * 0.01
+  const logoHeight = canvas.width * 0.08
+  const logoAspectRatio = logoImage.width / logoImage.height
+  const logoWidth = logoHeight * logoAspectRatio
 
-  ctx.globalAlpha = logoOpacity
-
-  // Measure text width to position the entire group
-  ctx.font = `600 ${Math.round(fontSize * 0.9)}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`
-  const textMetrics = ctx.measureText('BragDoc')
-  const textWidth = textMetrics.width
-  const totalWidth = iconSize + gap + textWidth
-
-  // Position entire group at top-right
-  const groupStartX = canvas.width - logoPadding - totalWidth
+  const x = canvas.width - logoPadding - logoWidth
   const y = logoPadding
 
-  // Draw rounded square background with brand blue
-  const cornerRadius = iconSize * 0.2
-  ctx.fillStyle = 'hsl(221.2 83.2% 53.3%)'
-  ctx.beginPath()
-  ctx.moveTo(groupStartX + cornerRadius, y)
-  ctx.lineTo(groupStartX + iconSize - cornerRadius, y)
-  ctx.quadraticCurveTo(
-    groupStartX + iconSize,
-    y,
-    groupStartX + iconSize,
-    y + cornerRadius
-  )
-  ctx.lineTo(groupStartX + iconSize, y + iconSize - cornerRadius)
-  ctx.quadraticCurveTo(
-    groupStartX + iconSize,
-    y + iconSize,
-    groupStartX + iconSize - cornerRadius,
-    y + iconSize
-  )
-  ctx.lineTo(groupStartX + cornerRadius, y + iconSize)
-  ctx.quadraticCurveTo(
-    groupStartX,
-    y + iconSize,
-    groupStartX,
-    y + iconSize - cornerRadius
-  )
-  ctx.lineTo(groupStartX, y + cornerRadius)
-  ctx.quadraticCurveTo(groupStartX, y, groupStartX + cornerRadius, y)
-  ctx.fill()
+  // Disable image smoothing for crisp rendering
+  const imageSmoothingEnabled = ctx.imageSmoothingEnabled
+  ctx.imageSmoothingEnabled = false
 
-  // Draw the B letter in white
-  ctx.fillStyle = '#ffffff'
-  ctx.font = `bold ${Math.round(fontSize)}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.fillText('B', groupStartX + iconSize / 2, y + iconSize / 2)
-
-  // Draw "BragDoc" text to the right of the icon
-  ctx.fillStyle = '#ffffff'
-  ctx.font = `600 ${Math.round(fontSize * 0.9)}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`
-  ctx.textAlign = 'left'
-  ctx.textBaseline = 'middle'
-  ctx.fillText('BragDoc', groupStartX + iconSize + gap, y + iconSize / 2)
-
+  ctx.globalAlpha = logoOpacity
+  ctx.drawImage(logoImage, x, y, logoWidth, logoHeight)
   ctx.globalAlpha = 1
+
+  // Restore image smoothing setting
+  ctx.imageSmoothingEnabled = imageSmoothingEnabled
 }
 
 /**
@@ -204,7 +162,9 @@ export function drawThumbnail(
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
   // Draw logo and text
-  drawBragDocLogo(ctx, canvas, config.logoOpacity)
+  if (config.logoImage) {
+    drawLogo(ctx, canvas, config.logoImage, config.logoOpacity)
+  }
   drawTextContent(ctx, canvas.width, canvas.height, config)
 }
 
@@ -227,6 +187,8 @@ export function drawThumbnailWithoutBackground(
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
   // Draw logo and text
-  drawBragDocLogo(ctx, canvas, config.logoOpacity)
+  if (config.logoImage) {
+    drawLogo(ctx, canvas, config.logoImage, config.logoOpacity)
+  }
   drawTextContent(ctx, canvas.width, canvas.height, config)
 }

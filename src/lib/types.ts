@@ -20,4 +20,5 @@ export interface ThumbnailConfig {
   logoOpacity: number
   preset: ThumbnailPreset
   background: string
+  customLogo?: string
 }
