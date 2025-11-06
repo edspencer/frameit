@@ -1,7 +1,7 @@
 {
-  "name": "thumbnail-generator",
+  "name": "frameit",
   "version": "0.1.0",
-  "description": "A lightweight, open-source video thumbnail generator for creating branded thumbnails across multiple platforms",
+  "description": "A lightweight, open-source image generator for creating beautiful title images—thumbnails, OG images, and title cards—across multiple platforms",
   "type": "module",
   "license": "MIT",
   "scripts": {

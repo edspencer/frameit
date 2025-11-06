@@ -1,17 +1,17 @@
-# Thumbnail Generator
+# FrameIt
 
-A lightweight, open-source video thumbnail generator for creating branded thumbnails across multiple platforms. Built with React, TypeScript, and Tailwind CSS, deployable to Cloudflare Pages.
+A lightweight, open-source image generator for creating beautiful title images—thumbnails, OG images, and title cards—across multiple platforms. Built with React, TypeScript, and Tailwind CSS, deployable to Cloudflare Pages.
 
 ## Features
 
-- **Multiple Platform Presets**: Pre-configured dimensions for LinkedIn, YouTube, Twitter/X, and Instagram
-- **Real-time Preview**: Live canvas preview as you customize your thumbnail
-- **Customizable Text**: Add heading and subheading text with full control
+- **Multiple Platform Presets**: Pre-configured dimensions for YouTube, YouTube Shorts, Twitter/X, TikTok, and more
+- **Real-time Preview**: Live canvas preview as you customize your image
+- **Customizable Text**: Add heading and subheading text with independent color controls
 - **Background Options**: Choose from multiple gradient backgrounds or use solid colors
-- **Color Customization**: Pick any text color with a color picker
+- **Color Customization**: Pick custom colors for heading and subheading text
 - **Logo Control**: Adjust logo opacity for different design needs
-- **One-click Download**: Export thumbnails as PNG files
-- **Clipboard Copy**: Copy generated thumbnail directly to clipboard
+- **One-click Download**: Export images as PNG files
+- **Clipboard Copy**: Copy generated image directly to clipboard
 - **Fully Responsive**: Works seamlessly on desktop, tablet, and mobile devices
 
 ## Getting Started
@@ -25,8 +25,8 @@ A lightweight, open-source video thumbnail generator for creating branded thumbn
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/thumbnail-generator.git
-cd thumbnail-generator
+git clone https://github.com/yourusername/frameit.git
+cd frameit
 
 # Install dependencies
 npm install
@@ -62,7 +62,7 @@ pnpm preview
 ## Project Structure
 
 ```
-thumbnail-generator/
+frameit/
 ├── src/
 │   ├── main.tsx                 # React entry point
 │   ├── App.tsx                  # Main app component
@@ -76,7 +76,8 @@ thumbnail-generator/
 │   │   ├── CanvasPreview.tsx         # Canvas rendering wrapper
 │   │   ├── ControlPanel.tsx          # Control UI wrapper
 │   │   ├── PlatformSelector.tsx      # Platform preset selector
-│   │   ├── TextContent.tsx           # Text input controls
+│   │   ├── HeadingContent.tsx        # Heading text and color controls
+│   │   ├── SubheadingContent.tsx     # Subheading text and color controls
 │   │   ├── BackgroundSelector.tsx    # Background gallery
 │   │   ├── ColorPicker.tsx           # Text color control
 │   │   └── OpacitySlider.tsx         # Logo opacity control
@@ -109,11 +110,11 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed technical documentation.
 
 ## Future Features
 
-- **API Endpoint** (`/api/thumbnail`): Generate thumbnails programmatically via API
+- **API Endpoint** (`/api/generate`): Generate images programmatically via API
 - **Custom Backgrounds**: Upload your own background images
-- **Template System**: Create and save custom thumbnail templates
-- **Batch Generation**: Generate multiple thumbnails at once
-- **Animation Support**: Create animated GIF/MP4 thumbnails
+- **Template System**: Create and save custom image templates
+- **Batch Generation**: Generate multiple images at once
+- **Animation Support**: Create animated GIF/MP4 videos
 - **Collaboration**: Share and export templates for team use
 
 ## Deployment
@@ -137,10 +138,10 @@ Alternatively, connect your GitHub repository to Cloudflare Pages for automatic 
 
 ### Planned Endpoints
 
-#### Generate Thumbnail
+#### Generate Image
 
 ```
-GET /api/thumbnail?title=...&subtitle=...&preset=youtube&background=dark-blue&textColor=%23ffffff
+GET /api/generate?title=...&subtitle=...&preset=youtube&background=dark-blue&titleColor=%23ffffff&subtitleColor=%23ffffff
 ```
 
 Returns a PNG image with the specified configuration. See [ARCHITECTURE.md](./ARCHITECTURE.md) for complete API documentation.
@@ -174,4 +175,4 @@ For questions, issues, or feedback:
 
 ## Acknowledgments
 
-Built as a standalone, open-source alternative to commercial thumbnail generators, inspired by design tools like Canva and Adobe Express.
+Built as a standalone, open-source image generator for creating beautiful title images—thumbnails, OG images, and title cards—inspired by design tools like Canva and Adobe Express.

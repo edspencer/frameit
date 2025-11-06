@@ -56,7 +56,7 @@ export function ThumbnailGenerator() {
     savedConfig.background || ''
   )
   const [title, setTitle] = useState<string>(() =>
-    savedConfig.title || 'Getting to Know Thumbnail Generator'
+    savedConfig.title || 'Welcome to FrameIt'
   )
   const [subtitle, setSubtitle] = useState<string>(() =>
     savedConfig.subtitle || 'Your thumbnails, beautifully crafted'
@@ -121,8 +121,8 @@ export function ThumbnailGenerator() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Thumbnail Generator</h1>
-          <p className="text-slate-400">Create beautiful, branded thumbnails for your content</p>
+          <h1 className="text-4xl font-bold text-white mb-2">FrameIt</h1>
+          <p className="text-slate-400">Create beautiful title images for thumbnails, OG images, and title cards</p>
         </div>
 
         {/* Main Grid */}
@@ -207,7 +207,7 @@ export function ThumbnailGenerator() {
 
         {/* Footer */}
         <div className="mt-12 text-center text-sm text-slate-500">
-          Thumbnail Generator • Create and download beautiful thumbnails instantly
+          FrameIt • Create and download beautiful title images instantly
         </div>
       </div>
     </div>
