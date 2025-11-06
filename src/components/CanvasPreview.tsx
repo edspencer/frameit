@@ -1,4 +1,6 @@
-import { useEffect, useRef, forwardRef, Ref } from 'react'
+import { useEffect, useRef, forwardRef } from 'react'
+import type { Ref } from 'react'
+import type React from 'react'
 import type { ThumbnailPreset } from '../lib/types'
 import { drawThumbnail, drawThumbnailWithoutBackground } from '../lib/canvas-utils'
 
