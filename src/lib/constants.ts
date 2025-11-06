@@ -1,4 +1,4 @@
-import type { ThumbnailPreset, BackgroundImage } from './types'
+import type { ThumbnailPreset, BackgroundImage, BackgroundGradient } from './types'
 
 export const PRESETS: ThumbnailPreset[] = [
   {
@@ -42,6 +42,33 @@ export const PRESETS: ThumbnailPreset[] = [
     height: 1080,
     aspectRatio: '1:1',
     description: 'Square format for social media',
+  },
+]
+
+export const GRADIENTS: BackgroundGradient[] = [
+  {
+    name: 'Default Dark',
+    id: 'default-dark',
+    colorStart: '#0f1729',
+    colorEnd: '#1a2744',
+  },
+  {
+    name: 'Dark Blue',
+    id: 'dark-blue',
+    colorStart: '#172a45',
+    colorEnd: '#0f1729',
+  },
+  {
+    name: 'Purple Gradient',
+    id: 'purple',
+    colorStart: '#581c87',
+    colorEnd: '#312e81',
+  },
+  {
+    name: 'Teal Gradient',
+    id: 'teal',
+    colorStart: '#134e4a',
+    colorEnd: '#1e293b',
   },
 ]
 

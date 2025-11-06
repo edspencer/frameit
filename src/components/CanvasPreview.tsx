@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, forwardRef } from 'react'
 import type { Ref } from 'react'
 import type React from 'react'
 import type { ThumbnailPreset } from '../lib/types'
-import { drawThumbnail, drawThumbnailWithoutBackground } from '../lib/canvas-utils'
+import { drawThumbnail } from '../lib/canvas-utils'
 
 interface CanvasPreviewProps {
   preset: ThumbnailPreset
@@ -11,7 +11,10 @@ interface CanvasPreviewProps {
   titleColor: string
   subtitleColor: string
   logoOpacity: number
-  backgroundImage: string
+  gradientColorStart: string
+  gradientColorEnd: string
+  backgroundImageUrl?: string
+  backgroundImageScale?: number
   customLogo?: string
 }
 
@@ -24,7 +27,10 @@ export const CanvasPreview = forwardRef<HTMLCanvasElement, CanvasPreviewProps>(
       titleColor,
       subtitleColor,
       logoOpacity,
-      backgroundImage,
+      gradientColorStart,
+      gradientColorEnd,
+      backgroundImageUrl,
+      backgroundImageScale,
       customLogo,
     },
     ref: Ref<HTMLCanvasElement>
@@ -37,7 +43,7 @@ export const CanvasPreview = forwardRef<HTMLCanvasElement, CanvasPreviewProps>(
     const backgroundImgRef = useRef<HTMLImageElement>(new window.Image())
     const backgroundLoadedRef = useRef(false)
     const logoLoadedRef = useRef(false)
-    const [renderTrigger, setRenderTrigger] = useState(false)
+    const [renderTrigger, setRenderTrigger] = useState(0)
 
     // Effect to load logo image (only when customLogo changes)
     useEffect(() => {
@@ -46,67 +52,98 @@ export const CanvasPreview = forwardRef<HTMLCanvasElement, CanvasPreviewProps>(
       logoImgRef.current = logoImg
 
       let isMounted = true
+      let loadTimeout: ReturnType<typeof setTimeout> | null = null
 
-      logoImg.onload = () => {
+      // Reset loaded state while loading new image
+      logoLoadedRef.current = false
+
+      const handleLoadComplete = () => {
         if (isMounted) {
           logoLoadedRef.current = true
-          setRenderTrigger((prev) => !prev)
+          if (loadTimeout) clearTimeout(loadTimeout)
+          setRenderTrigger((prev) => prev + 1)
         }
       }
+
+      logoImg.onload = handleLoadComplete
 
       logoImg.onerror = () => {
         if (isMounted) {
           console.error('Failed to load logo image')
           logoLoadedRef.current = false
-          setRenderTrigger((prev) => !prev)
+          if (loadTimeout) clearTimeout(loadTimeout)
+          setRenderTrigger((prev) => prev + 1)
         }
       }
 
       // Load logo image - use custom logo if provided, otherwise use default
-      logoImg.src = customLogo || '/frameit-logo.png'
+      const logoSrc = customLogo || '/frameit-logo.png'
+      logoImg.src = logoSrc
+
+      // Fallback: if load event doesn't fire within reasonable time, force render anyway
+      loadTimeout = setTimeout(() => {
+        if (isMounted && logoImg.complete) {
+          handleLoadComplete()
+        }
+      }, 100)
 
       return () => {
         isMounted = false
+        if (loadTimeout) clearTimeout(loadTimeout)
       }
     }, [customLogo])
 
-    // Effect to load background image (only when backgroundImage changes)
+    // Effect to load background image (only when backgroundImageUrl changes)
     useEffect(() => {
       const backgroundImg = new window.Image()
       backgroundImg.crossOrigin = 'anonymous'
       backgroundImgRef.current = backgroundImg
 
       let isMounted = true
+      let loadTimeout: ReturnType<typeof setTimeout> | null = null
 
-      backgroundImg.onload = () => {
+      const handleLoadComplete = () => {
         if (isMounted) {
           backgroundLoadedRef.current = true
-          setRenderTrigger((prev) => !prev)
+          if (loadTimeout) clearTimeout(loadTimeout)
+          setRenderTrigger((prev) => prev + 1)
         }
       }
+
+      backgroundImg.onload = handleLoadComplete
 
       backgroundImg.onerror = () => {
         if (isMounted) {
           backgroundLoadedRef.current = false
-          setRenderTrigger((prev) => !prev)
+          if (loadTimeout) clearTimeout(loadTimeout)
+          setRenderTrigger((prev) => prev + 1)
         }
       }
 
-      // Only set background image if it's not empty
-      if (backgroundImage) {
-        backgroundImg.src = backgroundImage
+      // Only set background image if it's provided
+      if (backgroundImageUrl) {
+        backgroundImg.src = backgroundImageUrl
+        // Fallback: if load event doesn't fire within reasonable time, force render anyway
+        loadTimeout = setTimeout(() => {
+          if (isMounted && backgroundImg.complete) {
+            handleLoadComplete()
+          }
+        }, 100)
       } else {
-        backgroundLoadedRef.current = true
+        backgroundLoadedRef.current = false
         // Trigger state update asynchronously to avoid cascading renders
-        setTimeout(() => {
-          setRenderTrigger((prev) => !prev)
+        loadTimeout = setTimeout(() => {
+          if (isMounted) {
+            setRenderTrigger((prev) => prev + 1)
+          }
         }, 0)
       }
 
       return () => {
         isMounted = false
+        if (loadTimeout) clearTimeout(loadTimeout)
       }
-    }, [backgroundImage])
+    }, [backgroundImageUrl])
 
     // Effect to render canvas (when content/styling changes or images load)
     useEffect(() => {
@@ -125,37 +162,33 @@ export const CanvasPreview = forwardRef<HTMLCanvasElement, CanvasPreviewProps>(
       const logoImg = logoImgRef.current
       const backgroundImg = backgroundImgRef.current
 
-      if (backgroundLoadedRef.current && backgroundImg) {
-        drawThumbnail(ctx, canvas, backgroundImg, {
-          title,
-          subtitle,
-          titleColor,
-          subtitleColor,
-          logoOpacity,
-          logoImage: logoLoadedRef.current ? logoImg || undefined : undefined,
-        })
-      } else {
-        drawThumbnailWithoutBackground(ctx, canvas, {
-          title,
-          subtitle,
-          titleColor,
-          subtitleColor,
-          logoOpacity,
-          logoImage: logoLoadedRef.current ? logoImg || undefined : undefined,
-        })
-      }
+      drawThumbnail(ctx, canvas, {
+        title,
+        subtitle,
+        titleColor,
+        subtitleColor,
+        logoOpacity,
+        gradientColorStart,
+        gradientColorEnd,
+        logoImage: logoLoadedRef.current ? logoImg || undefined : undefined,
+        backgroundImage: backgroundLoadedRef.current && backgroundImg ? backgroundImg : undefined,
+        backgroundImageScale,
+      })
       // renderTrigger is included to ensure this effect re-runs when images finish loading
-    }, [preset, title, subtitle, titleColor, subtitleColor, logoOpacity, canvasRef, renderTrigger])
+    }, [preset, title, subtitle, titleColor, subtitleColor, logoOpacity, gradientColorStart, gradientColorEnd, backgroundImageScale, canvasRef, renderTrigger])
 
     return (
       <canvas
         ref={ref}
+        width={preset.width}
+        height={preset.height}
         style={{
           width: '100%',
           height: 'auto',
           maxWidth: '100%',
           maxHeight: '100%',
           display: 'block',
+          aspectRatio: `${preset.width} / ${preset.height}`,
         }}
       />
     )

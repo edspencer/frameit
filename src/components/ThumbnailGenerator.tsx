@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { PRESETS } from '../lib/constants'
+import { PRESETS, GRADIENTS } from '../lib/constants'
 import type { ThumbnailPreset, ThumbnailConfig } from '../lib/types'
 import { CanvasPreview } from './CanvasPreview'
 import { ControlPanel } from './ControlPanel'
@@ -38,7 +38,9 @@ function saveConfigToStorage(config: ThumbnailConfig): void {
       titleColor: config.titleColor,
       subtitleColor: config.subtitleColor,
       logoOpacity: config.logoOpacity,
-      background: config.background,
+      gradientId: config.gradientId,
+      backgroundImageUrl: config.backgroundImageUrl,
+      backgroundImageScale: config.backgroundImageScale,
       customLogo: config.customLogo,
     }))
   } catch (err) {
@@ -53,8 +55,14 @@ export function ThumbnailGenerator() {
   const [selectedPreset, setSelectedPreset] = useState<ThumbnailPreset>(() =>
     (savedConfig.preset as ThumbnailPreset) || PRESETS[0]
   )
-  const [selectedBackground, setSelectedBackground] = useState<string>(() =>
-    savedConfig.background || ''
+  const [selectedGradientId, setSelectedGradientId] = useState<string>(() =>
+    (savedConfig.gradientId as string) || GRADIENTS[0].id
+  )
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | undefined>(() =>
+    (savedConfig.backgroundImageUrl as string | undefined) || undefined
+  )
+  const [backgroundImageScale, setBackgroundImageScale] = useState<number>(() =>
+    (savedConfig.backgroundImageScale as number) || 100
   )
   const [title, setTitle] = useState<string>(() =>
     savedConfig.title || 'Welcome to FrameIt'
@@ -84,11 +92,13 @@ export function ThumbnailGenerator() {
       titleColor,
       subtitleColor,
       logoOpacity,
-      background: selectedBackground,
+      gradientId: selectedGradientId,
+      backgroundImageUrl,
+      backgroundImageScale,
       customLogo,
     }
     saveConfigToStorage(config)
-  }, [selectedPreset, title, subtitle, titleColor, subtitleColor, logoOpacity, selectedBackground, customLogo])
+  }, [selectedPreset, title, subtitle, titleColor, subtitleColor, logoOpacity, selectedGradientId, backgroundImageUrl, backgroundImageScale, customLogo])
 
   const downloadThumbnail = () => {
     const canvas = canvasRef.current
@@ -120,6 +130,9 @@ export function ThumbnailGenerator() {
       alert('Failed to copy to clipboard')
     }
   }
+
+  // Get the selected gradient
+  const selectedGradient = GRADIENTS.find((g) => g.id === selectedGradientId) || GRADIENTS[0]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
@@ -161,7 +174,10 @@ export function ThumbnailGenerator() {
                   titleColor={titleColor}
                   subtitleColor={subtitleColor}
                   logoOpacity={logoOpacity}
-                  backgroundImage={selectedBackground}
+                  gradientColorStart={selectedGradient.colorStart}
+                  gradientColorEnd={selectedGradient.colorEnd}
+                  backgroundImageUrl={backgroundImageUrl}
+                  backgroundImageScale={backgroundImageScale}
                   customLogo={customLogo}
                 />
               </div>
@@ -212,8 +228,12 @@ export function ThumbnailGenerator() {
               onSubtitleChange={setSubtitle}
               subtitleColor={subtitleColor}
               onSubtitleColorChange={setSubtitleColor}
-              selectedBackground={selectedBackground}
-              onBackgroundChange={setSelectedBackground}
+              selectedGradientId={selectedGradientId}
+              onGradientChange={setSelectedGradientId}
+              backgroundImageUrl={backgroundImageUrl}
+              onBackgroundImageChange={setBackgroundImageUrl}
+              backgroundImageScale={backgroundImageScale}
+              onBackgroundImageScaleChange={setBackgroundImageScale}
               logoOpacity={logoOpacity}
               onOpacityChange={setLogoOpacity}
               customLogo={customLogo}
