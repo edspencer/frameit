@@ -119,20 +119,42 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed technical documentation.
 
 ## Deployment
 
-### Cloudflare Pages
+### Cloudflare Pages (Recommended)
 
+The easiest way to deploy FrameIt is to connect your GitHub repository to Cloudflare Pages for automatic deployments.
+
+**Git-based Deployment:**
+1. Push your code to GitHub
+2. Go to [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages**
+3. Click **"Create Application"** → **"Pages"** → **"Connect to Git"**
+4. Select your repository
+5. Configure build settings:
+   - **Build command**: `pnpm build`
+   - **Build output directory**: `dist`
+   - **Deploy command**: Leave blank (Cloudflare automatically deploys the build output)
+6. Click **"Save and Deploy"**
+
+FrameIt will now deploy automatically on every push to your main branch.
+
+**Direct Upload (One-time):**
 ```bash
 # Build the project
-npm run build
+pnpm build
 
 # Install Wrangler CLI (if not already installed)
 npm install -g @cloudflare/wrangler
 
-# Deploy to Cloudflare Pages
+# Deploy the dist/ folder
 wrangler pages deploy dist/
 ```
 
-Alternatively, connect your GitHub repository to Cloudflare Pages for automatic deployments.
+### Custom Domain
+
+To use a custom domain (like `frameit.dev`):
+1. In your Cloudflare Pages project settings
+2. Go to **Custom domains**
+3. Add your domain
+4. Update your domain's DNS if needed (Cloudflare will provide instructions)
 
 ## API Documentation
 
