@@ -6,6 +6,13 @@ export interface ThumbnailPreset {
   description: string
 }
 
+export interface BackgroundGradient {
+  name: string
+  id: string
+  colorStart: string
+  colorEnd: string
+}
+
 export interface BackgroundImage {
   name: string
   url: string
@@ -19,6 +26,8 @@ export interface ThumbnailConfig {
   subtitleColor: string
   logoOpacity: number
   preset: ThumbnailPreset
-  background: string
+  gradientId: string
+  backgroundImageUrl?: string
+  backgroundImageScale?: number
   customLogo?: string
 }

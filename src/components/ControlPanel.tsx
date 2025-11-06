@@ -1,7 +1,8 @@
 import { PlatformSelector } from './PlatformSelector'
 import { HeadingContent } from './HeadingContent'
 import { SubheadingContent } from './SubheadingContent'
-import { BackgroundSelector } from './BackgroundSelector'
+import { GradientSelector } from './GradientSelector'
+import { BackgroundImageUploader } from './BackgroundImageUploader'
 import { LogoUploader } from './LogoUploader'
 import type { ThumbnailPreset } from '../lib/types'
 
@@ -16,8 +17,12 @@ interface ControlPanelProps {
   onSubtitleChange: (subtitle: string) => void
   subtitleColor: string
   onSubtitleColorChange: (color: string) => void
-  selectedBackground: string
-  onBackgroundChange: (url: string) => void
+  selectedGradientId: string
+  onGradientChange: (id: string) => void
+  backgroundImageUrl: string | undefined
+  onBackgroundImageChange: (url: string | undefined) => void
+  backgroundImageScale: number
+  onBackgroundImageScaleChange: (scale: number) => void
   logoOpacity: number
   onOpacityChange: (opacity: number) => void
   customLogo: string | undefined
@@ -35,8 +40,12 @@ export function ControlPanel({
   onSubtitleChange,
   subtitleColor,
   onSubtitleColorChange,
-  selectedBackground,
-  onBackgroundChange,
+  selectedGradientId,
+  onGradientChange,
+  backgroundImageUrl,
+  onBackgroundImageChange,
+  backgroundImageScale,
+  onBackgroundImageScaleChange,
   logoOpacity,
   onOpacityChange,
   customLogo,
@@ -57,7 +66,13 @@ export function ControlPanel({
         subtitleColor={subtitleColor}
         onSubtitleColorChange={onSubtitleColorChange}
       />
-      <BackgroundSelector selectedBackground={selectedBackground} onBackgroundChange={onBackgroundChange} />
+      <GradientSelector selectedGradientId={selectedGradientId} onGradientChange={onGradientChange} />
+      <BackgroundImageUploader
+        backgroundImageUrl={backgroundImageUrl}
+        onImageChange={onBackgroundImageChange}
+        backgroundImageScale={backgroundImageScale}
+        onScaleChange={onBackgroundImageScaleChange}
+      />
       <LogoUploader
         customLogo={customLogo}
         onLogoChange={onCustomLogoChange}

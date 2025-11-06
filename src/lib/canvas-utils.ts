@@ -9,7 +9,11 @@ interface DrawConfig {
   titleColor: string
   subtitleColor: string
   logoOpacity: number
+  gradientColorStart: string
+  gradientColorEnd: string
   logoImage?: HTMLImageElement
+  backgroundImage?: HTMLImageElement
+  backgroundImageScale?: number
 }
 
 /**
@@ -41,6 +45,22 @@ export function wrapText(
   }
 
   return lines
+}
+
+/**
+ * Draws a gradient background that fills the entire canvas
+ */
+export function drawGradientBackground(
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+  colorStart: string,
+  colorEnd: string
+): void {
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
+  gradient.addColorStop(0, colorStart)
+  gradient.addColorStop(1, colorEnd)
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
 }
 
 /**
@@ -113,78 +133,52 @@ export function drawTextContent(
 }
 
 /**
- * Draws the thumbnail with a background image
+ * Draws the thumbnail with gradient background and optional background image overlay
  */
 export function drawThumbnail(
   ctx: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement,
-  backgroundImg: HTMLImageElement,
   config: DrawConfig
 ): void {
   // Clear the canvas first
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  // Draw background image with cover effect
-  const bgWidth = backgroundImg.width
-  const bgHeight = backgroundImg.height
-  const canvasAspect = canvas.width / canvas.height
-  const bgAspect = bgWidth / bgHeight
+  // Always draw the gradient background
+  drawGradientBackground(ctx, canvas, config.gradientColorStart, config.gradientColorEnd)
 
-  let sourceX = 0
-  let sourceY = 0
-  let sourceWidth = bgWidth
-  let sourceHeight = bgHeight
+  // If background image is provided, draw it on top with overlay
+  if (config.backgroundImage && config.backgroundImageScale !== undefined && config.backgroundImageScale > 0) {
+    const scale = config.backgroundImageScale / 100
+    const bgWidth = config.backgroundImage.width
+    const bgHeight = config.backgroundImage.height
+    const bgAspect = bgWidth / bgHeight
 
-  if (canvasAspect > bgAspect) {
-    // Canvas is wider, fit height
-    sourceWidth = bgHeight * canvasAspect
-    sourceX = (bgWidth - sourceWidth) / 2
-  } else {
-    // Canvas is taller, fit width
-    sourceHeight = bgWidth / canvasAspect
-    sourceY = (bgHeight - sourceHeight) / 2
+    // Calculate display dimensions based on scale
+    // Scale 100% means the image width equals canvas width
+    let displayWidth = canvas.width * scale
+    let displayHeight = displayWidth / bgAspect
+
+    // Center the image on the canvas
+    const displayX = (canvas.width - displayWidth) / 2
+    const displayY = (canvas.height - displayHeight) / 2
+
+    // Draw the scaled and centered image
+    ctx.drawImage(
+      config.backgroundImage,
+      0,
+      0,
+      bgWidth,
+      bgHeight,
+      displayX,
+      displayY,
+      displayWidth,
+      displayHeight
+    )
+
+    // Draw dark overlay for better text contrast
+    ctx.fillStyle = 'rgba(23, 48, 84, 0.5)'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
   }
-
-  ctx.drawImage(
-    backgroundImg,
-    sourceX,
-    sourceY,
-    sourceWidth,
-    sourceHeight,
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  )
-
-  // Draw dark overlay for better text contrast
-  ctx.fillStyle = 'rgba(23, 48, 84, 0.5)'
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-  // Draw logo and text
-  if (config.logoImage) {
-    drawLogo(ctx, canvas, config.logoImage, config.logoOpacity)
-  }
-  drawTextContent(ctx, canvas.width, canvas.height, config)
-}
-
-/**
- * Draws the thumbnail with a gradient background (no image)
- */
-export function drawThumbnailWithoutBackground(
-  ctx: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement,
-  config: DrawConfig
-): void {
-  // Clear the canvas first
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-  // Draw gradient background
-  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-  gradient.addColorStop(0, '#0f1729')
-  gradient.addColorStop(1, '#1a2744')
-  ctx.fillStyle = gradient
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
 
   // Draw logo and text
   if (config.logoImage) {
