@@ -20,7 +20,7 @@ function loadConfigFromStorage(): Partial<ThumbnailConfig> {
         config.preset = preset
       }
     }
-    delete config.presetName
+    config.presetName = undefined
 
     return config
   } catch (err) {
@@ -51,7 +51,7 @@ export function ThumbnailGenerator() {
   const savedConfig = loadConfigFromStorage()
 
   const [selectedPreset, setSelectedPreset] = useState<ThumbnailPreset>(() =>
-    (savedConfig.preset as ThumbnailPreset) || PRESETS[0]!
+    (savedConfig.preset as ThumbnailPreset) || PRESETS[0]
   )
   const [selectedBackground, setSelectedBackground] = useState<string>(() =>
     savedConfig.background || ''
@@ -60,7 +60,7 @@ export function ThumbnailGenerator() {
     savedConfig.title || 'Welcome to FrameIt'
   )
   const [subtitle, setSubtitle] = useState<string>(() =>
-    savedConfig.subtitle || 'Your thumbnails, beautifully crafted'
+    savedConfig.subtitle || 'Change this text to whatever, upload your own logo, whatever you want'
   )
   const [titleColor, setTitleColor] = useState<string>(() =>
     savedConfig.titleColor || '#ffffff'
@@ -183,12 +183,14 @@ export function ThumbnailGenerator() {
               <div className="flex gap-3">
                 <button
                   onClick={downloadThumbnail}
+                  type="button"
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
                 >
                   ⬇️ Download PNG
                 </button>
                 <button
                   onClick={copyToClipboard}
+                  type="button"
                   className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 px-4 rounded-lg transition-colors"
                 >
                   📋 Copy to Clipboard
