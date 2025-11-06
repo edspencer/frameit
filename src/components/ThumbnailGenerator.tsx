@@ -39,6 +39,7 @@ function saveConfigToStorage(config: ThumbnailConfig): void {
       subtitleColor: config.subtitleColor,
       logoOpacity: config.logoOpacity,
       background: config.background,
+      customLogo: config.customLogo,
     }))
   } catch (err) {
     console.error('Failed to save config to storage:', err)
@@ -70,6 +71,9 @@ export function ThumbnailGenerator() {
   const [logoOpacity, setLogoOpacity] = useState<number>(() =>
     savedConfig.logoOpacity || 1
   )
+  const [customLogo, setCustomLogo] = useState<string | undefined>(() =>
+    savedConfig.customLogo
+  )
 
   // Save config to localStorage whenever any setting changes
   useEffect(() => {
@@ -81,9 +85,10 @@ export function ThumbnailGenerator() {
       subtitleColor,
       logoOpacity,
       background: selectedBackground,
+      customLogo,
     }
     saveConfigToStorage(config)
-  }, [selectedPreset, title, subtitle, titleColor, subtitleColor, logoOpacity, selectedBackground])
+  }, [selectedPreset, title, subtitle, titleColor, subtitleColor, logoOpacity, selectedBackground, customLogo])
 
   const downloadThumbnail = () => {
     const canvas = canvasRef.current
@@ -121,7 +126,14 @@ export function ThumbnailGenerator() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">FrameIt</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="120" height="28.8" className="h-8" aria-label="FrameIt logo">
+              <title>FrameIt logo</title>
+              <rect x="0" y="0" width="48" height="48" rx="8" fill="hsl(221.2 83.2% 53.3%)"/>
+              <text x="24" y="28" fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif" fontSize="24" fontWeight="bold" fill="white" textAnchor="middle" dominantBaseline="middle">FI</text>
+              <text x="60" y="27" fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif" fontSize="36" fontWeight="600" fill="white" dominantBaseline="middle">FrameIt</text>
+            </svg>
+          </div>
           <p className="text-slate-400">Create beautiful title images for thumbnails, OG images, and title cards</p>
         </div>
 
@@ -150,6 +162,7 @@ export function ThumbnailGenerator() {
                   subtitleColor={subtitleColor}
                   logoOpacity={logoOpacity}
                   backgroundImage={selectedBackground}
+                  customLogo={customLogo}
                 />
               </div>
             </div>
@@ -201,6 +214,8 @@ export function ThumbnailGenerator() {
               onBackgroundChange={setSelectedBackground}
               logoOpacity={logoOpacity}
               onOpacityChange={setLogoOpacity}
+              customLogo={customLogo}
+              onCustomLogoChange={setCustomLogo}
             />
           </div>
         </div>

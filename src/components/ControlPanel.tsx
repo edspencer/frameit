@@ -2,7 +2,7 @@ import { PlatformSelector } from './PlatformSelector'
 import { HeadingContent } from './HeadingContent'
 import { SubheadingContent } from './SubheadingContent'
 import { BackgroundSelector } from './BackgroundSelector'
-import { OpacitySlider } from './OpacitySlider'
+import { LogoUploader } from './LogoUploader'
 import type { ThumbnailPreset } from '../lib/types'
 
 interface ControlPanelProps {
@@ -20,6 +20,8 @@ interface ControlPanelProps {
   onBackgroundChange: (url: string) => void
   logoOpacity: number
   onOpacityChange: (opacity: number) => void
+  customLogo: string | undefined
+  onCustomLogoChange: (logo: string | undefined) => void
 }
 
 export function ControlPanel({
@@ -37,6 +39,8 @@ export function ControlPanel({
   onBackgroundChange,
   logoOpacity,
   onOpacityChange,
+  customLogo,
+  onCustomLogoChange,
 }: ControlPanelProps) {
   return (
     <div className="space-y-6">
@@ -54,7 +58,12 @@ export function ControlPanel({
         onSubtitleColorChange={onSubtitleColorChange}
       />
       <BackgroundSelector selectedBackground={selectedBackground} onBackgroundChange={onBackgroundChange} />
-      <OpacitySlider logoOpacity={logoOpacity} onOpacityChange={onOpacityChange} />
+      <LogoUploader
+        customLogo={customLogo}
+        onLogoChange={onCustomLogoChange}
+        logoOpacity={logoOpacity}
+        onOpacityChange={onOpacityChange}
+      />
 
       <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
         <h4 className="text-sm font-semibold text-white mb-3">💡 Tips</h4>
