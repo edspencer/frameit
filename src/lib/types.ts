@@ -15,7 +15,8 @@ export interface BackgroundImage {
 export interface ThumbnailConfig {
   title: string
   subtitle: string
-  textColor: string
+  titleColor: string
+  subtitleColor: string
   logoOpacity: number
   preset: ThumbnailPreset
   background: string

@@ -6,7 +6,8 @@
 interface DrawConfig {
   title: string
   subtitle: string
-  textColor: string
+  titleColor: string
+  subtitleColor: string
   logoOpacity: number
 }
 
@@ -126,7 +127,7 @@ export function drawTextContent(
   const maxTextWidth = canvasWidth - padding * 2 - canvasWidth * 0.08
 
   // Title
-  ctx.fillStyle = config.textColor
+  ctx.fillStyle = config.titleColor
   ctx.font = `bold ${Math.round(canvasWidth * 0.08)}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`
   ctx.textAlign = 'left'
   ctx.textBaseline = 'top'
@@ -143,7 +144,7 @@ export function drawTextContent(
 
   // Subtitle
   ctx.font = `${Math.round(canvasWidth * 0.045)}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+  ctx.fillStyle = config.subtitleColor
   yPosition += canvasWidth * 0.02
 
   const subtitleLines = wrapText(ctx, config.subtitle, maxTextWidth)
@@ -162,6 +163,9 @@ export function drawThumbnail(
   backgroundImg: HTMLImageElement,
   config: DrawConfig
 ): void {
+  // Clear the canvas first
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
   // Draw background image with cover effect
   const bgWidth = backgroundImg.width
   const bgHeight = backgroundImg.height
@@ -212,6 +216,9 @@ export function drawThumbnailWithoutBackground(
   canvas: HTMLCanvasElement,
   config: DrawConfig
 ): void {
+  // Clear the canvas first
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
   // Draw gradient background
   const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
   gradient.addColorStop(0, '#0f1729')

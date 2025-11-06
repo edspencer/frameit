@@ -16,11 +16,25 @@ export const PRESETS: ThumbnailPreset[] = [
     description: 'YouTube video thumbnail',
   },
   {
+    name: 'YouTube Shorts',
+    width: 1080,
+    height: 1920,
+    aspectRatio: '9:16',
+    description: 'YouTube Shorts vertical thumbnail',
+  },
+  {
     name: 'Twitter/X',
     width: 1200,
     height: 675,
     aspectRatio: '16:9',
     description: 'Twitter/X video thumbnail',
+  },
+  {
+    name: 'TikTok',
+    width: 1080,
+    height: 1920,
+    aspectRatio: '9:16',
+    description: 'TikTok vertical video thumbnail',
   },
   {
     name: 'Square',

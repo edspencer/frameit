@@ -10,7 +10,7 @@ export function PlatformSelector({ selectedPreset, onPresetChange }: PlatformSel
   return (
     <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
       <h3 className="text-lg font-semibold text-white mb-4">Platform</h3>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {PRESETS.map((preset) => (
           <button
             key={preset.name}
@@ -21,8 +21,10 @@ export function PlatformSelector({ selectedPreset, onPresetChange }: PlatformSel
                 : 'border-slate-600 hover:border-slate-500'
             }`}
           >
-            <div className="font-medium text-white">{preset.name}</div>
-            <div className="text-xs mt-1 opacity-75">{preset.aspectRatio}</div>
+            <div className="font-medium text-white text-sm">{preset.name}</div>
+            <div className="text-xs text-slate-300 mt-1">
+              {preset.width} × {preset.height}px • {preset.aspectRatio}
+            </div>
           </button>
         ))}
       </div>

@@ -6,7 +6,8 @@ interface CanvasPreviewProps {
   preset: ThumbnailPreset
   title: string
   subtitle: string
-  textColor: string
+  titleColor: string
+  subtitleColor: string
   logoOpacity: number
   backgroundImage: string
 }
@@ -17,7 +18,8 @@ export const CanvasPreview = forwardRef<HTMLCanvasElement, CanvasPreviewProps>(
       preset,
       title,
       subtitle,
-      textColor,
+      titleColor,
+      subtitleColor,
       logoOpacity,
       backgroundImage,
     },
@@ -33,9 +35,11 @@ export const CanvasPreview = forwardRef<HTMLCanvasElement, CanvasPreviewProps>(
       const ctx = canvas.getContext('2d')
       if (!ctx) return
 
-      // Set canvas dimensions
-      canvas.width = preset.width
-      canvas.height = preset.height
+      // Only set canvas dimensions if the preset changed (this clears the canvas)
+      if (canvas.width !== preset.width || canvas.height !== preset.height) {
+        canvas.width = preset.width
+        canvas.height = preset.height
+      }
 
       // Create a working image for background
       const backgroundImg = new window.Image()
@@ -49,14 +53,16 @@ export const CanvasPreview = forwardRef<HTMLCanvasElement, CanvasPreviewProps>(
           drawThumbnail(ctx, canvas, backgroundImg, {
             title,
             subtitle,
-            textColor,
+            titleColor,
+            subtitleColor,
             logoOpacity,
           })
         } else {
           drawThumbnailWithoutBackground(ctx, canvas, {
             title,
             subtitle,
-            textColor,
+            titleColor,
+            subtitleColor,
             logoOpacity,
           })
         }
@@ -79,15 +85,19 @@ export const CanvasPreview = forwardRef<HTMLCanvasElement, CanvasPreviewProps>(
         backgroundLoaded = true
         handleBothLoaded()
       }
-    }, [preset, title, subtitle, textColor, logoOpacity, backgroundImage, canvasRef])
+    }, [preset, title, subtitle, titleColor, subtitleColor, logoOpacity, backgroundImage, canvasRef])
 
     return (
-      <div className="bg-slate-900 p-8 flex items-center justify-center min-h-96 rounded-lg border border-slate-700">
-        <canvas
-          ref={ref}
-          className="border border-slate-700 rounded-lg shadow-2xl"
-        />
-      </div>
+      <canvas
+        ref={ref}
+        style={{
+          width: '100%',
+          height: 'auto',
+          maxWidth: '100%',
+          maxHeight: '100%',
+          display: 'block',
+        }}
+      />
     )
   }
 )
