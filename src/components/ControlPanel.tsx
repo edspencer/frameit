@@ -1,7 +1,6 @@
 import { PlatformSelector } from './PlatformSelector'
 import { LayoutSelector } from './LayoutSelector'
 import { GradientSelector } from './GradientSelector'
-import { BackgroundImageUploader } from './BackgroundImageUploader'
 import { TextElementControl } from './TextElementControl'
 import { ImageElementControl } from './ImageElementControl'
 import { LAYOUTS } from '../lib/constants'
@@ -15,18 +14,14 @@ interface ControlPanelProps {
   config: ThumbnailConfigNew // Full config instead of individual props
   onTextElementChange: (id: string, updates: Partial<{ content: string; color: string; fontSize: string; fontWeight: number; fontFamily: string }>) => void
   onTextElementPreview?: (id: string, updates: { fontFamily?: string; color?: string; fontWeight?: number }) => void // For hover preview
-  onImageElementChange: (id: string, updates: Partial<{ url: string | undefined; opacity: number }>) => void
+  onImageElementChange: (id: string, updates: Partial<{ url: string | undefined; opacity: number; scale: number }>) => void
   selectedGradientId: string
   onGradientChange: (id: string) => void
-  backgroundImageUrl: string | undefined
-  onBackgroundImageChange: (url: string | undefined) => void
-  backgroundImageScale: number
-  onBackgroundImageScaleChange: (scale: number) => void
 }
 
-// Helper to format element ID as label ("title" -> "Title")
-function formatLabel(id: string): string {
-  return id.charAt(0).toUpperCase() + id.slice(1)
+// Helper to get display label (uses element.name if present, otherwise capitalizes id)
+function getElementLabel(element: { id: string; name?: string }): string {
+  return element.name || element.id.charAt(0).toUpperCase() + element.id.slice(1)
 }
 
 export function ControlPanel({
@@ -40,10 +35,6 @@ export function ControlPanel({
   onImageElementChange,
   selectedGradientId,
   onGradientChange,
-  backgroundImageUrl,
-  onBackgroundImageChange,
-  backgroundImageScale,
-  onBackgroundImageScaleChange,
 }: ControlPanelProps) {
   // Look up the selected layout
   const selectedLayout = LAYOUTS.find(l => l.id === selectedLayoutId) || LAYOUTS[0]
@@ -54,14 +45,8 @@ export function ControlPanel({
       <PlatformSelector selectedPreset={selectedPreset} onPresetChange={onPresetChange} />
       <LayoutSelector selectedLayoutId={selectedLayoutId} onLayoutChange={onLayoutChange} />
       <GradientSelector selectedGradientId={selectedGradientId} onGradientChange={onGradientChange} />
-      <BackgroundImageUploader
-        backgroundImageUrl={backgroundImageUrl}
-        onImageChange={onBackgroundImageChange}
-        backgroundImageScale={backgroundImageScale}
-        onScaleChange={onBackgroundImageScaleChange}
-      />
 
-      {/* Dynamic controls from layout.elements */}
+      {/* Dynamic controls from layout.elements (only text and image, not overlays) */}
       {selectedLayout.elements.map(layoutElement => {
         if (layoutElement.type === 'text') {
           const textEl = config.textElements.find(t => t.id === layoutElement.id)
@@ -75,7 +60,7 @@ export function ControlPanel({
             <TextElementControl
               key={layoutElement.id}
               id={layoutElement.id}
-              label={formatLabel(layoutElement.id)}
+              label={getElementLabel(layoutElement)}
               content={textEl?.content || ''}
               color={textEl?.color}
               fontSize={textEl?.fontSize}
@@ -95,20 +80,27 @@ export function ControlPanel({
               onFontWeightPreview={onTextElementPreview ? (fontWeight) => onTextElementPreview(layoutElement.id, { fontWeight }) : undefined}
             />
           )
-        } else {
+        }
+
+        if (layoutElement.type === 'image') {
           const imageEl = config.imageElements.find(i => i.id === layoutElement.id)
           return (
             <ImageElementControl
               key={layoutElement.id}
               id={layoutElement.id}
-              label={formatLabel(layoutElement.id)}
+              label={getElementLabel(layoutElement)}
               url={imageEl?.url}
               opacity={imageEl?.opacity ?? 1.0}
+              scale={imageEl?.scale ?? 100}
               onUrlChange={(url) => onImageElementChange(layoutElement.id, { url })}
               onOpacityChange={(opacity) => onImageElementChange(layoutElement.id, { opacity })}
+              onScaleChange={(scale) => onImageElementChange(layoutElement.id, { scale })}
             />
           )
         }
+
+        // Overlays don't have UI controls - they're purely layout-defined
+        return null
       })}
     </div>
   )

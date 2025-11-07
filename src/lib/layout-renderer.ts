@@ -45,7 +45,7 @@ export class LayoutRenderer {
     this.lastElementBounds.clear()
 
     // 1. Render background (implicit zIndex: 0)
-    this.renderBackground(ctx, canvas, config.background, loadedImages)
+    this.renderBackground(ctx, canvas, config.background)
 
     // 2. Sort elements by zIndex (ascending) and render in order
     const sortedElements = [...layout.elements].sort((a, b) => a.zIndex - b.zIndex)
@@ -55,15 +55,13 @@ export class LayoutRenderer {
   }
 
   /**
-   * Renders the background (gradient, solid color, or image overlay)
+   * Renders the background (gradient or solid color only)
    */
   private renderBackground(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
-    background: BackgroundConfig,
-    loadedImages: Map<string, HTMLImageElement>
+    background: BackgroundConfig
   ): void {
-    // Draw base background
     switch (background.type) {
       case 'gradient': {
         const gradient = GRADIENTS.find(g => g.id === background.gradientId) || GRADIENTS[0]
@@ -79,37 +77,6 @@ export class LayoutRenderer {
       case 'none':
         // Transparent / no background
         break
-    }
-
-    // Draw optional image overlay
-    if (background.imageUrl) {
-      const bgImage = loadedImages.get('background')
-      if (bgImage) {
-        // Default to 100% scale if not specified
-        const scale = (background.imageScale ?? 100) / 100
-        const bgAspect = bgImage.width / bgImage.height
-
-        // Calculate display dimensions based on scale
-        const displayWidth = canvas.width * scale
-        const displayHeight = displayWidth / bgAspect
-
-        // Center the image on the canvas
-        const displayX = (canvas.width - displayWidth) / 2
-        const displayY = (canvas.height - displayHeight) / 2
-
-        // Draw the scaled and centered image
-        ctx.drawImage(
-          bgImage,
-          0,
-          0,
-          bgImage.width,
-          bgImage.height,
-          displayX,
-          displayY,
-          displayWidth,
-          displayHeight
-        )
-      }
     }
   }
 

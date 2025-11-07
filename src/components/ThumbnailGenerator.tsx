@@ -64,7 +64,25 @@ export function ThumbnailGenerator() {
   const [zoomLevel, setZoomLevel] = useState<number>(100)
 
   const savedConfig = loadConfigFromStorage()
-  const [config, setConfig] = useState<ThumbnailConfigNew>(() => savedConfig || getDefaultConfig())
+  const [config, setConfig] = useState<ThumbnailConfigNew>(() => {
+    const initialConfig = savedConfig || getDefaultConfig()
+    const layout = LAYOUTS.find(l => l.id === initialConfig.layoutId) || LAYOUTS[0]
+
+    // Ensure all layout elements exist in initial config
+    const textElements = [...initialConfig.textElements]
+    const imageElements = [...initialConfig.imageElements]
+
+    for (const el of layout.elements) {
+      if (el.type === 'text' && !textElements.find(t => t.id === el.id)) {
+        textElements.push({ id: el.id, content: '', color: '#ffffff' })
+      }
+      if (el.type === 'image' && !imageElements.find(i => i.id === el.id)) {
+        imageElements.push({ id: el.id, opacity: 1.0, scale: 100 })
+      }
+    }
+
+    return { ...initialConfig, textElements, imageElements }
+  })
 
   const selectedLayout = LAYOUTS.find(l => l.id === config.layoutId) || LAYOUTS[0]
 
@@ -124,7 +142,7 @@ export function ThumbnailGenerator() {
           textElements.push({ id: el.id, content: '', color: '#ffffff' })
         }
         if (el.type === 'image' && !imageElements.find(i => i.id === el.id)) {
-          imageElements.push({ id: el.id, opacity: 1.0 })
+          imageElements.push({ id: el.id, opacity: 1.0, scale: 100 })
         }
       }
 
@@ -300,10 +318,6 @@ export function ThumbnailGenerator() {
               onImageElementChange={updateImageElement}
               selectedGradientId={config.background.gradientId || GRADIENTS[0].id}
               onGradientChange={(gradientId) => updateBackground({ type: 'gradient', gradientId })}
-              backgroundImageUrl={config.background.imageUrl}
-              onBackgroundImageChange={(imageUrl) => updateBackground({ imageUrl })}
-              backgroundImageScale={config.background.imageScale || 100}
-              onBackgroundImageScaleChange={(imageScale) => updateBackground({ imageScale })}
             />
           </div>
         </div>

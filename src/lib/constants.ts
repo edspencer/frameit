@@ -344,6 +344,15 @@ export const LAYOUTS: LayoutDefinition[] = [
     name: 'Photo Essay',
     description: 'Keynote-style layout with artist and photo title',
     elements: [
+      // Main photo - fills entire canvas
+      {
+        id: 'main-image',
+        type: 'image',
+        name: 'Main Image',
+        position: { x: '50%', y: '50%', anchor: 'center' },
+        sizing: { maxWidth: '100%' }, // Will scale to fill width
+        zIndex: 1,
+      },
       // Top scrim overlay - dark gradient at top for text legibility
       {
         id: 'top-scrim',

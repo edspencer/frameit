@@ -7,8 +7,10 @@ interface ImageElementControlProps {
   label: string // Display label (e.g., "Logo", "Avatar", "Badge")
   url: string | undefined // Current image URL (data URL or regular URL)
   opacity: number // Current opacity (0-1)
+  scale: number // Current scale (0-200, default 100)
   onUrlChange: (url: string | undefined) => void
   onOpacityChange: (opacity: number) => void
+  onScaleChange: (scale: number) => void
 }
 
 export function ImageElementControl({
@@ -16,8 +18,10 @@ export function ImageElementControl({
   label,
   url,
   opacity,
+  scale,
   onUrlChange,
   onOpacityChange,
+  onScaleChange,
 }: ImageElementControlProps) {
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -53,7 +57,7 @@ export function ImageElementControl({
   return (
     <ConfigSection title={label}>
       <div className="space-y-3">
-        {url && (
+        {url ? (
           <div className="flex items-center gap-3 p-3 bg-slate-900 rounded border border-slate-600">
             <img
               src={url}
@@ -68,29 +72,29 @@ export function ImageElementControl({
               🗑️ Remove
             </button>
           </div>
-        )}
-
-        <div
-          {...getRootProps()}
-          className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-            isDragActive
-              ? 'border-blue-400 bg-blue-500/10'
-              : 'border-slate-600 hover:border-slate-500 bg-slate-900/50'
-          }`}
-        >
-          <input {...getInputProps()} />
-          <div className="text-slate-300">
-            <div className="text-2xl mb-2">📤</div>
-            {isDragActive ? (
-              <p className="font-medium text-blue-400">Drop your {label.toLowerCase()} here...</p>
-            ) : (
-              <>
-                <p className="font-medium">Drag & drop your {label.toLowerCase()} here</p>
-                <p className="text-sm text-slate-400">or click to select a file</p>
-              </>
-            )}
+        ) : (
+          <div
+            {...getRootProps()}
+            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+              isDragActive
+                ? 'border-blue-400 bg-blue-500/10'
+                : 'border-slate-600 hover:border-slate-500 bg-slate-900/50'
+            }`}
+          >
+            <input {...getInputProps()} />
+            <div className="text-slate-300">
+              <div className="text-2xl mb-2">📤</div>
+              {isDragActive ? (
+                <p className="font-medium text-blue-400">Drop your {label.toLowerCase()} here...</p>
+              ) : (
+                <>
+                  <p className="font-medium">Drag & drop your {label.toLowerCase()} here</p>
+                  <p className="text-sm text-slate-400">or click to select a file</p>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="space-y-2">
           <label htmlFor={`opacity-${id}`} className="block text-sm text-slate-300">
@@ -103,6 +107,21 @@ export function ImageElementControl({
             max="100"
             value={Math.round(opacity * 100)}
             onChange={(e) => onOpacityChange(Number.parseInt(e.target.value) / 100)}
+            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor={`scale-${id}`} className="block text-sm text-slate-300">
+            Scale: {scale}%
+          </label>
+          <input
+            id={`scale-${id}`}
+            type="range"
+            min="0"
+            max="200"
+            value={scale}
+            onChange={(e) => onScaleChange(Number.parseInt(e.target.value))}
             className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
           />
         </div>

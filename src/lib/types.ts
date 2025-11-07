@@ -46,8 +46,6 @@ export interface BackgroundConfig {
   type: BackgroundType
   gradientId?: string      // For gradient backgrounds (references BackgroundGradient.id)
   solidColor?: string      // For solid backgrounds
-  imageUrl?: string        // Optional image overlay
-  imageScale?: number      // 0-200, default 100
 }
 
 export interface TextElement {
@@ -107,6 +105,7 @@ export interface OverlayStyling {
 export interface TextLayoutElement {
   id: string              // Must match TextElement.id
   type: 'text'
+  name?: string           // Optional display name for UI (fallback: capitalize id)
   position: LayoutPosition
   sizing?: LayoutSizing
   styling?: LayoutStyling
@@ -116,6 +115,7 @@ export interface TextLayoutElement {
 export interface ImageLayoutElement {
   id: string              // Must match ImageElement.id
   type: 'image'
+  name?: string           // Optional display name for UI (fallback: capitalize id)
   position: LayoutPosition
   sizing?: LayoutSizing
   zIndex: number          // Rendering order (lower = drawn first/behind)
