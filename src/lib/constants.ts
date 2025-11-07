@@ -1,19 +1,24 @@
 import type { ThumbnailPreset, BackgroundImage, BackgroundGradient } from './types'
+import {
+  YouTubeIcon,
+  LinkedInIcon,
+  XIcon,
+  TikTokIcon,
+  InstagramIcon,
+  PinterestIcon,
+  OpenGraphIcon,
+} from '../components/icons/PlatformIcons'
 
 export const PRESETS: ThumbnailPreset[] = [
-  {
-    name: 'LinkedIn Video',
-    width: 1200,
-    height: 627,
-    aspectRatio: '16:9',
-    description: 'Recommended for LinkedIn video thumbnails',
-  },
+  // Video Thumbnails
   {
     name: 'YouTube',
     width: 1280,
     height: 720,
     aspectRatio: '16:9',
     description: 'YouTube video thumbnail',
+    category: 'video',
+    icon: YouTubeIcon,
   },
   {
     name: 'YouTube Shorts',
@@ -21,6 +26,17 @@ export const PRESETS: ThumbnailPreset[] = [
     height: 1920,
     aspectRatio: '9:16',
     description: 'YouTube Shorts vertical thumbnail',
+    category: 'video',
+    icon: YouTubeIcon,
+  },
+  {
+    name: 'LinkedIn Video',
+    width: 1200,
+    height: 627,
+    aspectRatio: '16:9',
+    description: 'Recommended for LinkedIn video thumbnails',
+    category: 'video',
+    icon: LinkedInIcon,
   },
   {
     name: 'Twitter/X',
@@ -28,6 +44,8 @@ export const PRESETS: ThumbnailPreset[] = [
     height: 675,
     aspectRatio: '16:9',
     description: 'Twitter/X video thumbnail',
+    category: 'video',
+    icon: XIcon,
   },
   {
     name: 'TikTok',
@@ -35,13 +53,54 @@ export const PRESETS: ThumbnailPreset[] = [
     height: 1920,
     aspectRatio: '9:16',
     description: 'TikTok vertical video thumbnail',
+    category: 'video',
+    icon: TikTokIcon,
   },
   {
-    name: 'Square',
+    name: 'Instagram Reels',
+    width: 1080,
+    height: 1920,
+    aspectRatio: '9:16',
+    description: 'Instagram Reels vertical video thumbnail',
+    category: 'video',
+    icon: InstagramIcon,
+  },
+  // Social Titles
+  {
+    name: 'Open Graph',
+    width: 1200,
+    height: 630,
+    aspectRatio: '16:9',
+    description: 'Standard for website social sharing',
+    category: 'social',
+    icon: OpenGraphIcon,
+  },
+  {
+    name: 'Instagram Feed',
     width: 1080,
     height: 1080,
     aspectRatio: '1:1',
-    description: 'Square format for social media',
+    description: 'Instagram feed post',
+    category: 'social',
+    icon: InstagramIcon,
+  },
+  {
+    name: 'X Header',
+    width: 1500,
+    height: 500,
+    aspectRatio: '3:1',
+    description: 'X profile header image',
+    category: 'social',
+    icon: XIcon,
+  },
+  {
+    name: 'Pinterest Pin',
+    width: 1000,
+    height: 1500,
+    aspectRatio: '2:3',
+    description: 'Pinterest pin image',
+    category: 'social',
+    icon: PinterestIcon,
   },
 ]
 

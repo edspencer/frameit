@@ -1,4 +1,5 @@
 import { ColorPicker } from './ColorPicker'
+import { ConfigSection } from './ConfigSection'
 
 interface HeadingContentProps {
   title: string
@@ -14,8 +15,7 @@ export function HeadingContent({
   onTitleColorChange,
 }: HeadingContentProps) {
   return (
-    <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <h3 className="text-lg font-semibold text-white mb-4">Heading</h3>
+    <ConfigSection title="Heading">
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -36,6 +36,6 @@ export function HeadingContent({
           <ColorPicker textColor={titleColor} onColorChange={onTitleColorChange} />
         </div>
       </div>
-    </div>
+    </ConfigSection>
   )
 }

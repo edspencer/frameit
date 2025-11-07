@@ -1,3 +1,5 @@
+import { ConfigSection } from './ConfigSection'
+
 interface OpacitySliderProps {
   logoOpacity: number
   onOpacityChange: (opacity: number) => void
@@ -5,8 +7,7 @@ interface OpacitySliderProps {
 
 export function OpacitySlider({ logoOpacity, onOpacityChange }: OpacitySliderProps) {
   return (
-    <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <h3 className="text-lg font-semibold text-white mb-4">Logo Opacity</h3>
+    <ConfigSection title="Logo Opacity">
       <div className="flex items-center gap-4">
         <input
           type="range"
@@ -21,6 +22,6 @@ export function OpacitySlider({ logoOpacity, onOpacityChange }: OpacitySliderPro
           {Math.round(logoOpacity * 100)}%
         </div>
       </div>
-    </div>
+    </ConfigSection>
   )
 }

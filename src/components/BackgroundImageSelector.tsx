@@ -1,4 +1,5 @@
 import { BACKGROUND_IMAGES } from '../lib/constants'
+import { ConfigSection } from './ConfigSection'
 
 interface BackgroundImageSelectorProps {
   selectedImageUrl: string | undefined
@@ -7,8 +8,7 @@ interface BackgroundImageSelectorProps {
 
 export function BackgroundImageSelector({ selectedImageUrl, onImageChange }: BackgroundImageSelectorProps) {
   return (
-    <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <h3 className="text-lg font-semibold text-white mb-4">Background Image (Optional)</h3>
+    <ConfigSection title="Background Image (Optional)">
       <div className="grid grid-cols-3 gap-2">
         {/* None button */}
         <button
@@ -52,6 +52,6 @@ export function BackgroundImageSelector({ selectedImageUrl, onImageChange }: Bac
           ? 'No background image'
           : BACKGROUND_IMAGES.find((bg) => bg.url === selectedImageUrl)?.name || 'Custom'}
       </div>
-    </div>
+    </ConfigSection>
   )
 }

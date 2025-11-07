@@ -1,4 +1,5 @@
 import { BACKGROUND_IMAGES } from '../lib/constants'
+import { ConfigSection } from './ConfigSection'
 
 interface BackgroundSelectorProps {
   selectedBackground: string
@@ -7,8 +8,7 @@ interface BackgroundSelectorProps {
 
 export function BackgroundSelector({ selectedBackground, onBackgroundChange }: BackgroundSelectorProps) {
   return (
-    <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <h3 className="text-lg font-semibold text-white mb-4">Background</h3>
+    <ConfigSection title="Background">
       <div className="grid grid-cols-3 gap-2">
         {BACKGROUND_IMAGES.map((bg) => (
           <button
@@ -38,6 +38,6 @@ export function BackgroundSelector({ selectedBackground, onBackgroundChange }: B
       <div className="text-xs text-slate-400 mt-3">
         {BACKGROUND_IMAGES.find((bg) => bg.url === selectedBackground)?.name || 'None'}
       </div>
-    </div>
+    </ConfigSection>
   )
 }
