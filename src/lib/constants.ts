@@ -332,7 +332,7 @@ export const LAYOUTS: LayoutDefinition[] = [
         id: 'logo',
         type: 'image',
         position: { x: '95%', y: '95%', anchor: 'bottom-right' },
-        sizing: { maxWidth: '12%' },
+        sizing: { maxWidth: '6%' },
         zIndex: 200,
       },
     ],

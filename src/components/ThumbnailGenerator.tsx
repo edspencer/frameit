@@ -54,8 +54,12 @@ function getDefaultConfig(): ThumbnailConfigNew {
     textElements: [
       { id: 'title', content: 'Welcome to FrameIt', color: '#ffffff' },
       { id: 'subtitle', content: 'Change this text to whatever, upload your own logo, whatever you want', color: '#ffffff' },
+      { id: 'artist', content: 'Artist Name', color: '#ffffff' },
     ],
-    imageElements: [{ id: 'logo', url: '/frameit-logo.png', opacity: 1.0 }],
+    imageElements: [
+      { id: 'logo', url: '/frameit-logo.png', opacity: 1.0, scale: 100 },
+      { id: 'main-image', url: '/default-photo.jpg', opacity: 1.0, scale: 100 },
+    ],
   }
 }
 
