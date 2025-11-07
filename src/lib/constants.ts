@@ -47,8 +47,8 @@ export const PRESETS: ThumbnailPreset[] = [
 
 export const GRADIENTS: BackgroundGradient[] = [
   {
-    name: 'Default Dark',
-    id: 'default-dark',
+    name: 'Default',
+    id: 'default',
     colorStart: '#0f1729',
     colorEnd: '#1a2744',
   },
@@ -59,16 +59,64 @@ export const GRADIENTS: BackgroundGradient[] = [
     colorEnd: '#0f1729',
   },
   {
-    name: 'Purple Gradient',
+    name: 'Purple',
     id: 'purple',
     colorStart: '#581c87',
     colorEnd: '#312e81',
   },
   {
-    name: 'Teal Gradient',
+    name: 'Teal',
     id: 'teal',
     colorStart: '#134e4a',
     colorEnd: '#1e293b',
+  },
+  {
+    name: 'Sunset',
+    id: 'sunset',
+    colorStart: '#7c2d12',
+    colorEnd: '#991b1b',
+  },
+  {
+    name: 'Ocean',
+    id: 'ocean',
+    colorStart: '#075985',
+    colorEnd: '#0c4a6e',
+  },
+  {
+    name: 'Forest',
+    id: 'forest',
+    colorStart: '#14532d',
+    colorEnd: '#064e3b',
+  },
+  {
+    name: 'Midnight',
+    id: 'midnight',
+    colorStart: '#1e1b4b',
+    colorEnd: '#0f172a',
+  },
+  {
+    name: 'Rose',
+    id: 'rose',
+    colorStart: '#881337',
+    colorEnd: '#4c0519',
+  },
+  {
+    name: 'Emerald',
+    id: 'emerald',
+    colorStart: '#065f46',
+    colorEnd: '#022c22',
+  },
+  {
+    name: 'Amber',
+    id: 'amber',
+    colorStart: '#92400e',
+    colorEnd: '#451a03',
+  },
+  {
+    name: 'Slate',
+    id: 'slate',
+    colorStart: '#334155',
+    colorEnd: '#0f172a',
   },
 ]
 

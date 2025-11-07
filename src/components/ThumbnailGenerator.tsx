@@ -3,6 +3,7 @@ import { PRESETS, GRADIENTS } from '../lib/constants'
 import type { ThumbnailPreset, ThumbnailConfig } from '../lib/types'
 import { CanvasPreview } from './CanvasPreview'
 import { ControlPanel } from './ControlPanel'
+import { Tooltip } from './Tooltip'
 
 const STORAGE_KEY = 'thumbnailGeneratorConfig'
 
@@ -50,6 +51,7 @@ function saveConfigToStorage(config: ThumbnailConfig): void {
 
 export function ThumbnailGenerator() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [zoomLevel, setZoomLevel] = useState<number>(100)
   const savedConfig = loadConfigFromStorage()
 
   const [selectedPreset, setSelectedPreset] = useState<ThumbnailPreset>(() =>
@@ -99,6 +101,30 @@ export function ThumbnailGenerator() {
     }
     saveConfigToStorage(config)
   }, [selectedPreset, title, subtitle, titleColor, subtitleColor, logoOpacity, selectedGradientId, backgroundImageUrl, backgroundImageScale, customLogo])
+
+  // Track canvas display size to calculate zoom level
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const updateZoomLevel = () => {
+      const displayWidth = canvas.offsetWidth
+      const actualWidth = selectedPreset.width
+      const zoom = Math.round((displayWidth / actualWidth) * 100)
+      setZoomLevel(zoom)
+    }
+
+    // Initial calculation
+    updateZoomLevel()
+
+    // Watch for resize
+    const resizeObserver = new ResizeObserver(updateZoomLevel)
+    resizeObserver.observe(canvas)
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [selectedPreset.width])
 
   const downloadThumbnail = () => {
     const canvas = canvasRef.current
@@ -153,7 +179,7 @@ export function ThumbnailGenerator() {
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Preview Section */}
-          <div className="lg:col-span-2 flex flex-col">
+          <div className="lg:col-span-2 flex flex-col lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)]">
             {/* Canvas Preview */}
             <div className="bg-slate-800 rounded-lg overflow-hidden shadow-2xl border border-slate-700 flex items-center justify-center p-4">
               <div
@@ -187,11 +213,25 @@ export function ThumbnailGenerator() {
             <div className="mt-6 space-y-4">
               {/* Info Section */}
               <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-                <div className="space-y-2 text-sm">
-                  <p className="text-slate-300">
-                    Dimensions: {selectedPreset.width} × {selectedPreset.height}px ({selectedPreset.aspectRatio})
-                  </p>
-                  <p className="text-slate-400">Ready for download and screenshot capture</p>
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2 text-sm">
+                    <p className="text-slate-300">
+                      Dimensions: {selectedPreset.width} × {selectedPreset.height}px ({selectedPreset.aspectRatio})
+                    </p>
+                    <p className="text-slate-400">Ready for download and screenshot capture</p>
+                  </div>
+                  <div className="text-sm text-slate-400 text-right">
+                    <p className="flex items-center gap-1">
+                      Preview zoom: {zoomLevel}%
+                      <Tooltip
+                        content={`Shows how the preview is scaled vs actual ${selectedPreset.width}×${selectedPreset.height}px. 100% = full size, lower = scaled to fit.`}
+                      >
+                        <span className="inline-flex items-center justify-center w-4 h-4 text-xs rounded-full bg-slate-700 text-slate-300 cursor-help hover:bg-slate-600 transition-colors">
+                          ?
+                        </span>
+                      </Tooltip>
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -243,8 +283,30 @@ export function ThumbnailGenerator() {
         </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center text-sm text-slate-500">
-          FrameIt • Create and download beautiful title images instantly
+        <div className="mt-12 text-center text-sm text-slate-500 space-y-2">
+          <p>
+            Created with love by{' '}
+            <a
+              href="https://edspencer.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              Ed Spencer
+            </a>
+          </p>
+          <p>
+            <a
+              href="https://github.com/edspencer/frameit"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              View on GitHub
+            </a>
+            {' • '}
+            © {new Date().getFullYear()}
+          </p>
         </div>
       </div>
     </div>
