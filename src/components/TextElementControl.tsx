@@ -48,7 +48,7 @@ export function TextElementControl({
   onFontFamilyPreview,
 }: TextElementControlProps) {
   return (
-    <ConfigSection title={label}>
+    <ConfigSection title={label} storageKey={`text-${id}`}>
       <div className="space-y-4">
         <div>
           <label htmlFor={`text-${id}`} className="block text-sm font-medium text-slate-300 mb-2">

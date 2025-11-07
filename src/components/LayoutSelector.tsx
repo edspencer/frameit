@@ -1,19 +1,28 @@
 import { useState } from 'react'
 import { LAYOUTS } from '../lib/constants'
+import { getSectionExpandedState, setSectionExpandedState } from '../lib/ui-state'
 
 interface LayoutSelectorProps {
   selectedLayoutId: string
   onLayoutChange: (layoutId: string) => void
 }
 
+const STORAGE_KEY = 'layout'
+
 export function LayoutSelector({ selectedLayoutId, onLayoutChange }: LayoutSelectorProps) {
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(() => getSectionExpandedState(STORAGE_KEY, true))
+
+  const handleToggle = () => {
+    const newState = !isExpanded
+    setIsExpanded(newState)
+    setSectionExpandedState(STORAGE_KEY, newState)
+  }
 
   return (
     <div className="space-y-3">
       <button
         type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={handleToggle}
         className="w-full flex items-center justify-between text-left group"
       >
         <h3 className="text-sm font-medium text-slate-300">Layout</h3>

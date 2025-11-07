@@ -1,21 +1,36 @@
 import type React from 'react'
 import { useState } from 'react'
+import { getSectionExpandedState, setSectionExpandedState } from '../lib/ui-state'
 
 interface ConfigSectionProps {
   title: string
   children: React.ReactNode
   defaultExpanded?: boolean
+  storageKey?: string // Optional key for localStorage persistence
 }
 
-export function ConfigSection({ title, children, defaultExpanded = true }: ConfigSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded)
+export function ConfigSection({ title, children, defaultExpanded = true, storageKey }: ConfigSectionProps) {
+  const [isExpanded, setIsExpanded] = useState(() => {
+    if (storageKey) {
+      return getSectionExpandedState(storageKey, defaultExpanded)
+    }
+    return defaultExpanded
+  })
+
+  const handleToggle = () => {
+    const newState = !isExpanded
+    setIsExpanded(newState)
+    if (storageKey) {
+      setSectionExpandedState(storageKey, newState)
+    }
+  }
 
   return (
     <div className="bg-slate-800 rounded-lg p-4 border border-slate-700">
       <button
         type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between text-left mb-4 group"
+        onClick={handleToggle}
+        className={`w-full flex items-center justify-between text-left group ${isExpanded ? 'mb-4' : ''}`}
       >
         <h3 className="text-lg font-semibold text-white">{title}</h3>
         <svg

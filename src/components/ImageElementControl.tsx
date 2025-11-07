@@ -55,7 +55,7 @@ export function ImageElementControl({
   }
 
   return (
-    <ConfigSection title={label}>
+    <ConfigSection title={label} storageKey={`image-${id}`}>
       <div className="space-y-3">
         {url ? (
           <div className="flex items-center gap-3 p-3 bg-slate-900 rounded border border-slate-600">
