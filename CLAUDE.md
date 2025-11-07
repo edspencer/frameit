@@ -26,6 +26,8 @@ pnpm preview
 - **Deployment**: Cloudflare Pages
 - **Canvas**: HTML5 Canvas API for image rendering
 
+GitHub repo: https://github.com/edspencer/frameit
+
 ## Project Structure
 
 ```
