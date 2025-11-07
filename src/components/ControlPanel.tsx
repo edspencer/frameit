@@ -79,16 +79,6 @@ export function ControlPanel({
         logoOpacity={logoOpacity}
         onOpacityChange={onOpacityChange}
       />
-
-      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-        <h4 className="text-sm font-semibold text-white mb-3">💡 Tips</h4>
-        <ul className="text-xs text-slate-400 space-y-2">
-          <li>• Use screenshotter for final capture</li>
-          <li>• Keep text legible on small displays</li>
-          <li>• High contrast ensures visibility</li>
-          <li>• Logo provides brand recognition</li>
-        </ul>
-      </div>
     </div>
   )
 }

@@ -9,9 +9,10 @@ export function GradientSelector({ selectedGradientId, onGradientChange }: Gradi
   return (
     <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
       <h3 className="text-lg font-semibold text-white mb-4">Background Gradient</h3>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-4 gap-2">
         {GRADIENTS.map((gradient) => (
           <button
+            type="button"
             key={gradient.id}
             onClick={() => onGradientChange(gradient.id)}
             className={`relative h-16 rounded-lg overflow-hidden border-2 transition-all ${
