@@ -1,4 +1,5 @@
 import { GRADIENTS } from '../lib/constants'
+import { ConfigSection } from './ConfigSection'
 
 interface GradientSelectorProps {
   selectedGradientId: string
@@ -7,8 +8,7 @@ interface GradientSelectorProps {
 
 export function GradientSelector({ selectedGradientId, onGradientChange }: GradientSelectorProps) {
   return (
-    <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <h3 className="text-lg font-semibold text-white mb-4">Background Gradient</h3>
+    <ConfigSection title="Background Gradient">
       <div className="grid grid-cols-4 gap-2">
         {GRADIENTS.map((gradient) => (
           <button
@@ -31,6 +31,6 @@ export function GradientSelector({ selectedGradientId, onGradientChange }: Gradi
           </button>
         ))}
       </div>
-    </div>
+    </ConfigSection>
   )
 }

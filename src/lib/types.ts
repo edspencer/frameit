@@ -1,9 +1,13 @@
+import type React from 'react'
+
 export interface ThumbnailPreset {
   name: string
   width: number
   height: number
   aspectRatio: string
   description: string
+  category: 'video' | 'social'
+  icon: React.ComponentType<{ size?: number; className?: string }>
 }
 
 export interface BackgroundGradient {

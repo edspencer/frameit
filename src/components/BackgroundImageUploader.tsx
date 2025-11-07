@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { ConfigSection } from './ConfigSection'
 
 interface BackgroundImageUploaderProps {
   backgroundImageUrl: string | undefined
@@ -46,9 +47,7 @@ export function BackgroundImageUploader({
   }
 
   return (
-    <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <h3 className="text-lg font-semibold text-white mb-4">Background Image (Optional)</h3>
-
+    <ConfigSection title="Background Image (Optional)">
       <div className="space-y-3">
         {backgroundImageUrl && (
           <div className="flex items-center gap-3 p-3 bg-slate-900 rounded border border-slate-600">
@@ -106,6 +105,6 @@ export function BackgroundImageUploader({
           </div>
         )}
       </div>
-    </div>
+    </ConfigSection>
   )
 }

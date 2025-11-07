@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { ConfigSection } from './ConfigSection'
 
 interface LogoUploaderProps {
   customLogo: string | undefined
@@ -41,9 +42,7 @@ export function LogoUploader({ customLogo, onLogoChange, logoOpacity, onOpacityC
   }
 
   return (
-    <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <h3 className="text-lg font-semibold text-white mb-4">Logo</h3>
-
+    <ConfigSection title="Logo">
       <div className="space-y-3">
         {customLogo && (
           <div className="flex items-center gap-3 p-3 bg-slate-900 rounded border border-slate-600">
@@ -98,6 +97,6 @@ export function LogoUploader({ customLogo, onLogoChange, logoOpacity, onOpacityC
           />
         </div>
       </div>
-    </div>
+    </ConfigSection>
   )
 }

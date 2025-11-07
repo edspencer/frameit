@@ -1,4 +1,5 @@
 import { ColorPicker } from './ColorPicker'
+import { ConfigSection } from './ConfigSection'
 
 interface SubheadingContentProps {
   subtitle: string
@@ -14,8 +15,7 @@ export function SubheadingContent({
   onSubtitleColorChange,
 }: SubheadingContentProps) {
   return (
-    <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <h3 className="text-lg font-semibold text-white mb-4">Subheading</h3>
+    <ConfigSection title="Subheading">
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -36,6 +36,6 @@ export function SubheadingContent({
           <ColorPicker textColor={subtitleColor} onColorChange={onSubtitleColorChange} />
         </div>
       </div>
-    </div>
+    </ConfigSection>
   )
 }
