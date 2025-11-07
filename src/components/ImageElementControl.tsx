@@ -2,14 +2,23 @@ import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { ConfigSection } from './ConfigSection'
 
-interface LogoUploaderProps {
-  customLogo: string | undefined
-  onLogoChange: (logoDataUrl: string | undefined) => void
-  logoOpacity: number
+interface ImageElementControlProps {
+  id: string // Element ID (e.g., "logo", "avatar", "badge")
+  label: string // Display label (e.g., "Logo", "Avatar", "Badge")
+  url: string | undefined // Current image URL (data URL or regular URL)
+  opacity: number // Current opacity (0-1)
+  onUrlChange: (url: string | undefined) => void
   onOpacityChange: (opacity: number) => void
 }
 
-export function LogoUploader({ customLogo, onLogoChange, logoOpacity, onOpacityChange }: LogoUploaderProps) {
+export function ImageElementControl({
+  id,
+  label,
+  url,
+  opacity,
+  onUrlChange,
+  onOpacityChange,
+}: ImageElementControlProps) {
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0]
@@ -19,14 +28,14 @@ export function LogoUploader({ customLogo, onLogoChange, logoOpacity, onOpacityC
       const reader = new FileReader()
       reader.onload = (e) => {
         const dataUrl = e.target?.result as string
-        onLogoChange(dataUrl)
+        onUrlChange(dataUrl)
       }
       reader.onerror = () => {
-        alert('Failed to read image file')
+        alert(`Failed to read ${label.toLowerCase()} image file`)
       }
       reader.readAsDataURL(file)
     },
-    [onLogoChange]
+    [onUrlChange, label]
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -38,17 +47,17 @@ export function LogoUploader({ customLogo, onLogoChange, logoOpacity, onOpacityC
   })
 
   const handleDelete = () => {
-    onLogoChange(undefined)
+    onUrlChange(undefined)
   }
 
   return (
-    <ConfigSection title="Logo">
+    <ConfigSection title={label}>
       <div className="space-y-3">
-        {customLogo && (
+        {url && (
           <div className="flex items-center gap-3 p-3 bg-slate-900 rounded border border-slate-600">
             <img
-              src={customLogo}
-              alt="Custom logo preview"
+              src={url}
+              alt={`${label} preview`}
               className="h-12 object-contain"
             />
             <button
@@ -73,10 +82,10 @@ export function LogoUploader({ customLogo, onLogoChange, logoOpacity, onOpacityC
           <div className="text-slate-300">
             <div className="text-2xl mb-2">📤</div>
             {isDragActive ? (
-              <p className="font-medium text-blue-400">Drop your logo here...</p>
+              <p className="font-medium text-blue-400">Drop your {label.toLowerCase()} here...</p>
             ) : (
               <>
-                <p className="font-medium">Drag & drop your logo here</p>
+                <p className="font-medium">Drag & drop your {label.toLowerCase()} here</p>
                 <p className="text-sm text-slate-400">or click to select a file</p>
               </>
             )}
@@ -84,15 +93,16 @@ export function LogoUploader({ customLogo, onLogoChange, logoOpacity, onOpacityC
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm text-slate-300">
-            Opacity: {Math.round(logoOpacity * 100)}%
+          <label htmlFor={`opacity-${id}`} className="block text-sm text-slate-300">
+            Opacity: {Math.round(opacity * 100)}%
           </label>
           <input
+            id={`opacity-${id}`}
             type="range"
             min="0"
             max="100"
-            value={Math.round(logoOpacity * 100)}
-            onChange={(e) => onOpacityChange(parseInt(e.target.value) / 100)}
+            value={Math.round(opacity * 100)}
+            onChange={(e) => onOpacityChange(Number.parseInt(e.target.value) / 100)}
             className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
           />
         </div>

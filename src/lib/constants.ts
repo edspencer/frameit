@@ -358,4 +358,35 @@ export const LAYOUTS: LayoutDefinition[] = [
       },
     ],
   },
+
+  // Photo Essay Layout - Keynote-style with artist and photo title at top
+  {
+    id: 'photo-essay',
+    name: 'Photo Essay',
+    description: 'Keynote-style layout with artist and photo title',
+    elements: [
+      {
+        id: 'artist',
+        type: 'text',
+        position: { x: '5%', y: '5%', anchor: 'top-left' },
+        sizing: { maxWidth: '90%', fontSize: '1.75%', lineHeight: 1.3 },
+        styling: {
+          fontWeight: 400,
+          textAlign: 'left',
+          color: '#ffffff',
+        },
+      },
+      {
+        id: 'title',
+        type: 'text',
+        position: { x: '5%', y: 'auto', anchor: 'top-left' },
+        sizing: { maxWidth: '90%', fontSize: '4.5%', lineHeight: 1.2 },
+        styling: {
+          fontWeight: 600,
+          textAlign: 'left',
+          color: '#ffffff',
+        },
+      },
+    ],
+  },
 ]
