@@ -1,106 +1,165 @@
 import { useState, useRef, useEffect } from 'react'
-import { PRESETS, GRADIENTS } from '../lib/constants'
-import type { ThumbnailPreset, ThumbnailConfig } from '../lib/types'
+import { PRESETS, GRADIENTS, LAYOUTS } from '../lib/constants'
+import type { ThumbnailPreset, ThumbnailConfigNew } from '../lib/types'
 import { CanvasPreview } from './CanvasPreview'
 import { ControlPanel } from './ControlPanel'
 import { Tooltip } from './Tooltip'
 
 const STORAGE_KEY = 'thumbnailGeneratorConfig'
 
-function loadConfigFromStorage(): Partial<ThumbnailConfig> {
+function loadConfigFromStorage(): ThumbnailConfigNew | null {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
-    if (!stored) return {}
+    if (!stored) return null
+    const parsed = JSON.parse(stored)
 
-    const config = JSON.parse(stored)
-
-    // Find the preset by name
-    if (config.presetName) {
-      const preset = PRESETS.find(p => p.name === config.presetName)
-      if (preset) {
-        config.preset = preset
+    // Check if this is the new format (has textElements and imageElements)
+    if (parsed.textElements && parsed.imageElements) {
+      // Restore preset object from name
+      if (parsed.presetName) {
+        const preset = PRESETS.find(p => p.name === parsed.presetName)
+        if (preset) parsed.preset = preset
       }
+      return parsed as ThumbnailConfigNew
     }
-    config.presetName = undefined
 
-    return config
+    // Old format detected - return null to use default config
+    console.log('Old config format detected, using defaults')
+    return null
   } catch (err) {
-    console.error('Failed to load config from storage:', err)
-    return {}
+    console.error('Failed to load config:', err)
+    return null
   }
 }
 
-function saveConfigToStorage(config: ThumbnailConfig): void {
+function saveConfigToStorage(config: ThumbnailConfigNew): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       presetName: config.preset.name,
-      title: config.title,
-      subtitle: config.subtitle,
-      titleColor: config.titleColor,
-      subtitleColor: config.subtitleColor,
-      logoOpacity: config.logoOpacity,
-      gradientId: config.gradientId,
-      backgroundImageUrl: config.backgroundImageUrl,
-      backgroundImageScale: config.backgroundImageScale,
-      customLogo: config.customLogo,
+      layoutId: config.layoutId,
+      background: config.background,
+      textElements: config.textElements,
+      imageElements: config.imageElements,
     }))
   } catch (err) {
-    console.error('Failed to save config to storage:', err)
+    console.error('Failed to save config:', err)
+  }
+}
+
+function getDefaultConfig(): ThumbnailConfigNew {
+  return {
+    preset: PRESETS[0],
+    layoutId: LAYOUTS[0].id,
+    background: { type: 'gradient', gradientId: GRADIENTS[0].id },
+    textElements: [
+      { id: 'title', content: 'Welcome to FrameIt', color: '#ffffff' },
+      { id: 'subtitle', content: 'Change this text to whatever, upload your own logo, whatever you want', color: '#ffffff' },
+      { id: 'artist', content: 'Artist Name', color: '#ffffff' },
+    ],
+    imageElements: [
+      { id: 'logo', url: '/frameit-logo.png', opacity: 1.0, scale: 100 },
+      { id: 'main-image', url: '/default-photo.jpg', opacity: 1.0, scale: 100 },
+    ],
   }
 }
 
 export function ThumbnailGenerator() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [zoomLevel, setZoomLevel] = useState<number>(100)
-  const savedConfig = loadConfigFromStorage()
 
-  const [selectedPreset, setSelectedPreset] = useState<ThumbnailPreset>(() =>
-    (savedConfig.preset as ThumbnailPreset) || PRESETS[0]
-  )
-  const [selectedGradientId, setSelectedGradientId] = useState<string>(() =>
-    (savedConfig.gradientId as string) || GRADIENTS[0].id
-  )
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | undefined>(() =>
-    (savedConfig.backgroundImageUrl as string | undefined) || undefined
-  )
-  const [backgroundImageScale, setBackgroundImageScale] = useState<number>(() =>
-    (savedConfig.backgroundImageScale as number) || 100
-  )
-  const [title, setTitle] = useState<string>(() =>
-    savedConfig.title || 'Welcome to FrameIt'
-  )
-  const [subtitle, setSubtitle] = useState<string>(() =>
-    savedConfig.subtitle || 'Change this text to whatever, upload your own logo, whatever you want'
-  )
-  const [titleColor, setTitleColor] = useState<string>(() =>
-    savedConfig.titleColor || '#ffffff'
-  )
-  const [subtitleColor, setSubtitleColor] = useState<string>(() =>
-    savedConfig.subtitleColor || '#ffffff'
-  )
-  const [logoOpacity, setLogoOpacity] = useState<number>(() =>
-    savedConfig.logoOpacity || 1
-  )
-  const [customLogo, setCustomLogo] = useState<string | undefined>(() =>
-    savedConfig.customLogo
-  )
+  const savedConfig = loadConfigFromStorage()
+  const [config, setConfig] = useState<ThumbnailConfigNew>(() => {
+    const initialConfig = savedConfig || getDefaultConfig()
+    const layout = LAYOUTS.find(l => l.id === initialConfig.layoutId) || LAYOUTS[0]
+
+    // Ensure all layout elements exist in initial config
+    const textElements = [...initialConfig.textElements]
+    const imageElements = [...initialConfig.imageElements]
+
+    for (const el of layout.elements) {
+      if (el.type === 'text' && !textElements.find(t => t.id === el.id)) {
+        textElements.push({ id: el.id, content: '', color: '#ffffff' })
+      }
+      if (el.type === 'image' && !imageElements.find(i => i.id === el.id)) {
+        imageElements.push({ id: el.id, opacity: 1.0, scale: 100 })
+      }
+    }
+
+    return { ...initialConfig, textElements, imageElements }
+  })
+
+  const selectedLayout = LAYOUTS.find(l => l.id === config.layoutId) || LAYOUTS[0]
+
+  // Helper functions to update parts of config
+  const updateTextElement = (id: string, updates: Partial<typeof config.textElements[0]>) => {
+    setConfig(prev => ({
+      ...prev,
+      textElements: prev.textElements.map(el => el.id === id ? { ...el, ...updates } : el)
+    }))
+  }
+
+  // Temporary preview for hover (doesn't save to state)
+  const [previewState, setPreviewState] = useState<{
+    id: string
+    fontFamily?: string
+    color?: string
+    fontWeight?: number
+  } | null>(null)
+
+  const previewTextElement = (id: string, updates: { fontFamily?: string; color?: string; fontWeight?: number }) => {
+    setPreviewState(prev => {
+      // If same element, merge updates
+      if (prev?.id === id) {
+        return { ...prev, ...updates }
+      }
+      // New element, replace
+      return { id, ...updates }
+    })
+  }
+
+  const updateImageElement = (id: string, updates: Partial<typeof config.imageElements[0]>) => {
+    setConfig(prev => ({
+      ...prev,
+      imageElements: prev.imageElements.map(el => el.id === id ? { ...el, ...updates } : el)
+    }))
+  }
+
+  const updateBackground = (updates: Partial<typeof config.background>) => {
+    setConfig(prev => ({ ...prev, background: { ...prev.background, ...updates } }))
+  }
+
+  const updatePreset = (preset: ThumbnailPreset) => {
+    setConfig(prev => ({ ...prev, preset }))
+  }
+
+  const updateLayoutId = (layoutId: string) => {
+    setConfig(prev => {
+      const newLayout = LAYOUTS.find(l => l.id === layoutId) || LAYOUTS[0]
+
+      // Copy existing elements
+      const textElements = [...prev.textElements]
+      const imageElements = [...prev.imageElements]
+
+      // Ensure all layout elements exist in config (with defaults if missing)
+      for (const el of newLayout.elements) {
+        if (el.type === 'text' && !textElements.find(t => t.id === el.id)) {
+          textElements.push({ id: el.id, content: '', color: '#ffffff' })
+        }
+        if (el.type === 'image' && !imageElements.find(i => i.id === el.id)) {
+          imageElements.push({ id: el.id, opacity: 1.0, scale: 100 })
+        }
+      }
+
+      return { ...prev, layoutId, textElements, imageElements }
+    })
+  }
+
+  // No longer need to extract individual elements - ControlPanel does that internally
 
   // Save config to localStorage whenever any setting changes
   useEffect(() => {
-    const config: ThumbnailConfig = {
-      preset: selectedPreset,
-      title,
-      subtitle,
-      titleColor,
-      subtitleColor,
-      logoOpacity,
-      gradientId: selectedGradientId,
-      backgroundImageUrl,
-      backgroundImageScale,
-      customLogo,
-    }
     saveConfigToStorage(config)
-  }, [selectedPreset, title, subtitle, titleColor, subtitleColor, logoOpacity, selectedGradientId, backgroundImageUrl, backgroundImageScale, customLogo])
+  }, [config])
 
   // Track canvas display size to calculate zoom level
   useEffect(() => {
@@ -109,7 +168,7 @@ export function ThumbnailGenerator() {
 
     const updateZoomLevel = () => {
       const displayWidth = canvas.offsetWidth
-      const actualWidth = selectedPreset.width
+      const actualWidth = config.preset.width
       const zoom = Math.round((displayWidth / actualWidth) * 100)
       setZoomLevel(zoom)
     }
@@ -124,7 +183,7 @@ export function ThumbnailGenerator() {
     return () => {
       resizeObserver.disconnect()
     }
-  }, [selectedPreset.width])
+  }, [config.preset.width])
 
   const downloadThumbnail = () => {
     const canvas = canvasRef.current
@@ -132,7 +191,7 @@ export function ThumbnailGenerator() {
 
     const link = document.createElement('a')
     link.href = canvas.toDataURL('image/png')
-    link.download = `thumbnail-${selectedPreset.name.toLowerCase().replace(/\s+/g, '-')}.png`
+    link.download = `thumbnail-${config.preset.name.toLowerCase().replace(/\s+/g, '-')}.png`
     link.click()
   }
 
@@ -156,9 +215,6 @@ export function ThumbnailGenerator() {
       alert('Failed to copy to clipboard')
     }
   }
-
-  // Get the selected gradient
-  const selectedGradient = GRADIENTS.find((g) => g.id === selectedGradientId) || GRADIENTS[0]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 pb-24">
@@ -185,17 +241,24 @@ export function ThumbnailGenerator() {
               <div className="flex items-center justify-center" style={{ maxHeight: '80vh' }}>
                 <CanvasPreview
                   ref={canvasRef}
-                  preset={selectedPreset}
-                  title={title}
-                  subtitle={subtitle}
-                  titleColor={titleColor}
-                  subtitleColor={subtitleColor}
-                  logoOpacity={logoOpacity}
-                  gradientColorStart={selectedGradient.colorStart}
-                  gradientColorEnd={selectedGradient.colorEnd}
-                  backgroundImageUrl={backgroundImageUrl}
-                  backgroundImageScale={backgroundImageScale}
-                  customLogo={customLogo}
+                  config={
+                    previewState
+                      ? {
+                          ...config,
+                          textElements: config.textElements.map(el =>
+                            el.id === previewState.id
+                              ? {
+                                  ...el,
+                                  ...(previewState.fontFamily && { fontFamily: previewState.fontFamily }),
+                                  ...(previewState.color && { color: previewState.color }),
+                                  ...(previewState.fontWeight !== undefined && { fontWeight: previewState.fontWeight })
+                                }
+                              : el
+                          )
+                        }
+                      : config
+                  }
+                  layout={selectedLayout}
                 />
               </div>
             </div>
@@ -207,7 +270,7 @@ export function ThumbnailGenerator() {
                 <div className="flex justify-between items-start">
                   <div className="space-y-2 text-sm">
                     <p className="text-slate-300">
-                      Dimensions: {selectedPreset.width} × {selectedPreset.height}px ({selectedPreset.aspectRatio})
+                      Dimensions: {config.preset.width} × {config.preset.height}px ({config.preset.aspectRatio})
                     </p>
                     <p className="text-slate-400">Ready for download and screenshot capture</p>
                   </div>
@@ -215,7 +278,7 @@ export function ThumbnailGenerator() {
                     <p className="flex items-center gap-1">
                       Preview zoom: {zoomLevel}%
                       <Tooltip
-                        content={`Shows how the preview is scaled vs actual ${selectedPreset.width}×${selectedPreset.height}px. 100% = full size, lower = scaled to fit.`}
+                        content={`Shows how the preview is scaled vs actual ${config.preset.width}×${config.preset.height}px. 100% = full size, lower = scaled to fit.`}
                       >
                         <span className="inline-flex items-center justify-center w-4 h-4 text-xs rounded-full bg-slate-700 text-slate-300 cursor-help hover:bg-slate-600 transition-colors">
                           ?
@@ -249,26 +312,16 @@ export function ThumbnailGenerator() {
           {/* Control Section */}
           <div className="lg:col-span-1">
             <ControlPanel
-              selectedPreset={selectedPreset}
-              onPresetChange={setSelectedPreset}
-              title={title}
-              onTitleChange={setTitle}
-              titleColor={titleColor}
-              onTitleColorChange={setTitleColor}
-              subtitle={subtitle}
-              onSubtitleChange={setSubtitle}
-              subtitleColor={subtitleColor}
-              onSubtitleColorChange={setSubtitleColor}
-              selectedGradientId={selectedGradientId}
-              onGradientChange={setSelectedGradientId}
-              backgroundImageUrl={backgroundImageUrl}
-              onBackgroundImageChange={setBackgroundImageUrl}
-              backgroundImageScale={backgroundImageScale}
-              onBackgroundImageScaleChange={setBackgroundImageScale}
-              logoOpacity={logoOpacity}
-              onOpacityChange={setLogoOpacity}
-              customLogo={customLogo}
-              onCustomLogoChange={setCustomLogo}
+              selectedPreset={config.preset}
+              onPresetChange={updatePreset}
+              selectedLayoutId={config.layoutId}
+              onLayoutChange={updateLayoutId}
+              config={config}
+              onTextElementChange={updateTextElement}
+              onTextElementPreview={previewTextElement}
+              onImageElementChange={updateImageElement}
+              selectedGradientId={config.background.gradientId || GRADIENTS[0].id}
+              onGradientChange={(gradientId) => updateBackground({ type: 'gradient', gradientId })}
             />
           </div>
         </div>

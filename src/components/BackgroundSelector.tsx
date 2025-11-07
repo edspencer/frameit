@@ -12,6 +12,7 @@ export function BackgroundSelector({ selectedBackground, onBackgroundChange }: B
       <div className="grid grid-cols-3 gap-2">
         {BACKGROUND_IMAGES.map((bg) => (
           <button
+            type="button"
             key={bg.name}
             onClick={() => onBackgroundChange(bg.url)}
             className={`relative h-16 rounded-lg overflow-hidden border-2 transition-all ${

@@ -1,4 +1,4 @@
-import type { ThumbnailPreset, BackgroundImage, BackgroundGradient } from './types'
+import type { ThumbnailPreset, BackgroundImage, BackgroundGradient, LayoutDefinition } from './types'
 import {
   YouTubeIcon,
   LinkedInIcon,
@@ -203,5 +203,202 @@ export const BACKGROUND_IMAGES: BackgroundImage[] = [
   {
     name: 'Minimalist',
     url: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1200" height="627"%3E%3Crect fill="%23ffffff" width="1200" height="627"/%3E%3Crect fill="%230f172a" x="0" y="0" width="1200" height="627" opacity="0.95"/%3E%3C/svg%3E',
+  },
+]
+
+// ============================================================================
+// Built-in Layouts
+// ============================================================================
+
+export const LAYOUTS: LayoutDefinition[] = [
+  // Default Layout - Matches the original FrameIt layout (logo top-right)
+  {
+    id: 'default',
+    name: 'Default',
+    description: 'Original FrameIt layout with logo in top-right',
+    elements: [
+      {
+        id: 'title',
+        type: 'text',
+        position: { x: '8%', y: '30%', anchor: 'top-left' },
+        sizing: { maxWidth: '84%', fontSize: '8%', lineHeight: 1.125 },
+        styling: {
+          fontWeight: 700,
+          fontFamily: 'Inter, -apple-system, sans-serif',
+          textAlign: 'left',
+          color: '#ffffff',
+        },
+        zIndex: 100,
+      },
+      {
+        id: 'subtitle',
+        type: 'text',
+        position: { x: '8%', y: 'auto', anchor: 'top-left' },
+        sizing: { maxWidth: '84%', fontSize: '4.5%', lineHeight: 1.22 },
+        styling: {
+          fontWeight: 400,
+          fontFamily: 'Inter, -apple-system, sans-serif',
+          textAlign: 'left',
+          color: '#ffffff',
+        },
+        zIndex: 100,
+      },
+      {
+        id: 'logo',
+        type: 'image',
+        position: { x: '98%', y: '2%', anchor: 'top-right' },
+        sizing: { maxWidth: '8%' },
+        zIndex: 200,
+      },
+    ],
+  },
+
+  // Classic Layout - Traditional top-left aligned title with subtitle below
+  {
+    id: 'classic',
+    name: 'Classic',
+    description: 'Traditional top-left layout with subtitle',
+    elements: [
+      {
+        id: 'title',
+        type: 'text',
+        position: { x: '10%', y: '15%', anchor: 'top-left' },
+        sizing: { maxWidth: '80%', fontSize: '8%', lineHeight: 1.1 },
+        styling: {
+          fontWeight: 700,
+          fontFamily: 'Inter, -apple-system, sans-serif',
+          textAlign: 'left',
+          color: '#ffffff',
+        },
+        zIndex: 100,
+      },
+      {
+        id: 'subtitle',
+        type: 'text',
+        position: { x: '10%', y: 'auto', anchor: 'top-left' },
+        sizing: { maxWidth: '70%', fontSize: '3%', lineHeight: 1.4 },
+        styling: {
+          fontWeight: 400,
+          fontFamily: 'Inter, -apple-system, sans-serif',
+          textAlign: 'left',
+          color: '#ffffff',
+        },
+        zIndex: 100,
+      },
+      {
+        id: 'logo',
+        type: 'image',
+        position: { x: '10%', y: '85%', anchor: 'bottom-left' },
+        sizing: { maxWidth: '15%' },
+        zIndex: 200,
+      },
+    ],
+  },
+
+
+  // Minimal Layout - Large title, small subtitle, logo at bottom
+  {
+    id: 'minimal',
+    name: 'Minimal',
+    description: 'Large title with minimal subtitle',
+    elements: [
+      {
+        id: 'title',
+        type: 'text',
+        position: { x: '10%', y: '30%', anchor: 'top-left' },
+        sizing: { maxWidth: '85%', fontSize: '10%', lineHeight: 1.0 },
+        styling: {
+          fontWeight: 800,
+          fontFamily: 'Inter, -apple-system, sans-serif',
+          textAlign: 'left',
+          color: '#ffffff',
+        },
+        zIndex: 100,
+      },
+      {
+        id: 'subtitle',
+        type: 'text',
+        position: { x: '10%', y: 'auto', anchor: 'top-left' },
+        sizing: { maxWidth: '60%', fontSize: '2.5%', lineHeight: 1.3 },
+        styling: {
+          fontWeight: 300,
+          fontFamily: 'Inter, -apple-system, sans-serif',
+          textAlign: 'left',
+          color: '#ffffff',
+        },
+        zIndex: 100,
+      },
+      {
+        id: 'logo',
+        type: 'image',
+        position: { x: '95%', y: '95%', anchor: 'bottom-right' },
+        sizing: { maxWidth: '6%' },
+        zIndex: 200,
+      },
+    ],
+  },
+
+  // Photo Essay Layout - Keynote-style with artist and photo title at top
+  {
+    id: 'photo-essay',
+    name: 'Photo Essay',
+    description: 'Keynote-style layout with artist and photo title',
+    elements: [
+      // Main photo - fills entire canvas
+      {
+        id: 'main-image',
+        type: 'image',
+        name: 'Main Image',
+        position: { x: '50%', y: '50%', anchor: 'center' },
+        sizing: { maxWidth: '100%' }, // Will scale to fill width
+        zIndex: 1,
+      },
+      // Top scrim overlay - dark gradient at top for text legibility
+      {
+        id: 'top-scrim',
+        type: 'overlay',
+        position: { x: '0%', y: '0%', anchor: 'top-left' },
+        sizing: {
+          width: '100%',
+          height: '25%',
+        },
+        styling: {
+          fill: '#000000', // Fallback (unused with gradient)
+          opacity: 1.0,
+          gradient: {
+            direction: 'vertical',
+            colorStart: 'rgba(0,0,0,0.7)', // Dark grey at top
+            colorEnd: 'rgba(0,0,0,0)',     // Transparent at bottom
+          },
+        },
+        zIndex: 10,
+      },
+      {
+        id: 'artist',
+        type: 'text',
+        position: { x: '5%', y: '5%', anchor: 'top-left' },
+        sizing: { maxWidth: '90%', fontSize: '1.75%', lineHeight: 1.3 },
+        styling: {
+          fontWeight: 400,
+          fontFamily: 'Inter, -apple-system, sans-serif',
+          textAlign: 'left',
+          color: '#ffffff',
+        },
+        zIndex: 100,
+      },
+      {
+        id: 'title',
+        type: 'text',
+        position: { x: '5%', y: 'auto', anchor: 'top-left' },
+        sizing: { maxWidth: '90%', fontSize: '4.5%', lineHeight: 1.2 },
+        styling: {
+          fontWeight: 600,
+          fontFamily: 'Inter, -apple-system, sans-serif',
+          textAlign: 'left',
+          color: '#ffffff',
+        },
+        zIndex: 100,
+      },
+    ],
   },
 ]

@@ -8,7 +8,7 @@ interface GradientSelectorProps {
 
 export function GradientSelector({ selectedGradientId, onGradientChange }: GradientSelectorProps) {
   return (
-    <ConfigSection title="Background Gradient">
+    <ConfigSection title="Background Gradient" storageKey="gradient">
       <div className="grid grid-cols-4 gap-2">
         {GRADIENTS.map((gradient) => (
           <button

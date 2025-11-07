@@ -12,7 +12,7 @@ export function PlatformSelector({ selectedPreset, onPresetChange }: PlatformSel
   const socialPresets = PRESETS.filter(p => p.category === 'social')
 
   return (
-    <ConfigSection title="Platform">
+    <ConfigSection title="Platform" storageKey="platform">
       {/* Video Thumbnails Section */}
       <div className="mb-6">
         <h4 className="text-sm font-medium text-slate-400 mb-2">Video Thumbnails</h4>
