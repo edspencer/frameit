@@ -183,12 +183,11 @@ export const CanvasPreview = forwardRef<HTMLCanvasElement, CanvasPreviewProps>(
         width={preset.width}
         height={preset.height}
         style={{
-          width: '100%',
-          height: 'auto',
           maxWidth: '100%',
-          maxHeight: '100%',
+          maxHeight: '80vh',
+          width: 'auto',
+          height: 'auto',
           display: 'block',
-          aspectRatio: `${preset.width} / ${preset.height}`,
         }}
       />
     )

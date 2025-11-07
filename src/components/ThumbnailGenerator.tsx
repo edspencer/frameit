@@ -161,7 +161,7 @@ export function ThumbnailGenerator() {
   const selectedGradient = GRADIENTS.find((g) => g.id === selectedGradientId) || GRADIENTS[0]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 pb-24">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -179,19 +179,10 @@ export function ThumbnailGenerator() {
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Preview Section */}
-          <div className="lg:col-span-2 flex flex-col lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-3rem)]">
+          <div className="lg:col-span-2 flex flex-col lg:sticky lg:top-6 lg:self-start">
             {/* Canvas Preview */}
-            <div className="bg-slate-800 rounded-lg overflow-hidden shadow-2xl border border-slate-700 flex items-center justify-center p-4">
-              <div
-                style={{
-                  aspectRatio: `${selectedPreset.width} / ${selectedPreset.height}`,
-                  width: '100%',
-                  maxWidth: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
+            <div className="bg-slate-800 rounded-lg shadow-2xl border border-slate-700 p-4">
+              <div className="flex items-center justify-center" style={{ maxHeight: '80vh' }}>
                 <CanvasPreview
                   ref={canvasRef}
                   preset={selectedPreset}
