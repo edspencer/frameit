@@ -1,6 +1,9 @@
 import type {
   LayoutDefinition,
   LayoutElement,
+  TextLayoutElement,
+  ImageLayoutElement,
+  OverlayLayoutElement,
   ThumbnailConfigNew,
   BackgroundConfig,
 } from './types'
@@ -41,11 +44,12 @@ export class LayoutRenderer {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     this.lastElementBounds.clear()
 
-    // 1. Render background (layout-agnostic)
+    // 1. Render background (implicit zIndex: 0)
     this.renderBackground(ctx, canvas, config.background, loadedImages)
 
-    // 2. Render layout elements in order
-    for (const element of layout.elements) {
+    // 2. Sort elements by zIndex (ascending) and render in order
+    const sortedElements = [...layout.elements].sort((a, b) => a.zIndex - b.zIndex)
+    for (const element of sortedElements) {
       this.renderElement(ctx, canvas, config, element, loadedImages)
     }
   }
@@ -110,7 +114,7 @@ export class LayoutRenderer {
   }
 
   /**
-   * Dispatches element rendering to text or image renderer
+   * Dispatches element rendering to text, image, or overlay renderer
    */
   private renderElement(
     ctx: CanvasRenderingContext2D,
@@ -121,8 +125,10 @@ export class LayoutRenderer {
   ): void {
     if (element.type === 'text') {
       this.renderText(ctx, canvas, config, element)
-    } else {
+    } else if (element.type === 'image') {
       this.renderImage(ctx, canvas, config, element, loadedImages)
+    } else if (element.type === 'overlay') {
+      this.renderOverlay(ctx, canvas, element)
     }
   }
 
@@ -133,7 +139,7 @@ export class LayoutRenderer {
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
     config: ThumbnailConfigNew,
-    element: LayoutElement
+    element: TextLayoutElement
   ): void {
     // Find the text element by ID
     const textEl = config.textElements.find(t => t.id === element.id)
@@ -144,8 +150,8 @@ export class LayoutRenderer {
       textEl.fontSize || element.sizing?.fontSize || '8%',
       canvas.width
     )
-    const fontWeight = element.styling?.fontWeight || 400
-    const fontFamily = element.styling?.fontFamily || '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif'
+    const fontWeight = textEl.fontWeight ?? element.styling?.fontWeight ?? 400
+    const fontFamily = textEl.fontFamily || element.styling?.fontFamily || '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif'
     const textAlign = element.styling?.textAlign || 'left'
     const color = textEl.color || element.styling?.color || '#ffffff'
     const lineHeight = element.sizing?.lineHeight || 1.2
@@ -212,7 +218,7 @@ export class LayoutRenderer {
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
     config: ThumbnailConfigNew,
-    element: LayoutElement,
+    element: ImageLayoutElement,
     loadedImages: Map<string, HTMLImageElement>
   ): void {
     // Find the image element by ID
@@ -350,6 +356,51 @@ export class LayoutRenderer {
     }
 
     return Number.parseFloat(value) || 64
+  }
+
+  /**
+   * Renders an overlay element (solid color or gradient rectangle)
+   */
+  private renderOverlay(
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    element: OverlayLayoutElement
+  ): void {
+
+    // Resolve dimensions
+    const width = this.resolveSize(element.sizing.width, canvas.width)
+    const height = this.resolveSize(element.sizing.height, canvas.height)
+
+    // Resolve position
+    const { x, y } = this.resolvePosition(element, canvas)
+
+    // Apply anchor offset
+    const anchorPoint = this.applyAnchorOffset(
+      x,
+      y,
+      width,
+      height,
+      element.position.anchor || 'top-left'
+    )
+
+    // Draw fill or gradient
+    if (element.styling.gradient) {
+      const grad =
+        element.styling.gradient.direction === 'horizontal'
+          ? ctx.createLinearGradient(anchorPoint.x, anchorPoint.y, anchorPoint.x + width, anchorPoint.y)
+          : ctx.createLinearGradient(anchorPoint.x, anchorPoint.y, anchorPoint.x, anchorPoint.y + height)
+
+      grad.addColorStop(0, element.styling.gradient.colorStart)
+      grad.addColorStop(1, element.styling.gradient.colorEnd)
+      ctx.fillStyle = grad
+      ctx.fillRect(anchorPoint.x, anchorPoint.y, width, height)
+    } else {
+      // Solid fill with opacity
+      ctx.globalAlpha = element.styling.opacity
+      ctx.fillStyle = element.styling.fill
+      ctx.fillRect(anchorPoint.x, anchorPoint.y, width, height)
+      ctx.globalAlpha = 1.0
+    }
   }
 
   /**

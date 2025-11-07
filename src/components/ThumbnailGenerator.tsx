@@ -76,6 +76,25 @@ export function ThumbnailGenerator() {
     }))
   }
 
+  // Temporary preview for hover (doesn't save to state)
+  const [previewState, setPreviewState] = useState<{
+    id: string
+    fontFamily?: string
+    color?: string
+    fontWeight?: number
+  } | null>(null)
+
+  const previewTextElement = (id: string, updates: { fontFamily?: string; color?: string; fontWeight?: number }) => {
+    setPreviewState(prev => {
+      // If same element, merge updates
+      if (prev?.id === id) {
+        return { ...prev, ...updates }
+      }
+      // New element, replace
+      return { id, ...updates }
+    })
+  }
+
   const updateImageElement = (id: string, updates: Partial<typeof config.imageElements[0]>) => {
     setConfig(prev => ({
       ...prev,
@@ -200,7 +219,23 @@ export function ThumbnailGenerator() {
               <div className="flex items-center justify-center" style={{ maxHeight: '80vh' }}>
                 <CanvasPreview
                   ref={canvasRef}
-                  config={config}
+                  config={
+                    previewState
+                      ? {
+                          ...config,
+                          textElements: config.textElements.map(el =>
+                            el.id === previewState.id
+                              ? {
+                                  ...el,
+                                  ...(previewState.fontFamily && { fontFamily: previewState.fontFamily }),
+                                  ...(previewState.color && { color: previewState.color }),
+                                  ...(previewState.fontWeight !== undefined && { fontWeight: previewState.fontWeight })
+                                }
+                              : el
+                          )
+                        }
+                      : config
+                  }
                   layout={selectedLayout}
                 />
               </div>
@@ -261,6 +296,7 @@ export function ThumbnailGenerator() {
               onLayoutChange={updateLayoutId}
               config={config}
               onTextElementChange={updateTextElement}
+              onTextElementPreview={previewTextElement}
               onImageElementChange={updateImageElement}
               selectedGradientId={config.background.gradientId || GRADIENTS[0].id}
               onGradientChange={(gradientId) => updateBackground({ type: 'gradient', gradientId })}

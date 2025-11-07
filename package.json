@@ -13,6 +13,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.9",
     "lucide-react": "^0.553.0",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1",

@@ -13,7 +13,8 @@ interface ControlPanelProps {
   selectedLayoutId: string
   onLayoutChange: (layoutId: string) => void
   config: ThumbnailConfigNew // Full config instead of individual props
-  onTextElementChange: (id: string, updates: Partial<{ content: string; color: string }>) => void
+  onTextElementChange: (id: string, updates: Partial<{ content: string; color: string; fontSize: string; fontWeight: number; fontFamily: string }>) => void
+  onTextElementPreview?: (id: string, updates: { fontFamily?: string; color?: string; fontWeight?: number }) => void // For hover preview
   onImageElementChange: (id: string, updates: Partial<{ url: string | undefined; opacity: number }>) => void
   selectedGradientId: string
   onGradientChange: (id: string) => void
@@ -35,6 +36,7 @@ export function ControlPanel({
   onLayoutChange,
   config,
   onTextElementChange,
+  onTextElementPreview,
   onImageElementChange,
   selectedGradientId,
   onGradientChange,
@@ -63,15 +65,34 @@ export function ControlPanel({
       {selectedLayout.elements.map(layoutElement => {
         if (layoutElement.type === 'text') {
           const textEl = config.textElements.find(t => t.id === layoutElement.id)
+          // Extract layout defaults for all properties
+          const defaultColor = layoutElement.styling?.color || '#ffffff'
+          const defaultFontSize = layoutElement.sizing?.fontSize || '8%'
+          const defaultFontWeight = layoutElement.styling?.fontWeight || 400
+          const defaultFontFamily = layoutElement.styling?.fontFamily || '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif'
+
           return (
             <TextElementControl
               key={layoutElement.id}
               id={layoutElement.id}
               label={formatLabel(layoutElement.id)}
               content={textEl?.content || ''}
-              color={textEl?.color || '#ffffff'}
+              color={textEl?.color}
+              fontSize={textEl?.fontSize}
+              fontWeight={textEl?.fontWeight}
+              fontFamily={textEl?.fontFamily}
+              defaultColor={defaultColor}
+              defaultFontSize={defaultFontSize}
+              defaultFontWeight={defaultFontWeight}
+              defaultFontFamily={defaultFontFamily}
               onContentChange={(content) => onTextElementChange(layoutElement.id, { content })}
               onColorChange={(color) => onTextElementChange(layoutElement.id, { color })}
+              onFontSizeChange={(fontSize) => onTextElementChange(layoutElement.id, { fontSize })}
+              onFontWeightChange={(fontWeight) => onTextElementChange(layoutElement.id, { fontWeight })}
+              onFontFamilyChange={(fontFamily) => onTextElementChange(layoutElement.id, { fontFamily })}
+              onFontFamilyPreview={onTextElementPreview ? (fontFamily) => onTextElementPreview(layoutElement.id, { fontFamily }) : undefined}
+              onColorPreview={onTextElementPreview ? (color) => onTextElementPreview(layoutElement.id, { color }) : undefined}
+              onFontWeightPreview={onTextElementPreview ? (fontWeight) => onTextElementPreview(layoutElement.id, { fontWeight }) : undefined}
             />
           )
         } else {

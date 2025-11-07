@@ -55,6 +55,8 @@ export interface TextElement {
   content: string
   color?: string          // Optional override (hex color)
   fontSize?: string       // Optional override ("8%", "64px")
+  fontFamily?: string     // Optional override ("Inter", "Georgia", etc.)
+  fontWeight?: number     // Optional override (400, 600, 700, 800)
 }
 
 export interface ImageElement {
@@ -87,13 +89,48 @@ export interface LayoutStyling {
   color?: string          // Default color (hex)
 }
 
-export interface LayoutElement {
-  id: string              // Must match TextElement.id or ImageElement.id
-  type: 'text' | 'image'
-  position: LayoutPosition
-  sizing?: LayoutSizing   // Text only
-  styling?: LayoutStyling // Text only
+export interface OverlaySizing {
+  width: string           // '100%', '80%', '500px'
+  height: string          // '40%', '200px', '300px'
 }
+
+export interface OverlayStyling {
+  fill: string            // Solid color (e.g., '#000000')
+  opacity: number         // 0-1 (e.g., 0.6)
+  gradient?: {
+    direction: 'horizontal' | 'vertical'
+    colorStart: string    // e.g., 'rgba(0,0,0,0.8)' or '#000000'
+    colorEnd: string      // e.g., 'rgba(0,0,0,0)' or '#ffffff'
+  }
+}
+
+export interface TextLayoutElement {
+  id: string              // Must match TextElement.id
+  type: 'text'
+  position: LayoutPosition
+  sizing?: LayoutSizing
+  styling?: LayoutStyling
+  zIndex: number          // Rendering order (lower = drawn first/behind)
+}
+
+export interface ImageLayoutElement {
+  id: string              // Must match ImageElement.id
+  type: 'image'
+  position: LayoutPosition
+  sizing?: LayoutSizing
+  zIndex: number          // Rendering order (lower = drawn first/behind)
+}
+
+export interface OverlayLayoutElement {
+  id: string              // e.g., "top-scrim", "bottom-fade"
+  type: 'overlay'
+  position: LayoutPosition
+  sizing: OverlaySizing
+  styling: OverlayStyling
+  zIndex: number          // Typically 10-50 (between background and text)
+}
+
+export type LayoutElement = TextLayoutElement | ImageLayoutElement | OverlayLayoutElement
 
 export interface LayoutDefinition {
   id: string

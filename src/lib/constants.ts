@@ -224,9 +224,11 @@ export const LAYOUTS: LayoutDefinition[] = [
         sizing: { maxWidth: '84%', fontSize: '8%', lineHeight: 1.125 },
         styling: {
           fontWeight: 700,
+          fontFamily: 'Inter, -apple-system, sans-serif',
           textAlign: 'left',
           color: '#ffffff',
         },
+        zIndex: 100,
       },
       {
         id: 'subtitle',
@@ -235,15 +237,18 @@ export const LAYOUTS: LayoutDefinition[] = [
         sizing: { maxWidth: '84%', fontSize: '4.5%', lineHeight: 1.22 },
         styling: {
           fontWeight: 400,
+          fontFamily: 'Inter, -apple-system, sans-serif',
           textAlign: 'left',
           color: '#ffffff',
         },
+        zIndex: 100,
       },
       {
         id: 'logo',
         type: 'image',
         position: { x: '98%', y: '2%', anchor: 'top-right' },
         sizing: { maxWidth: '8%' },
+        zIndex: 200,
       },
     ],
   },
@@ -261,9 +266,11 @@ export const LAYOUTS: LayoutDefinition[] = [
         sizing: { maxWidth: '80%', fontSize: '8%', lineHeight: 1.1 },
         styling: {
           fontWeight: 700,
+          fontFamily: 'Inter, -apple-system, sans-serif',
           textAlign: 'left',
           color: '#ffffff',
         },
+        zIndex: 100,
       },
       {
         id: 'subtitle',
@@ -272,55 +279,22 @@ export const LAYOUTS: LayoutDefinition[] = [
         sizing: { maxWidth: '70%', fontSize: '3%', lineHeight: 1.4 },
         styling: {
           fontWeight: 400,
+          fontFamily: 'Inter, -apple-system, sans-serif',
           textAlign: 'left',
           color: '#ffffff',
         },
+        zIndex: 100,
       },
       {
         id: 'logo',
         type: 'image',
         position: { x: '10%', y: '85%', anchor: 'bottom-left' },
         sizing: { maxWidth: '15%' },
+        zIndex: 200,
       },
     ],
   },
 
-  // Centered Layout - Everything centered for balanced compositions
-  {
-    id: 'centered',
-    name: 'Centered',
-    description: 'Centered layout for balanced compositions',
-    elements: [
-      {
-        id: 'title',
-        type: 'text',
-        position: { x: '50%', y: '40%', anchor: 'center' },
-        sizing: { maxWidth: '80%', fontSize: '8%', lineHeight: 1.1 },
-        styling: {
-          fontWeight: 700,
-          textAlign: 'center',
-          color: '#ffffff',
-        },
-      },
-      {
-        id: 'subtitle',
-        type: 'text',
-        position: { x: '50%', y: 'auto', anchor: 'top-center' },
-        sizing: { maxWidth: '70%', fontSize: '3%', lineHeight: 1.4 },
-        styling: {
-          fontWeight: 400,
-          textAlign: 'center',
-          color: '#ffffff',
-        },
-      },
-      {
-        id: 'logo',
-        type: 'image',
-        position: { x: '50%', y: '15%', anchor: 'top-center' },
-        sizing: { maxWidth: '15%' },
-      },
-    ],
-  },
 
   // Minimal Layout - Large title, small subtitle, logo at bottom
   {
@@ -335,9 +309,11 @@ export const LAYOUTS: LayoutDefinition[] = [
         sizing: { maxWidth: '85%', fontSize: '10%', lineHeight: 1.0 },
         styling: {
           fontWeight: 800,
+          fontFamily: 'Inter, -apple-system, sans-serif',
           textAlign: 'left',
           color: '#ffffff',
         },
+        zIndex: 100,
       },
       {
         id: 'subtitle',
@@ -346,15 +322,18 @@ export const LAYOUTS: LayoutDefinition[] = [
         sizing: { maxWidth: '60%', fontSize: '2.5%', lineHeight: 1.3 },
         styling: {
           fontWeight: 300,
+          fontFamily: 'Inter, -apple-system, sans-serif',
           textAlign: 'left',
           color: '#ffffff',
         },
+        zIndex: 100,
       },
       {
         id: 'logo',
         type: 'image',
-        position: { x: '50%', y: '90%', anchor: 'bottom-center' },
+        position: { x: '95%', y: '95%', anchor: 'bottom-right' },
         sizing: { maxWidth: '12%' },
+        zIndex: 200,
       },
     ],
   },
@@ -365,6 +344,26 @@ export const LAYOUTS: LayoutDefinition[] = [
     name: 'Photo Essay',
     description: 'Keynote-style layout with artist and photo title',
     elements: [
+      // Top scrim overlay - dark gradient at top for text legibility
+      {
+        id: 'top-scrim',
+        type: 'overlay',
+        position: { x: '0%', y: '0%', anchor: 'top-left' },
+        sizing: {
+          width: '100%',
+          height: '25%',
+        },
+        styling: {
+          fill: '#000000', // Fallback (unused with gradient)
+          opacity: 1.0,
+          gradient: {
+            direction: 'vertical',
+            colorStart: 'rgba(0,0,0,0.7)', // Dark grey at top
+            colorEnd: 'rgba(0,0,0,0)',     // Transparent at bottom
+          },
+        },
+        zIndex: 10,
+      },
       {
         id: 'artist',
         type: 'text',
@@ -372,9 +371,11 @@ export const LAYOUTS: LayoutDefinition[] = [
         sizing: { maxWidth: '90%', fontSize: '1.75%', lineHeight: 1.3 },
         styling: {
           fontWeight: 400,
+          fontFamily: 'Inter, -apple-system, sans-serif',
           textAlign: 'left',
           color: '#ffffff',
         },
+        zIndex: 100,
       },
       {
         id: 'title',
@@ -383,9 +384,11 @@ export const LAYOUTS: LayoutDefinition[] = [
         sizing: { maxWidth: '90%', fontSize: '4.5%', lineHeight: 1.2 },
         styling: {
           fontWeight: 600,
+          fontFamily: 'Inter, -apple-system, sans-serif',
           textAlign: 'left',
           color: '#ffffff',
         },
+        zIndex: 100,
       },
     ],
   },
