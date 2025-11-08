@@ -101,15 +101,15 @@ dist/                                   (Build output - ready for Cloudflare Pag
 ### Development
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 # App opens at http://localhost:5173
 ```
 
 ### Production Build
 
 ```bash
-npm run build
+pnpm build
 # Output in dist/ folder
 # Ready for Cloudflare Pages deployment
 ```
@@ -117,7 +117,7 @@ npm run build
 ### Deploy to Cloudflare Pages
 
 ```bash
-npm run build
+pnpm build
 wrangler pages deploy dist/
 ```
 

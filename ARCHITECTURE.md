@@ -224,7 +224,7 @@ The canvas utilities will be **reused server-side** via:
 ### Development Build
 
 ```bash
-npm run dev
+pnpm dev
 # Vite dev server on port 5173
 # Hot Module Replacement (HMR) enabled
 # Full source maps for debugging
@@ -233,7 +233,7 @@ npm run dev
 ### Production Build
 
 ```bash
-npm run build
+pnpm build
 # Output: dist/
 # TypeScript compilation in strict mode
 # Tree-shaking for smaller bundle
