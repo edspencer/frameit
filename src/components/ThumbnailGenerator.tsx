@@ -4,6 +4,8 @@ import type { ThumbnailPreset, ThumbnailConfigNew } from '../lib/types'
 import { CanvasPreview } from './CanvasPreview'
 import { ControlPanel } from './ControlPanel'
 import { Tooltip } from './Tooltip'
+import { FeedbackWidget } from '@wishnova/react'
+import '@wishnova/react/styles'
 
 const STORAGE_KEY = 'thumbnailGeneratorConfig'
 
@@ -325,6 +327,14 @@ export function ThumbnailGenerator() {
             />
           </div>
         </div>
+
+
+        <FeedbackWidget
+          projectId="3b17800e-133e-405c-92fe-19523f499c13"
+          position="bottom-right"
+          collectSentiment={true}
+          offerEmailFollowup={true}
+        />
 
         {/* Footer */}
         <div className="mt-12 text-center text-sm text-slate-500 space-y-2">
