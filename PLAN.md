@@ -190,7 +190,7 @@ Create a lightweight, standalone thumbnail generator project deployable to Cloud
    - Mobile browsers (iOS Safari, Chrome Mobile)
 
 3. Build verification:
-   - `npm run build` completes without errors
+   - `pnpm build` completes without errors
    - Build output optimized
    - Source maps generated if desired
 

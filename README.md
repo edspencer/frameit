@@ -18,7 +18,7 @@ A lightweight, open-source image generator for creating beautiful title imagesâ€
 
 ### Prerequisites
 
-- Node.js 16+ and npm or pnpm
+- Node.js 16+ and pnpm (version 9 recommended)
 - Cloudflare account (for deployment)
 
 ### Installation
@@ -29,8 +29,6 @@ git clone https://github.com/yourusername/frameit.git
 cd frameit
 
 # Install dependencies
-npm install
-# or
 pnpm install
 ```
 
@@ -38,8 +36,6 @@ pnpm install
 
 ```bash
 # Start the development server
-npm run dev
-# or
 pnpm dev
 ```
 
@@ -49,13 +45,9 @@ The application will open at `http://localhost:5173`
 
 ```bash
 # Create a production build
-npm run build
-# or
 pnpm build
 
 # Preview the production build locally
-npm run preview
-# or
 pnpm preview
 ```
 
@@ -142,7 +134,7 @@ FrameIt will now deploy automatically on every push to your main branch.
 pnpm build
 
 # Install Wrangler CLI (if not already installed)
-npm install -g @cloudflare/wrangler
+pnpm add -g wrangler
 
 # Deploy the dist/ folder
 wrangler pages deploy dist/
