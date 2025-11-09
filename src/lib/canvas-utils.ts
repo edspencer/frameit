@@ -1,7 +1,24 @@
 /**
  * Canvas drawing utilities for thumbnail generation.
  * These functions are pure and reusable in both client and server contexts.
+ * Works with both browser Canvas API and @napi-rs/canvas (Node.js).
  */
+
+/**
+ * Generic canvas interface that works with both browser and Node.js Canvas
+ */
+export interface CanvasLike {
+  width: number
+  height: number
+}
+
+/**
+ * Generic image interface that works with both HTMLImageElement and Node.js Image
+ */
+export interface ImageLike {
+  width: number
+  height: number
+}
 
 interface DrawConfig {
   title: string
@@ -11,8 +28,8 @@ interface DrawConfig {
   logoOpacity: number
   gradientColorStart: string
   gradientColorEnd: string
-  logoImage?: HTMLImageElement
-  backgroundImage?: HTMLImageElement
+  logoImage?: ImageLike
+  backgroundImage?: ImageLike
   backgroundImageScale?: number
 }
 
@@ -52,7 +69,7 @@ export function wrapText(
  */
 export function drawGradientBackground(
   ctx: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement,
+  canvas: CanvasLike,
   colorStart: string,
   colorEnd: string
 ): void {
@@ -66,10 +83,10 @@ export function drawGradientBackground(
 /**
  * Draws a logo image on the canvas (top-right corner)
  */
-export function drawLogo(
+export function drawLogo<TImage extends ImageLike>(
   ctx: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement,
-  logoImage: HTMLImageElement,
+  canvas: CanvasLike,
+  logoImage: TImage,
   logoOpacity: number
 ): void {
   const logoPadding = canvas.width * 0.02
@@ -85,7 +102,7 @@ export function drawLogo(
   ctx.imageSmoothingEnabled = false
 
   ctx.globalAlpha = logoOpacity
-  ctx.drawImage(logoImage, x, y, logoWidth, logoHeight)
+  ctx.drawImage(logoImage as unknown as CanvasImageSource, x, y, logoWidth, logoHeight)
   ctx.globalAlpha = 1
 
   // Restore image smoothing setting
@@ -137,7 +154,7 @@ export function drawTextContent(
  */
 export function drawThumbnail(
   ctx: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement,
+  canvas: CanvasLike,
   config: DrawConfig
 ): void {
   // Clear the canvas first
@@ -164,7 +181,7 @@ export function drawThumbnail(
 
     // Draw the scaled and centered image
     ctx.drawImage(
-      config.backgroundImage,
+      config.backgroundImage as unknown as CanvasImageSource,
       0,
       0,
       bgWidth,

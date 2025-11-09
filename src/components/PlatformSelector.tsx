@@ -1,15 +1,15 @@
-import { PRESETS } from '../lib/constants'
-import type { ThumbnailPreset } from '../lib/types'
+import { PRESETS_WITH_ICONS } from '../lib/ui-constants'
+import type { ThumbnailPresetWithIcon } from '../lib/types'
 import { ConfigSection } from './ConfigSection'
 
 interface PlatformSelectorProps {
-  selectedPreset: ThumbnailPreset
-  onPresetChange: (preset: ThumbnailPreset) => void
+  selectedPreset: ThumbnailPresetWithIcon
+  onPresetChange: (preset: ThumbnailPresetWithIcon) => void
 }
 
 export function PlatformSelector({ selectedPreset, onPresetChange }: PlatformSelectorProps) {
-  const videoPresets = PRESETS.filter(p => p.category === 'video')
-  const socialPresets = PRESETS.filter(p => p.category === 'social')
+  const videoPresets = PRESETS_WITH_ICONS.filter(p => p.category === 'video')
+  const socialPresets = PRESETS_WITH_ICONS.filter(p => p.category === 'social')
 
   return (
     <ConfigSection title="Platform" storageKey="platform">

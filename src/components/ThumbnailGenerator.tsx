@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
-import { PRESETS, GRADIENTS, LAYOUTS } from '../lib/constants'
-import type { ThumbnailPreset, ThumbnailConfigNew } from '../lib/types'
+import { PRESETS_WITH_ICONS } from '../lib/ui-constants'
+import { GRADIENTS, LAYOUTS } from '../lib/constants'
+import type { ThumbnailPresetWithIcon, ThumbnailConfigNew } from '../lib/types'
 import { CanvasPreview } from './CanvasPreview'
 import { ControlPanel } from './ControlPanel'
 import { Tooltip } from './Tooltip'
@@ -19,7 +20,7 @@ function loadConfigFromStorage(): ThumbnailConfigNew | null {
     if (parsed.textElements && parsed.imageElements) {
       // Restore preset object from name
       if (parsed.presetName) {
-        const preset = PRESETS.find(p => p.name === parsed.presetName)
+        const preset = PRESETS_WITH_ICONS.find(p => p.name === parsed.presetName)
         if (preset) parsed.preset = preset
       }
       return parsed as ThumbnailConfigNew
@@ -50,7 +51,7 @@ function saveConfigToStorage(config: ThumbnailConfigNew): void {
 
 function getDefaultConfig(): ThumbnailConfigNew {
   return {
-    preset: PRESETS[0],
+    preset: PRESETS_WITH_ICONS[0],
     layoutId: LAYOUTS[0].id,
     background: { type: 'gradient', gradientId: GRADIENTS[0].id },
     textElements: [
@@ -130,7 +131,7 @@ export function ThumbnailGenerator() {
     setConfig(prev => ({ ...prev, background: { ...prev.background, ...updates } }))
   }
 
-  const updatePreset = (preset: ThumbnailPreset) => {
+  const updatePreset = (preset: ThumbnailPresetWithIcon) => {
     setConfig(prev => ({ ...prev, preset }))
   }
 
