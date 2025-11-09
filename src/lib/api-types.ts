@@ -45,6 +45,12 @@ export interface ImageGenerationParams {
   /** Logo opacity 0-1 (default: 0.3) */
   logoOpacity?: number
 
+  /** Logo image URL (optional custom logo) */
+  logoUrl?: string
+
+  /** Layout ID (default, classic, minimal, photo-essay) */
+  layoutId?: string
+
   /** Output format (default: webp) */
   format?: ImageFormat
 }

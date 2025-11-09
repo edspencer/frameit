@@ -2,15 +2,17 @@
  * Vercel Serverless Function for image generation
  * Accepts GET (query params) or POST (JSON body) requests
  * Returns PNG or WebP image
+ *
+ * Uses LayoutRenderer for 1:1 parity with UI rendering
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas'
-import type { Image as CanvasImage } from '@napi-rs/canvas'
 import { join } from 'node:path'
-import { drawThumbnail } from '../src/lib/canvas-utils.js'
+import { LayoutRenderer } from '../src/lib/layout-renderer.js'
 import { validateParams, generateCacheKey, type ImageGenerationParams } from '../src/lib/api-types.js'
-import { BACKGROUND_IMAGES } from '../src/lib/constants.js'
+import { PRESETS, GRADIENTS, LAYOUTS } from '../src/lib/constants.js'
+import type { ThumbnailConfigNew, BackgroundConfig, TextElement, ImageElement } from '../src/lib/types.js'
 
 // Register fonts for server-side rendering
 // This runs once when the serverless function cold-starts
@@ -25,13 +27,34 @@ try {
 }
 
 /**
+ * Decodes query parameters, converting + to spaces
+ */
+function decodeQueryParams(params: Record<string, string | string[]>): Record<string, string | string[]> {
+  const decoded: Record<string, string | string[]> = {}
+  for (const [key, value] of Object.entries(params)) {
+    if (typeof value === 'string') {
+      // Replace + with space and decode URI component
+      decoded[key] = decodeURIComponent(value.replace(/\+/g, ' '))
+    } else {
+      decoded[key] = value
+    }
+  }
+  return decoded
+}
+
+/**
  * Main handler for both GET and POST requests
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // Parse parameters from query (GET) or body (POST)
-    const params: Partial<ImageGenerationParams> =
+    let params: Partial<ImageGenerationParams> =
       req.method === 'POST' ? req.body : req.query
+
+    // Decode query parameters for GET requests (convert + to spaces)
+    if (req.method !== 'POST') {
+      params = decodeQueryParams(params as Record<string, string | string[]>) as Partial<ImageGenerationParams>
+    }
 
     // Validate and normalize parameters
     const config = validateParams(params)
@@ -39,48 +62,122 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Generate cache key for this image
     const cacheKey = generateCacheKey(config)
 
-    // Create canvas with preset dimensions
-    const canvas = createCanvas(config.width, config.height)
-    const ctx = canvas.getContext('2d') as unknown as CanvasRenderingContext2D
+    // Find the preset (already validated)
+    const preset = PRESETS.find((p) => p.name.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-') === config.layout)
+    if (!preset) {
+      throw new Error(`Preset not found for layout: ${config.layout}`)
+    }
 
-    // Load background image if URL provided
-    let backgroundImage: CanvasImage | undefined
-    let gradientColors = { start: '#1a365d', end: '#2d3748' } // Default gradient
+    // Determine layoutId from params or use 'default'
+    const layoutId = (params as ImageGenerationParams).layoutId || 'default'
+    const layout = LAYOUTS.find(l => l.id === layoutId)
+    if (!layout) {
+      throw new Error(`Layout not found: ${layoutId}. Valid options: ${LAYOUTS.map(l => l.id).join(', ')}`)
+    }
+
+    // Build background config
+    let backgroundConfig: BackgroundConfig
 
     if (config.background.startsWith('http://') || config.background.startsWith('https://')) {
-      // Load external background image
-      try {
-        backgroundImage = await loadImage(config.background) as CanvasImage
-      } catch (error) {
-        console.warn('Failed to load background image:', error)
-        // Fall back to gradient
+      // External image URL - not supported in background config, will be ignored
+      // Use default gradient instead
+      backgroundConfig = {
+        type: 'gradient',
+        gradientId: GRADIENTS[0].id
       }
     } else {
-      // Find matching gradient from constants
-      const bgConfig = BACKGROUND_IMAGES.find((bg) => bg.name === config.background)
-      if (bgConfig) {
-        // Extract colors from gradient URL (SVG data URL)
-        // For now, use default gradient - we can parse SVG later if needed
-        gradientColors = extractGradientColors(bgConfig.url)
+      // Try to match gradient by ID or name
+      const gradient = GRADIENTS.find(g =>
+        g.id === config.background ||
+        g.name.toLowerCase() === config.background.toLowerCase()
+      )
+
+      if (gradient) {
+        backgroundConfig = {
+          type: 'gradient',
+          gradientId: gradient.id
+        }
+      } else {
+        // Default gradient
+        backgroundConfig = {
+          type: 'gradient',
+          gradientId: GRADIENTS[0].id
+        }
       }
     }
 
-    // Note: Logo loading is skipped for now - @napi-rs/canvas doesn't support SVG
-    // TODO: Convert logo to PNG or use a different approach for logo rendering
+    // Build text elements from params
+    const textElements: TextElement[] = []
 
-    // Draw the thumbnail using shared canvas utils
-    drawThumbnail(ctx, canvas, {
-      title: config.title,
-      subtitle: config.subtitle,
-      titleColor: `#${config.titleColor}`,
-      subtitleColor: `#${config.subtitleColor}`,
-      logoOpacity: config.logoOpacity,
-      gradientColorStart: gradientColors.start,
-      gradientColorEnd: gradientColors.end,
-      logoImage: undefined, // Logo disabled for now (SVG not supported by @napi-rs/canvas)
-      backgroundImage: backgroundImage,
-      backgroundImageScale: backgroundImage ? 100 : 0,
+    // Title is always required
+    textElements.push({
+      id: 'title',
+      content: config.title,
+      color: `#${config.titleColor}`,
     })
+
+    // Subtitle is optional
+    if (config.subtitle) {
+      textElements.push({
+        id: 'subtitle',
+        content: config.subtitle,
+        color: `#${config.subtitleColor}`,
+      })
+    }
+
+    // Build image elements
+    const imageElements: ImageElement[] = []
+
+    // Logo element with opacity
+    const typedParams = params as ImageGenerationParams
+    if (typedParams.logoUrl) {
+      imageElements.push({
+        id: 'logo',
+        url: typedParams.logoUrl,
+        opacity: config.logoOpacity,
+      })
+    } else {
+      // Default logo with opacity (will use default logo if layout has one)
+      imageElements.push({
+        id: 'logo',
+        opacity: config.logoOpacity,
+      })
+    }
+
+    // Build ThumbnailConfigNew
+    const thumbnailConfig: ThumbnailConfigNew = {
+      // @ts-expect-error - preset doesn't have icon field but UI requires it
+      preset: preset,
+      layoutId: layout.id,
+      background: backgroundConfig,
+      textElements,
+      imageElements,
+    }
+
+    // Create canvas with preset dimensions
+    const canvas = createCanvas(preset.width, preset.height)
+    const ctx = canvas.getContext('2d') as unknown as CanvasRenderingContext2D
+
+    // Load images referenced by imageElements
+    const loadedImages = new Map<string, HTMLImageElement>()
+
+    for (const imgEl of imageElements) {
+      if (imgEl.url) {
+        try {
+          const img = await loadImage(imgEl.url)
+          loadedImages.set(imgEl.id, img as unknown as HTMLImageElement)
+          console.log(`✓ Loaded image: ${imgEl.id} from ${imgEl.url}`)
+        } catch (error) {
+          console.warn(`Failed to load image ${imgEl.id} from ${imgEl.url}:`, error)
+          // Continue without this image
+        }
+      }
+    }
+
+    // Render using LayoutRenderer (same as UI)
+    const renderer = new LayoutRenderer()
+    // @ts-expect-error - Canvas from @napi-rs/canvas is compatible with HTMLCanvasElement interface
+    renderer.render(ctx, canvas, thumbnailConfig, layout, loadedImages)
 
     // Encode to requested format
     let buffer: Buffer
@@ -107,30 +204,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       error: 'Image generation failed',
       message,
     })
-  }
-}
-
-/**
- * Extract gradient colors from SVG data URL
- * This is a simple parser for our specific gradient format
- */
-function extractGradientColors(svgDataUrl: string): { start: string; end: string } {
-  try {
-    // Default colors
-    const defaults = { start: '#1a365d', end: '#2d3748' }
-
-    // SVG gradients in our constants are data URLs like:
-    // data:image/svg+xml,%3Csvg...stop-color='%23...'...
-    const matches = svgDataUrl.match(/stop-color='%23([0-9A-Fa-f]{6})'/g)
-
-    if (matches && matches.length >= 2) {
-      const start = `#${matches[0].match(/%23([0-9A-Fa-f]{6})/)?.[1] || defaults.start.slice(1)}`
-      const end = `#${matches[matches.length - 1].match(/%23([0-9A-Fa-f]{6})/)?.[1] || defaults.end.slice(1)}`
-      return { start, end }
-    }
-
-    return defaults
-  } catch {
-    return { start: '#1a365d', end: '#2d3748' }
   }
 }

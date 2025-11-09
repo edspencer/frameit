@@ -23,8 +23,9 @@ pnpm preview
 - **Framework**: React 19 RC with TypeScript 5 (strict mode)
 - **Build Tool**: Vite 5
 - **Styling**: Tailwind CSS 3
-- **Deployment**: Cloudflare Pages
-- **Canvas**: HTML5 Canvas API for image rendering
+- **Deployment**: Vercel (with Serverless Functions)
+- **Canvas**: HTML5 Canvas API (UI) + @napi-rs/canvas (API)
+- **API**: Vercel Serverless Functions for programmatic generation
 
 GitHub repo: https://github.com/edspencer/frameit
 
@@ -76,35 +77,111 @@ All state is persisted to localStorage via `saveConfigToStorage()` and restored 
 
 ## Canvas Rendering
 
-Canvas utilities are in `lib/canvas-utils.ts`:
-- `drawThumbnail()`: Renders with background image
-- `drawThumbnailWithoutBackground()`: Renders with gradient fallback
-- `drawTextContent()`: Renders title and subtitle with word wrapping
-- `drawBragDocLogo()`: Renders logo with opacity control
-- `wrapText()`: Wraps text to fit maximum width
+FrameIt uses a layout-based rendering system via `LayoutRenderer` class ([src/lib/layout-renderer.ts](src/lib/layout-renderer.ts)):
+- **Layout System**: JSON-defined layouts with text, image, and overlay elements
+- **Positioning**: Supports percentage-based, pixel-based, and auto positioning
+- **Anchor Points**: 9-point anchor system (top-left, center, bottom-right, etc.)
+- **Text Wrapping**: Automatic word wrapping via `wrapText()` utility
+- **Gradient Backgrounds**: Linear gradients via `drawGradientBackground()`
 
-**Important**: Canvas dimensions are only reset when the platform preset changes. This prevents the "flash" effect on text updates.
+The same `LayoutRenderer` is used for both UI preview and API generation, ensuring 1:1 parity.
+
+## API Endpoint
+
+FrameIt provides a serverless API endpoint for programmatic thumbnail generation at `/api/generate`.
+
+### API Usage
+
+**GET Request:**
+```bash
+curl "https://frameit.dev/api/generate?layout=open-graph&title=Hello%20World&subtitle=My%20Subtitle&format=png" -o thumbnail.png
+```
+
+**POST Request:**
+```bash
+curl -X POST https://frameit.dev/api/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "layout": "youtube",
+    "title": "Amazing Tutorial",
+    "subtitle": "Learn something new",
+    "titleColor": "ffffff",
+    "subtitleColor": "cccccc",
+    "background": "default",
+    "logoOpacity": 0.3,
+    "format": "webp"
+  }' -o thumbnail.webp
+```
+
+### API Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `layout` | string | Yes | - | Platform preset: `youtube`, `youtube-shorts`, `linkedin-video`, `twitter-x`, `tiktok`, `instagram-reels`, `open-graph`, `instagram-feed`, `x-header`, `pinterest-pin` |
+| `title` | string | Yes | - | Main heading text (max 200 chars) |
+| `subtitle` | string | No | `""` | Subheading text (max 300 chars) |
+| `titleColor` | string | No | `ffffff` | Title color as hex without # |
+| `subtitleColor` | string | No | `cccccc` | Subtitle color as hex without # |
+| `background` | string | No | `default` | Gradient ID: `default`, `dark-blue`, `sunset`, `ocean-blue`, `forest-green`, `purple-pink`, etc. |
+| `logoOpacity` | number | No | `0.3` | Logo opacity (0-1) |
+| `logoUrl` | string | No | - | Custom logo image URL |
+| `layoutId` | string | No | `default` | Layout style: `default`, `classic`, `minimal`, `photo-essay` |
+| `format` | string | No | `webp` | Output format: `png` or `webp` |
+
+### Layout Styles
+
+- **default**: Logo top-right, text left-aligned at 30% height
+- **classic**: Traditional top-left layout
+- **minimal**: Centered, minimalist aesthetic
+- **photo-essay**: Prominent centered text
+
+### Available Gradients
+
+`default`, `dark-blue`, `purple-gradient`, `sunset`, `ocean-blue`, `teal-cyan`, `red-orange`, `purple-pink`, `yellow-orange`, `green-teal`, `indigo-purple`, `pink-red`, `forest-green`, `navy-blue`, `warm-sunset`, `cool-ocean`, `dark-slate`
+
+### Example: Build Process Integration
+
+```javascript
+// generate-og-image.js
+import { writeFile } from 'fs/promises'
+
+const params = new URLSearchParams({
+  layout: 'open-graph',
+  title: process.env.PAGE_TITLE,
+  subtitle: process.env.PAGE_DESCRIPTION,
+  background: 'ocean-blue',
+  format: 'png'
+})
+
+const response = await fetch(`https://frameit.dev/api/generate?${params}`)
+const buffer = await response.arrayBuffer()
+await writeFile('public/og-image.png', Buffer.from(buffer))
+```
+
+### Testing Locally
+
+```bash
+# Start development server (runs both UI and API)
+vercel dev
+
+# Test API endpoint
+curl "http://localhost:3000/api/generate?layout=youtube&title=Test&format=png" -o test.png
+
+# Run comprehensive test suite
+npx tsx test-api.ts
+```
 
 ## Deployment
 
-### Cloudflare Pages
+### Vercel
 
-FrameIt is deployed to Cloudflare Pages:
+FrameIt is deployed to Vercel with automatic deployments:
 
 1. **Build command**: `pnpm build`
-2. **Build output directory**: `dist`
-3. **Deploy command**: Leave blank (Pages automatically deploys the build output)
+2. **Output directory**: `dist`
+3. **Serverless Functions**: Automatically deployed from `api/` directory
 
-The project connects to your GitHub repository for automatic deployments on push.
-
-**Important**: Do NOT use `npx wrangler deploy` in the deploy command—this creates a Cloudflare Worker that will override your Pages deployment.
-
-### Custom Domain
-
-To connect `frameit.dev`:
-1. Go to your Pages project settings
-2. Add custom domain
-3. Point your domain's DNS to Cloudflare (if not already)
+The API uses [@napi-rs/canvas](https://github.com/Brooooooklyn/canvas) for server-side rendering with the Inter font registered for consistent typography.
 
 ## Development Tips
 
@@ -169,14 +246,34 @@ Requires support for:
 - localStorage API
 - Clipboard API (for copy-to-clipboard feature)
 
+## Architecture
+
+### Rendering System
+
+Both the UI and API use the same rendering pipeline for 1:1 parity:
+
+1. **Layout Definition** ([src/lib/constants.ts](src/lib/constants.ts#L197)): JSON-based layout configurations
+2. **LayoutRenderer** ([src/lib/layout-renderer.ts](src/lib/layout-renderer.ts)): Interprets layouts and renders to canvas
+3. **Canvas Utils** ([src/lib/canvas-utils.ts](src/lib/canvas-utils.ts)): Shared utilities (`wrapText`, `drawGradientBackground`)
+
+### Type System
+
+- **[src/lib/types.ts](src/lib/types.ts)**: Core type definitions (shared by UI and API)
+- **[src/lib/ui-constants.ts](src/lib/ui-constants.ts)**: UI-specific constants with React icons
+- **[src/lib/api-types.ts](src/lib/api-types.ts)**: API parameter validation and types
+
+### API Implementation
+
+The API ([api/generate.ts](api/generate.ts)) transforms URL parameters into the same `ThumbnailConfigNew` format used by the UI, then uses `LayoutRenderer` to generate images server-side with @napi-rs/canvas.
+
 ## Future Enhancements
 
-- API endpoint (`/api/generate`) for programmatic thumbnail generation
-- Custom background upload
+- Custom background image upload
 - Template system for saving custom designs
 - Batch generation for multiple thumbnails
 - Animation support (GIF/MP4 output)
 - Team collaboration features
+- Additional layout customization options
 
 ## Troubleshooting
 

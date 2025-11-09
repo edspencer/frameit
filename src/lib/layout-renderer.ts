@@ -6,9 +6,9 @@ import type {
   OverlayLayoutElement,
   ThumbnailConfigNew,
   BackgroundConfig,
-} from './types'
-import { GRADIENTS } from './constants'
-import { wrapText, drawGradientBackground } from './canvas-utils'
+} from './types.js'
+import { GRADIENTS } from './constants.js'
+import { wrapText, drawGradientBackground } from './canvas-utils.js'
 
 interface ElementBounds {
   x: number
