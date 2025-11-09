@@ -102,7 +102,7 @@ export function drawLogo<TImage extends ImageLike>(
   ctx.imageSmoothingEnabled = false
 
   ctx.globalAlpha = logoOpacity
-  ctx.drawImage(logoImage as unknown as CanvasImageSource, x, y, logoWidth, logoHeight)
+  ctx.drawImage(logoImage as unknown as HTMLImageElement, x, y, logoWidth, logoHeight)
   ctx.globalAlpha = 1
 
   // Restore image smoothing setting
@@ -181,7 +181,7 @@ export function drawThumbnail(
 
     // Draw the scaled and centered image
     ctx.drawImage(
-      config.backgroundImage as unknown as CanvasImageSource,
+      config.backgroundImage as unknown as HTMLImageElement,
       0,
       0,
       bgWidth,
