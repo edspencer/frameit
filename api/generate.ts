@@ -17,9 +17,11 @@ import { BACKGROUND_IMAGES } from '../src/lib/constants.js'
 const fontsDir = join(process.cwd(), 'api', 'fonts')
 try {
   GlobalFonts.registerFromPath(join(fontsDir, 'InterVariable.ttf'), 'Inter')
-  console.log('✓ Inter font registered')
+  console.log('✓ Inter font registered successfully')
+  console.log('Available system fonts:', GlobalFonts.families.map(f => f.family).slice(0, 20).join(', '))
 } catch (err) {
-  console.error('Failed to register Inter font:', err)
+  console.error('⚠️  Failed to register Inter font:', err)
+  console.error('Falling back to system fonts')
 }
 
 /**
