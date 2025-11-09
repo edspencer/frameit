@@ -21,9 +21,13 @@ function loadConfigFromStorage(): ThumbnailConfigNew | null {
       // Restore preset object from name
       if (parsed.presetName) {
         const preset = PRESETS_WITH_ICONS.find(p => p.name === parsed.presetName)
-        if (preset) parsed.preset = preset
+        if (preset) {
+          parsed.preset = preset
+          return parsed as ThumbnailConfigNew
+        }
       }
-      return parsed as ThumbnailConfigNew
+      // If preset not found, return null to use defaults
+      return null
     }
 
     // Old format detected - return null to use default config

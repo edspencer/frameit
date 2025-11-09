@@ -144,7 +144,7 @@ export interface LayoutDefinition {
 }
 
 export interface ThumbnailConfigNew {
-  preset: ThumbnailPreset
+  preset: ThumbnailPresetWithIcon
   layoutId: string        // References LayoutDefinition.id
   background: BackgroundConfig
   textElements: TextElement[]
