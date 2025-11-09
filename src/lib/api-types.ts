@@ -6,9 +6,14 @@
 import { PRESETS } from './constants.js'
 
 /**
- * Platform layout options
+ * Get valid layout names from PRESETS (kebab-cased)
  */
-export type PlatformLayout = 'youtube' | 'youtube-shorts' | 'twitter' | 'tiktok' | 'square'
+const VALID_LAYOUTS = PRESETS.map((p) => p.name.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-'))
+
+/**
+ * Platform layout options (derived from PRESETS)
+ */
+export type PlatformLayout = typeof VALID_LAYOUTS[number]
 
 /**
  * Image format options
@@ -65,9 +70,9 @@ export interface ImageGenerationConfig {
  */
 export function validateParams(params: Partial<ImageGenerationParams>): ImageGenerationConfig {
   // Validate layout
-  const layout = params.layout || 'twitter'
-  if (!['youtube', 'youtube-shorts', 'twitter', 'tiktok', 'square'].includes(layout)) {
-    throw new Error(`Invalid layout: ${layout}`)
+  const layout = params.layout || 'open-graph'
+  if (!VALID_LAYOUTS.includes(layout)) {
+    throw new Error(`Invalid layout: ${layout}. Valid options: ${VALID_LAYOUTS.join(', ')}`)
   }
 
   // Get dimensions from preset
