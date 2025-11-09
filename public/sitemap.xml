@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://frameit.dev/</loc>
+    <lastmod>2025-01-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://frameit.dev/open-graph.png</image:loc>
+      <image:title>FrameIt - Free Online Thumbnail Generator</image:title>
+      <image:caption>Create stunning YouTube, LinkedIn, and social media thumbnails instantly</image:caption>
+    </image:image>
+  </url>
+</urlset>
