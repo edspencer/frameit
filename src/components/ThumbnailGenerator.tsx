@@ -54,8 +54,8 @@ function getDefaultConfig(): ThumbnailConfigNew {
     layoutId: LAYOUTS[0].id,
     background: { type: 'gradient', gradientId: GRADIENTS[0].id },
     textElements: [
-      { id: 'title', content: 'Welcome to FrameIt', color: '#ffffff' },
-      { id: 'subtitle', content: 'Change this text to whatever, upload your own logo, whatever you want', color: '#ffffff' },
+      { id: 'title', content: 'This is a template', color: '#ffffff' },
+      { id: 'subtitle', content: 'Change layout, upload images, and edit text with the controls on the right', color: '#ffffff' },
       { id: 'artist', content: 'Artist Name', color: '#ffffff' },
     ],
     imageElements: [
