@@ -5,11 +5,22 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { createCanvas, loadImage } from '@napi-rs/canvas'
+import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas'
 import type { Image as CanvasImage } from '@napi-rs/canvas'
+import { join } from 'node:path'
 import { drawThumbnail } from '../src/lib/canvas-utils.js'
 import { validateParams, generateCacheKey, type ImageGenerationParams } from '../src/lib/api-types.js'
 import { BACKGROUND_IMAGES } from '../src/lib/constants.js'
+
+// Register fonts for server-side rendering
+// This runs once when the serverless function cold-starts
+const fontsDir = join(process.cwd(), 'api', 'fonts')
+try {
+  GlobalFonts.registerFromPath(join(fontsDir, 'InterVariable.ttf'), 'Inter')
+  console.log('✓ Inter font registered')
+} catch (err) {
+  console.error('Failed to register Inter font:', err)
+}
 
 /**
  * Main handler for both GET and POST requests

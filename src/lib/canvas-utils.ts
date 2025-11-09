@@ -123,7 +123,7 @@ export function drawTextContent(
 
   // Title
   ctx.fillStyle = config.titleColor
-  ctx.font = `bold ${Math.round(canvasWidth * 0.08)}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`
+  ctx.font = `bold ${Math.round(canvasWidth * 0.08)}px Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`
   ctx.textAlign = 'left'
   ctx.textBaseline = 'top'
 
@@ -138,7 +138,7 @@ export function drawTextContent(
   })
 
   // Subtitle
-  ctx.font = `${Math.round(canvasWidth * 0.045)}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`
+  ctx.font = `${Math.round(canvasWidth * 0.045)}px Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`
   ctx.fillStyle = config.subtitleColor
   yPosition += canvasWidth * 0.02
 
