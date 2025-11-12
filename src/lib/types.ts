@@ -7,6 +7,10 @@ export interface ThumbnailPreset {
   aspectRatio: string
   description: string
   category: 'video' | 'social'
+}
+
+// UI-specific preset with icon component
+export interface ThumbnailPresetWithIcon extends ThumbnailPreset {
   icon: React.ComponentType<{ size?: number; className?: string }>
 }
 
@@ -140,7 +144,7 @@ export interface LayoutDefinition {
 }
 
 export interface ThumbnailConfigNew {
-  preset: ThumbnailPreset
+  preset: ThumbnailPresetWithIcon
   layoutId: string        // References LayoutDefinition.id
   background: BackgroundConfig
   textElements: TextElement[]

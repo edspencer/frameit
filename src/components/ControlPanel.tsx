@@ -4,11 +4,11 @@ import { GradientSelector } from './GradientSelector'
 import { TextElementControl } from './TextElementControl'
 import { ImageElementControl } from './ImageElementControl'
 import { LAYOUTS } from '../lib/constants'
-import type { ThumbnailPreset, ThumbnailConfigNew } from '../lib/types'
+import type { ThumbnailPresetWithIcon, ThumbnailConfigNew } from '../lib/types'
 
 interface ControlPanelProps {
-  selectedPreset: ThumbnailPreset
-  onPresetChange: (preset: ThumbnailPreset) => void
+  selectedPreset: ThumbnailPresetWithIcon
+  onPresetChange: (preset: ThumbnailPresetWithIcon) => void
   selectedLayoutId: string
   onLayoutChange: (layoutId: string) => void
   config: ThumbnailConfigNew // Full config instead of individual props

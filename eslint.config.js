@@ -46,5 +46,15 @@ export default [
         version: 'detect'
       }
     }
+  },
+  {
+    // Node.js environment for API files and test scripts
+    files: ['api/**/*.{js,ts}', 'test-api.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.es2021
+      }
+    }
   }
 ]

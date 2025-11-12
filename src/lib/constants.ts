@@ -1,13 +1,7 @@
 import type { ThumbnailPreset, BackgroundImage, BackgroundGradient, LayoutDefinition } from './types'
-import {
-  YouTubeIcon,
-  LinkedInIcon,
-  XIcon,
-  TikTokIcon,
-  InstagramIcon,
-  PinterestIcon,
-  OpenGraphIcon,
-} from '../components/icons/PlatformIcons'
+
+// Note: Icons are provided separately in ui-constants.ts for UI components
+// This file only exports data constants that can be safely used in both browser and Node.js
 
 export const PRESETS: ThumbnailPreset[] = [
   // Video Thumbnails
@@ -18,7 +12,6 @@ export const PRESETS: ThumbnailPreset[] = [
     aspectRatio: '16:9',
     description: 'YouTube video thumbnail',
     category: 'video',
-    icon: YouTubeIcon,
   },
   {
     name: 'YouTube Shorts',
@@ -27,7 +20,6 @@ export const PRESETS: ThumbnailPreset[] = [
     aspectRatio: '9:16',
     description: 'YouTube Shorts vertical thumbnail',
     category: 'video',
-    icon: YouTubeIcon,
   },
   {
     name: 'LinkedIn Video',
@@ -36,7 +28,6 @@ export const PRESETS: ThumbnailPreset[] = [
     aspectRatio: '16:9',
     description: 'Recommended for LinkedIn video thumbnails',
     category: 'video',
-    icon: LinkedInIcon,
   },
   {
     name: 'Twitter/X',
@@ -45,7 +36,6 @@ export const PRESETS: ThumbnailPreset[] = [
     aspectRatio: '16:9',
     description: 'Twitter/X video thumbnail',
     category: 'video',
-    icon: XIcon,
   },
   {
     name: 'TikTok',
@@ -54,7 +44,6 @@ export const PRESETS: ThumbnailPreset[] = [
     aspectRatio: '9:16',
     description: 'TikTok vertical video thumbnail',
     category: 'video',
-    icon: TikTokIcon,
   },
   {
     name: 'Instagram Reels',
@@ -63,7 +52,6 @@ export const PRESETS: ThumbnailPreset[] = [
     aspectRatio: '9:16',
     description: 'Instagram Reels vertical video thumbnail',
     category: 'video',
-    icon: InstagramIcon,
   },
   // Social Titles
   {
@@ -73,7 +61,6 @@ export const PRESETS: ThumbnailPreset[] = [
     aspectRatio: '16:9',
     description: 'Standard for website social sharing',
     category: 'social',
-    icon: OpenGraphIcon,
   },
   {
     name: 'Instagram Feed',
@@ -82,7 +69,6 @@ export const PRESETS: ThumbnailPreset[] = [
     aspectRatio: '1:1',
     description: 'Instagram feed post',
     category: 'social',
-    icon: InstagramIcon,
   },
   {
     name: 'X Header',
@@ -91,7 +77,6 @@ export const PRESETS: ThumbnailPreset[] = [
     aspectRatio: '3:1',
     description: 'X profile header image',
     category: 'social',
-    icon: XIcon,
   },
   {
     name: 'Pinterest Pin',
@@ -100,7 +85,6 @@ export const PRESETS: ThumbnailPreset[] = [
     aspectRatio: '2:3',
     description: 'Pinterest pin image',
     category: 'social',
-    icon: PinterestIcon,
   },
 ]
 
