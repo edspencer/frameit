@@ -1,4 +1,3 @@
-import { Analytics } from "@vercel/analytics/next"
 import { useState, useRef, useEffect } from 'react'
 import { PRESETS_WITH_ICONS } from '../lib/ui-constants'
 import { GRADIENTS, LAYOUTS } from '../lib/constants'
@@ -369,7 +368,6 @@ export function ThumbnailGenerator() {
           </p>
         </div>
       </div>
-      <Analytics />
     </div>
   )
 }
