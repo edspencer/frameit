@@ -11,8 +11,16 @@ export function PlatformSelector({ selectedPreset, onPresetChange }: PlatformSel
   const videoPresets = PRESETS_WITH_ICONS.filter(p => p.category === 'video')
   const socialPresets = PRESETS_WITH_ICONS.filter(p => p.category === 'social')
 
+  const SelectedIcon = selectedPreset.icon
+  const preview = (
+    <>
+      <SelectedIcon size={16} className="flex-shrink-0" />
+      <span className="truncate">{selectedPreset.name}</span>
+    </>
+  )
+
   return (
-    <ConfigSection title="Platform" storageKey="platform">
+    <ConfigSection title="Platform" storageKey="platform" preview={preview}>
       {/* Video Thumbnails Section */}
       <div className="mb-6">
         <h4 className="text-sm font-medium text-slate-400 mb-2">Video Thumbnails</h4>
