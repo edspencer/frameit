@@ -357,7 +357,7 @@ async function main() {
     try {
       await generateThumbnail(testCase)
       successCount++
-    } catch (error) {
+    } catch {
       // Error already logged in generateThumbnail
     }
   }
