@@ -47,8 +47,14 @@ export function TextElementControl({
   onFontWeightPreview,
   onFontFamilyPreview,
 }: TextElementControlProps) {
+  const preview = content ? (
+    <span className="italic truncate">&ldquo;{content}&rdquo;</span>
+  ) : (
+    <span className="italic text-slate-500">Empty</span>
+  )
+
   return (
-    <ConfigSection title={label} storageKey={`text-${id}`}>
+    <ConfigSection title={label} storageKey={`text-${id}`} preview={preview}>
       <div className="space-y-4">
         <div>
           <label htmlFor={`text-${id}`} className="block text-sm font-medium text-slate-300 mb-2">

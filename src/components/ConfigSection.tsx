@@ -7,9 +7,10 @@ interface ConfigSectionProps {
   children: React.ReactNode
   defaultExpanded?: boolean
   storageKey?: string // Optional key for localStorage persistence
+  preview?: React.ReactNode // Optional preview to show when collapsed
 }
 
-export function ConfigSection({ title, children, defaultExpanded = true, storageKey }: ConfigSectionProps) {
+export function ConfigSection({ title, children, defaultExpanded = true, storageKey, preview }: ConfigSectionProps) {
   const [isExpanded, setIsExpanded] = useState(() => {
     if (storageKey) {
       return getSectionExpandedState(storageKey, defaultExpanded)
@@ -32,9 +33,16 @@ export function ConfigSection({ title, children, defaultExpanded = true, storage
         onClick={handleToggle}
         className={`w-full flex items-center justify-between text-left group ${isExpanded ? 'mb-4' : ''}`}
       >
-        <h3 className="text-lg font-semibold text-white">{title}</h3>
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <h3 className="text-lg font-semibold text-white flex-shrink-0">{title}</h3>
+          {!isExpanded && preview && (
+            <div className="flex items-center gap-2 text-sm text-slate-400 truncate">
+              {preview}
+            </div>
+          )}
+        </div>
         <svg
-          className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${
+          className={`w-5 h-5 text-slate-400 transition-transform duration-200 flex-shrink-0 ${
             isExpanded ? 'rotate-180' : ''
           }`}
           fill="none"

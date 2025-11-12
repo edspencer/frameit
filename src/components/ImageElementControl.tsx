@@ -54,8 +54,21 @@ export function ImageElementControl({
     onUrlChange(undefined)
   }
 
+  const preview = url ? (
+    <div className="flex items-center gap-2">
+      <img
+        src={url}
+        alt={`${label} preview`}
+        className="h-6 w-auto object-contain"
+      />
+      <span className="text-xs">({Math.round(opacity * 100)}% • {scale}%)</span>
+    </div>
+  ) : (
+    <span className="italic text-slate-500">No image</span>
+  )
+
   return (
-    <ConfigSection title={label} storageKey={`image-${id}`}>
+    <ConfigSection title={label} storageKey={`image-${id}`} preview={preview}>
       <div className="space-y-3">
         {url ? (
           <div className="flex items-center gap-3 p-3 bg-slate-900 rounded border border-slate-600">

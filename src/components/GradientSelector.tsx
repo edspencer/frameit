@@ -7,8 +7,21 @@ interface GradientSelectorProps {
 }
 
 export function GradientSelector({ selectedGradientId, onGradientChange }: GradientSelectorProps) {
+  const selectedGradient = GRADIENTS.find(g => g.id === selectedGradientId)
+  const preview = selectedGradient ? (
+    <div className="flex items-center gap-2">
+      <div
+        className="w-6 h-6 rounded border border-slate-600"
+        style={{
+          background: `linear-gradient(to bottom, ${selectedGradient.colorStart}, ${selectedGradient.colorEnd})`,
+        }}
+      />
+      <span className="truncate">{selectedGradient.name}</span>
+    </div>
+  ) : null
+
   return (
-    <ConfigSection title="Background Gradient" storageKey="gradient">
+    <ConfigSection title="Background Gradient" storageKey="gradient" preview={preview}>
       <div className="grid grid-cols-4 gap-2">
         {GRADIENTS.map((gradient) => (
           <button
