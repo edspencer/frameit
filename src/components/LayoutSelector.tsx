@@ -4,14 +4,16 @@ import { ConfigSection } from './ConfigSection'
 interface LayoutSelectorProps {
   selectedLayoutId: string
   onLayoutChange: (layoutId: string) => void
+  onSectionExpanded?: (sectionName: string) => void
+  onSectionCollapsed?: (sectionName: string) => void
 }
 
-export function LayoutSelector({ selectedLayoutId, onLayoutChange }: LayoutSelectorProps) {
+export function LayoutSelector({ selectedLayoutId, onLayoutChange, onSectionExpanded, onSectionCollapsed }: LayoutSelectorProps) {
   const selectedLayout = LAYOUTS.find(l => l.id === selectedLayoutId)
   const preview = selectedLayout ? <span className="truncate">{selectedLayout.name}</span> : null
 
   return (
-    <ConfigSection title="Layout" storageKey="layout" preview={preview}>
+    <ConfigSection title="Layout" storageKey="layout" preview={preview} onExpanded={onSectionExpanded} onCollapsed={onSectionCollapsed}>
       <div className="grid grid-cols-2 gap-2">
         {LAYOUTS.map((layout) => {
           const isSelected = layout.id === selectedLayoutId

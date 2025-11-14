@@ -7,6 +7,21 @@ import { ControlPanel } from './ControlPanel'
 import { Tooltip } from './Tooltip'
 import { FeedbackWidget } from '@wishnova/react'
 import '@wishnova/react/styles'
+import {
+  trackPresetSelected,
+  trackLayoutChanged,
+  trackGradientChanged,
+  trackTextEdited,
+  trackTextColorChanged,
+  trackTextFontChanged,
+  trackTextWeightChanged,
+  trackLogoOpacityChanged,
+  trackImageScaleChanged,
+  trackThumbnailDownloaded,
+  trackThumbnailCopied,
+  trackConfigSectionExpanded,
+  trackConfigSectionCollapsed,
+} from '../lib/posthog'
 
 const STORAGE_KEY = 'thumbnailGeneratorConfig'
 
@@ -72,7 +87,13 @@ function getDefaultConfig(): ThumbnailConfigNew {
 
 export function ThumbnailGenerator() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const isInitialMount = useRef(true)
   const [zoomLevel, setZoomLevel] = useState<number>(100)
+
+  // Set initial mount flag to false after first render
+  useEffect(() => {
+    isInitialMount.current = false
+  }, [])
 
   const savedConfig = loadConfigFromStorage()
   const [config, setConfig] = useState<ThumbnailConfigNew>(() => {
@@ -99,6 +120,26 @@ export function ThumbnailGenerator() {
 
   // Helper functions to update parts of config
   const updateTextElement = (id: string, updates: Partial<typeof config.textElements[0]>) => {
+    // Track text content edits
+    if (!isInitialMount.current && updates.content !== undefined) {
+      trackTextEdited({ element_id: id, content_length: updates.content.length })
+    }
+
+    // Track text color changes
+    if (!isInitialMount.current && updates.color !== undefined) {
+      trackTextColorChanged({ element_id: id, new_color: updates.color })
+    }
+
+    // Track font family changes
+    if (!isInitialMount.current && updates.fontFamily !== undefined) {
+      trackTextFontChanged({ element_id: id, font_name: updates.fontFamily })
+    }
+
+    // Track font weight changes
+    if (!isInitialMount.current && updates.fontWeight !== undefined) {
+      trackTextWeightChanged({ element_id: id, new_weight: updates.fontWeight })
+    }
+
     setConfig(prev => ({
       ...prev,
       textElements: prev.textElements.map(el => el.id === id ? { ...el, ...updates } : el)
@@ -125,6 +166,16 @@ export function ThumbnailGenerator() {
   }
 
   const updateImageElement = (id: string, updates: Partial<typeof config.imageElements[0]>) => {
+    // Track opacity changes
+    if (!isInitialMount.current && updates.opacity !== undefined) {
+      trackLogoOpacityChanged({ new_opacity: updates.opacity })
+    }
+
+    // Track scale changes
+    if (!isInitialMount.current && updates.scale !== undefined) {
+      trackImageScaleChanged({ element_id: id, new_scale: updates.scale })
+    }
+
     setConfig(prev => ({
       ...prev,
       imageElements: prev.imageElements.map(el => el.id === id ? { ...el, ...updates } : el)
@@ -132,14 +183,33 @@ export function ThumbnailGenerator() {
   }
 
   const updateBackground = (updates: Partial<typeof config.background>) => {
+    // Track gradient changes
+    if (!isInitialMount.current && updates.gradientId !== undefined) {
+      const gradient = GRADIENTS.find(g => g.id === updates.gradientId)
+      if (gradient) {
+        trackGradientChanged({ gradient_id: gradient.id, gradient_name: gradient.name })
+      }
+    }
+
     setConfig(prev => ({ ...prev, background: { ...prev.background, ...updates } }))
   }
 
   const updatePreset = (preset: ThumbnailPresetWithIcon) => {
+    // Track preset selection
+    if (!isInitialMount.current) {
+      trackPresetSelected({ preset_name: preset.name })
+    }
+
     setConfig(prev => ({ ...prev, preset }))
   }
 
   const updateLayoutId = (layoutId: string) => {
+    // Track layout changes
+    if (!isInitialMount.current) {
+      const newLayout = LAYOUTS.find(l => l.id === layoutId) || LAYOUTS[0]
+      trackLayoutChanged({ layout_id: newLayout.id, layout_name: newLayout.name })
+    }
+
     setConfig(prev => {
       const newLayout = LAYOUTS.find(l => l.id === layoutId) || LAYOUTS[0]
 
@@ -196,6 +266,9 @@ export function ThumbnailGenerator() {
     const canvas = canvasRef.current
     if (!canvas) return
 
+    // Track thumbnail download
+    trackThumbnailDownloaded({ preset_used: config.preset.name, image_format: 'png' })
+
     const link = document.createElement('a')
     link.href = canvas.toDataURL('image/png')
     link.download = `thumbnail-${config.preset.name.toLowerCase().replace(/\s+/g, '-')}.png`
@@ -214,6 +287,8 @@ export function ThumbnailGenerator() {
               'image/png': blob,
             }),
           ])
+          // Track thumbnail copy to clipboard
+          trackThumbnailCopied({ preset_used: config.preset.name })
           alert('Thumbnail copied to clipboard!')
         }
       })
@@ -221,6 +296,15 @@ export function ThumbnailGenerator() {
       console.error('Failed to copy:', err)
       alert('Failed to copy to clipboard')
     }
+  }
+
+  // Handlers for section expand/collapse tracking
+  const handleSectionExpanded = (sectionName: string): void => {
+    trackConfigSectionExpanded({ section_name: sectionName })
+  }
+
+  const handleSectionCollapsed = (sectionName: string): void => {
+    trackConfigSectionCollapsed({ section_name: sectionName })
   }
 
   return (
@@ -329,6 +413,8 @@ export function ThumbnailGenerator() {
               onImageElementChange={updateImageElement}
               selectedGradientId={config.background.gradientId || GRADIENTS[0].id}
               onGradientChange={(gradientId) => updateBackground({ type: 'gradient', gradientId })}
+              onSectionExpanded={handleSectionExpanded}
+              onSectionCollapsed={handleSectionCollapsed}
             />
           </div>
         </div>

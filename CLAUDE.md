@@ -183,6 +183,125 @@ FrameIt is deployed to Vercel with automatic deployments:
 
 The API uses [@napi-rs/canvas](https://github.com/Brooooooklyn/canvas) for server-side rendering with the Inter font registered for consistent typography.
 
+**Environment Variables for Production:**
+
+Set these in Vercel project settings:
+- `VITE_POSTHOG_API_KEY` - PostHog API key for analytics (optional)
+- `VITE_POSTHOG_HOST` - PostHog API host (optional, defaults to https://us.posthog.com)
+
+## Analytics
+
+FrameIt uses PostHog for privacy-friendly analytics tracking to understand user behavior and feature usage.
+
+### PostHog Configuration
+
+PostHog is configured with strict GDPR compliance:
+- **No cookies**: Uses memory-only persistence
+- **No localStorage**: Session data stored in memory only
+- **Respects Do Not Track**: Honors browser DNT headers
+- **No session recording**: Recording disabled
+- **No autocapture**: Only manual events tracked
+- **Development mode**: Tracking disabled in development
+
+### Environment Variables
+
+```bash
+# Required for analytics (optional)
+VITE_POSTHOG_API_KEY=phc_your_key_here
+
+# Optional - defaults to https://us.posthog.com
+VITE_POSTHOG_HOST=https://us.posthog.com
+```
+
+Get your PostHog API key from: https://app.posthog.com/project/settings
+
+### Tracked Events
+
+FrameIt tracks 17 events across 3 categories:
+
+#### Conversion Events (2)
+- `thumbnail_downloaded` - User downloads generated thumbnail
+  - Properties: `preset_used`, `image_format`
+- `thumbnail_copied` - User copies thumbnail to clipboard
+  - Properties: `preset_used`
+
+#### Configuration Events (11)
+- `preset_selected` - User selects platform preset
+  - Properties: `preset_name`
+- `layout_changed` - User changes layout style
+  - Properties: `layout_id`, `layout_name`
+- `gradient_changed` - User selects background gradient
+  - Properties: `gradient_id`, `gradient_name`
+- `text_edited` - User edits text content
+  - Properties: `element_id`, `content_length`
+- `text_color_changed` - User changes text color
+  - Properties: `element_id`, `new_color`
+- `text_font_changed` - User changes font family
+  - Properties: `element_id`, `font_name`
+- `text_weight_changed` - User changes font weight
+  - Properties: `element_id`, `new_weight`
+- `logo_opacity_changed` - User adjusts logo opacity
+  - Properties: `new_opacity`
+- `image_scale_changed` - User adjusts image scale
+  - Properties: `element_id`, `new_scale`
+- `background_image_uploaded` - User uploads custom background
+- `logo_uploaded` - User uploads custom logo
+
+#### Engagement Events (4)
+- `page_viewed` - Initial page load
+- `session_started` - First user interaction
+- `config_section_expanded` - User expands collapsible section
+  - Properties: `section_name`
+- `config_section_collapsed` - User collapses collapsible section
+  - Properties: `section_name`
+
+### Adding New Events
+
+To add a new event:
+
+1. Define TypeScript interface in `src/lib/posthog.ts`:
+```typescript
+export interface MyNewEventProps {
+  property_name: string
+}
+```
+
+2. Create tracking function in `src/lib/posthog.ts`:
+```typescript
+export function trackMyNewEvent(props: MyNewEventProps): void {
+  if (!window.posthog) return
+  posthog.capture('my_new_event', props)
+}
+```
+
+3. Import and call in component:
+```typescript
+import { trackMyNewEvent } from '../lib/posthog'
+
+const handleSomething = () => {
+  trackMyNewEvent({ property_name: 'value' })
+  // ... rest of handler
+}
+```
+
+### Privacy Compliance
+
+PostHog configuration ensures GDPR compliance:
+- No cookies set (verified in DevTools)
+- No localStorage for tracking
+- Respects Do Not Track browser setting
+- Anonymous usage only (no PII collected)
+- Development mode skips all tracking
+
+### Testing Analytics
+
+To test analytics in development:
+1. Temporarily comment out the development mode check in `src/lib/posthog.ts`
+2. Set `VITE_POSTHOG_API_KEY` in `.env.local`
+3. Start dev server: `pnpm dev`
+4. Check PostHog Live Events: https://app.posthog.com/events
+5. Restore development mode check before committing
+
 ## Development Tips
 
 ### Adding New Platform Presets

@@ -4,9 +4,11 @@ import { ConfigSection } from './ConfigSection'
 interface GradientSelectorProps {
   selectedGradientId: string
   onGradientChange: (id: string) => void
+  onSectionExpanded?: (sectionName: string) => void
+  onSectionCollapsed?: (sectionName: string) => void
 }
 
-export function GradientSelector({ selectedGradientId, onGradientChange }: GradientSelectorProps) {
+export function GradientSelector({ selectedGradientId, onGradientChange, onSectionExpanded, onSectionCollapsed }: GradientSelectorProps) {
   const selectedGradient = GRADIENTS.find(g => g.id === selectedGradientId)
   const preview = selectedGradient ? (
     <div className="flex items-center gap-2">
@@ -21,7 +23,7 @@ export function GradientSelector({ selectedGradientId, onGradientChange }: Gradi
   ) : null
 
   return (
-    <ConfigSection title="Background Gradient" storageKey="gradient" preview={preview}>
+    <ConfigSection title="Background Gradient" storageKey="gradient" preview={preview} onExpanded={onSectionExpanded} onCollapsed={onSectionCollapsed}>
       <div className="grid grid-cols-4 gap-2">
         {GRADIENTS.map((gradient) => (
           <button

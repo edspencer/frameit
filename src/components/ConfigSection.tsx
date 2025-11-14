@@ -8,9 +8,11 @@ interface ConfigSectionProps {
   defaultExpanded?: boolean
   storageKey?: string // Optional key for localStorage persistence
   preview?: React.ReactNode // Optional preview to show when collapsed
+  onExpanded?: (sectionName: string) => void // Optional callback when section expands
+  onCollapsed?: (sectionName: string) => void // Optional callback when section collapses
 }
 
-export function ConfigSection({ title, children, defaultExpanded = true, storageKey, preview }: ConfigSectionProps) {
+export function ConfigSection({ title, children, defaultExpanded = true, storageKey, preview, onExpanded, onCollapsed }: ConfigSectionProps) {
   const [isExpanded, setIsExpanded] = useState(() => {
     if (storageKey) {
       return getSectionExpandedState(storageKey, defaultExpanded)
@@ -23,6 +25,14 @@ export function ConfigSection({ title, children, defaultExpanded = true, storage
     setIsExpanded(newState)
     if (storageKey) {
       setSectionExpandedState(storageKey, newState)
+    }
+
+    // Call tracking callbacks
+    if (newState && onExpanded) {
+      onExpanded(title)
+    }
+    if (!newState && onCollapsed) {
+      onCollapsed(title)
     }
   }
 

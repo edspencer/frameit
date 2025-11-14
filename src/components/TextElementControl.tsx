@@ -24,6 +24,8 @@ interface TextElementControlProps {
   onColorPreview?: (color: string) => void // For hover preview
   onFontWeightPreview?: (fontWeight: number) => void // For hover preview
   onFontFamilyPreview?: (fontFamily: string) => void // For hover preview
+  onSectionExpanded?: (sectionName: string) => void
+  onSectionCollapsed?: (sectionName: string) => void
 }
 
 export function TextElementControl({
@@ -46,6 +48,8 @@ export function TextElementControl({
   onColorPreview,
   onFontWeightPreview,
   onFontFamilyPreview,
+  onSectionExpanded,
+  onSectionCollapsed,
 }: TextElementControlProps) {
   const preview = content ? (
     <span className="italic truncate">&ldquo;{content}&rdquo;</span>
@@ -54,7 +58,7 @@ export function TextElementControl({
   )
 
   return (
-    <ConfigSection title={label} storageKey={`text-${id}`} preview={preview}>
+    <ConfigSection title={label} storageKey={`text-${id}`} preview={preview} onExpanded={onSectionExpanded} onCollapsed={onSectionCollapsed}>
       <div className="space-y-4">
         <div>
           <label htmlFor={`text-${id}`} className="block text-sm font-medium text-slate-300 mb-2">
