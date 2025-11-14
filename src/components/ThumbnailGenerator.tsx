@@ -411,8 +411,8 @@ export function ThumbnailGenerator() {
               onTextElementChange={updateTextElement}
               onTextElementPreview={previewTextElement}
               onImageElementChange={updateImageElement}
-              selectedGradientId={config.background.gradientId || GRADIENTS[0].id}
-              onGradientChange={(gradientId) => updateBackground({ type: 'gradient', gradientId })}
+              background={config.background}
+              onBackgroundChange={updateBackground}
               onSectionExpanded={handleSectionExpanded}
               onSectionCollapsed={handleSectionCollapsed}
             />

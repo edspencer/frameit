@@ -1,4 +1,4 @@
-import type { ThumbnailPreset, BackgroundImage, BackgroundGradient, LayoutDefinition } from './types'
+import type { ThumbnailPreset, BackgroundImage, BackgroundGradient, BackgroundSolidColor, LayoutDefinition } from './types'
 
 // Note: Icons are provided separately in ui-constants.ts for UI components
 // This file only exports data constants that can be safely used in both browser and Node.js
@@ -161,6 +161,25 @@ export const GRADIENTS: BackgroundGradient[] = [
     colorStart: '#334155',
     colorEnd: '#0f172a',
   },
+]
+
+export const SOLID_COLORS: BackgroundSolidColor[] = [
+  { name: 'Black', id: 'black', color: '#000000' },
+  { name: 'Charcoal', id: 'charcoal', color: '#1a1a1a' },
+  { name: 'Navy', id: 'navy', color: '#0f1729' },
+  { name: 'Dark Slate', id: 'dark-slate', color: '#1e293b' },
+  { name: 'Indigo', id: 'indigo', color: '#312e81' },
+  { name: 'Midnight', id: 'midnight', color: '#1e1b4b' },
+  { name: 'Teal', id: 'teal', color: '#134e4a' },
+  { name: 'Forest', id: 'forest', color: '#064e3b' },
+  { name: 'Slate', id: 'slate', color: '#334155' },
+  { name: 'Gray', id: 'gray', color: '#475569' },
+  { name: 'Steel', id: 'steel', color: '#64748b' },
+  { name: 'White', id: 'white', color: '#ffffff' },
+  { name: 'Sunset', id: 'sunset', color: '#7c2d12' },
+  { name: 'Rose', id: 'rose', color: '#4c0519' },
+  { name: 'Emerald', id: 'emerald', color: '#065f46' },
+  { name: 'Amber', id: 'amber', color: '#92400e' },
 ]
 
 export const BACKGROUND_IMAGES: BackgroundImage[] = [
