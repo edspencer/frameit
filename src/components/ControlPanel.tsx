@@ -1,10 +1,10 @@
 import { PlatformSelector } from './PlatformSelector'
 import { LayoutSelector } from './LayoutSelector'
-import { GradientSelector } from './GradientSelector'
+import { BackgroundSelector } from './BackgroundSelector'
 import { TextElementControl } from './TextElementControl'
 import { ImageElementControl } from './ImageElementControl'
 import { LAYOUTS } from '../lib/constants'
-import type { ThumbnailPresetWithIcon, ThumbnailConfigNew } from '../lib/types'
+import type { ThumbnailPresetWithIcon, ThumbnailConfigNew, BackgroundConfig } from '../lib/types'
 
 interface ControlPanelProps {
   selectedPreset: ThumbnailPresetWithIcon
@@ -15,8 +15,8 @@ interface ControlPanelProps {
   onTextElementChange: (id: string, updates: Partial<{ content: string; color: string; fontSize: string; fontWeight: number; fontFamily: string }>) => void
   onTextElementPreview?: (id: string, updates: { fontFamily?: string; color?: string; fontWeight?: number }) => void // For hover preview
   onImageElementChange: (id: string, updates: Partial<{ url: string | undefined; opacity: number; scale: number }>) => void
-  selectedGradientId: string
-  onGradientChange: (id: string) => void
+  background: BackgroundConfig
+  onBackgroundChange: (config: BackgroundConfig) => void
   onSectionExpanded?: (sectionName: string) => void // Optional callback for section expand tracking
   onSectionCollapsed?: (sectionName: string) => void // Optional callback for section collapse tracking
 }
@@ -35,8 +35,8 @@ export function ControlPanel({
   onTextElementChange,
   onTextElementPreview,
   onImageElementChange,
-  selectedGradientId,
-  onGradientChange,
+  background,
+  onBackgroundChange,
   onSectionExpanded,
   onSectionCollapsed,
 }: ControlPanelProps) {
@@ -48,7 +48,7 @@ export function ControlPanel({
       {/* Global controls (always shown, layout-agnostic) */}
       <PlatformSelector selectedPreset={selectedPreset} onPresetChange={onPresetChange} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
       <LayoutSelector selectedLayoutId={selectedLayoutId} onLayoutChange={onLayoutChange} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
-      <GradientSelector selectedGradientId={selectedGradientId} onGradientChange={onGradientChange} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
+      <BackgroundSelector background={background} onBackgroundChange={onBackgroundChange} />
 
       {/* Dynamic controls from layout.elements (only text and image, not overlays) */}
       {selectedLayout.elements.map(layoutElement => {

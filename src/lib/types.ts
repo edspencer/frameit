@@ -21,6 +21,12 @@ export interface BackgroundGradient {
   colorEnd: string
 }
 
+export interface BackgroundSolidColor {
+  name: string
+  id: string
+  color: string  // Hex color code (e.g., "#000000")
+}
+
 export interface BackgroundImage {
   name: string
   url: string
