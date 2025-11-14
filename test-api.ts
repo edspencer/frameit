@@ -8,7 +8,8 @@ import { writeFile, mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 
 // Configuration
-const HOST = 'http://localhost:3000'
+// const HOST = 'http://localhost:3000'
+const HOST = 'https://frameit.dev'  // Production
 const OUTPUT_DIR = './img'
 
 interface TestCase {
@@ -364,7 +365,7 @@ async function main() {
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
 
-  console.log(`\n✨ Complete!`)
+  console.log("\n✨ Complete!")
   console.log(`   Success: ${successCount}/${testCases.length}`)
   console.log(`   Time: ${elapsed}s`)
   console.log(`   Average: ${(Number.parseFloat(elapsed) / testCases.length).toFixed(2)}s per image`)

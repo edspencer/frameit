@@ -5,9 +5,11 @@ import { ConfigSection } from './ConfigSection'
 interface PlatformSelectorProps {
   selectedPreset: ThumbnailPresetWithIcon
   onPresetChange: (preset: ThumbnailPresetWithIcon) => void
+  onSectionExpanded?: (sectionName: string) => void
+  onSectionCollapsed?: (sectionName: string) => void
 }
 
-export function PlatformSelector({ selectedPreset, onPresetChange }: PlatformSelectorProps) {
+export function PlatformSelector({ selectedPreset, onPresetChange, onSectionExpanded, onSectionCollapsed }: PlatformSelectorProps) {
   const videoPresets = PRESETS_WITH_ICONS.filter(p => p.category === 'video')
   const socialPresets = PRESETS_WITH_ICONS.filter(p => p.category === 'social')
 
@@ -20,7 +22,7 @@ export function PlatformSelector({ selectedPreset, onPresetChange }: PlatformSel
   )
 
   return (
-    <ConfigSection title="Platform" storageKey="platform" preview={preview}>
+    <ConfigSection title="Platform" storageKey="platform" preview={preview} onExpanded={onSectionExpanded} onCollapsed={onSectionCollapsed}>
       {/* Video Thumbnails Section */}
       <div className="mb-6">
         <h4 className="text-sm font-medium text-slate-400 mb-2">Video Thumbnails</h4>

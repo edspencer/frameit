@@ -17,6 +17,8 @@ interface ControlPanelProps {
   onImageElementChange: (id: string, updates: Partial<{ url: string | undefined; opacity: number; scale: number }>) => void
   selectedGradientId: string
   onGradientChange: (id: string) => void
+  onSectionExpanded?: (sectionName: string) => void // Optional callback for section expand tracking
+  onSectionCollapsed?: (sectionName: string) => void // Optional callback for section collapse tracking
 }
 
 // Helper to get display label (uses element.name if present, otherwise capitalizes id)
@@ -35,6 +37,8 @@ export function ControlPanel({
   onImageElementChange,
   selectedGradientId,
   onGradientChange,
+  onSectionExpanded,
+  onSectionCollapsed,
 }: ControlPanelProps) {
   // Look up the selected layout
   const selectedLayout = LAYOUTS.find(l => l.id === selectedLayoutId) || LAYOUTS[0]
@@ -42,9 +46,9 @@ export function ControlPanel({
   return (
     <div className="space-y-6">
       {/* Global controls (always shown, layout-agnostic) */}
-      <PlatformSelector selectedPreset={selectedPreset} onPresetChange={onPresetChange} />
-      <LayoutSelector selectedLayoutId={selectedLayoutId} onLayoutChange={onLayoutChange} />
-      <GradientSelector selectedGradientId={selectedGradientId} onGradientChange={onGradientChange} />
+      <PlatformSelector selectedPreset={selectedPreset} onPresetChange={onPresetChange} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
+      <LayoutSelector selectedLayoutId={selectedLayoutId} onLayoutChange={onLayoutChange} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
+      <GradientSelector selectedGradientId={selectedGradientId} onGradientChange={onGradientChange} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
 
       {/* Dynamic controls from layout.elements (only text and image, not overlays) */}
       {selectedLayout.elements.map(layoutElement => {
@@ -78,6 +82,8 @@ export function ControlPanel({
               onFontFamilyPreview={onTextElementPreview ? (fontFamily) => onTextElementPreview(layoutElement.id, { fontFamily }) : undefined}
               onColorPreview={onTextElementPreview ? (color) => onTextElementPreview(layoutElement.id, { color }) : undefined}
               onFontWeightPreview={onTextElementPreview ? (fontWeight) => onTextElementPreview(layoutElement.id, { fontWeight }) : undefined}
+              onSectionExpanded={onSectionExpanded}
+              onSectionCollapsed={onSectionCollapsed}
             />
           )
         }
@@ -95,6 +101,8 @@ export function ControlPanel({
               onUrlChange={(url) => onImageElementChange(layoutElement.id, { url })}
               onOpacityChange={(opacity) => onImageElementChange(layoutElement.id, { opacity })}
               onScaleChange={(scale) => onImageElementChange(layoutElement.id, { scale })}
+              onSectionExpanded={onSectionExpanded}
+              onSectionCollapsed={onSectionCollapsed}
             />
           )
         }

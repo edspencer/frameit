@@ -11,6 +11,8 @@ interface ImageElementControlProps {
   onUrlChange: (url: string | undefined) => void
   onOpacityChange: (opacity: number) => void
   onScaleChange: (scale: number) => void
+  onSectionExpanded?: (sectionName: string) => void
+  onSectionCollapsed?: (sectionName: string) => void
 }
 
 export function ImageElementControl({
@@ -22,6 +24,8 @@ export function ImageElementControl({
   onUrlChange,
   onOpacityChange,
   onScaleChange,
+  onSectionExpanded,
+  onSectionCollapsed,
 }: ImageElementControlProps) {
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -68,7 +72,7 @@ export function ImageElementControl({
   )
 
   return (
-    <ConfigSection title={label} storageKey={`image-${id}`} preview={preview}>
+    <ConfigSection title={label} storageKey={`image-${id}`} preview={preview} onExpanded={onSectionExpanded} onCollapsed={onSectionCollapsed}>
       <div className="space-y-3">
         {url ? (
           <div className="flex items-center gap-3 p-3 bg-slate-900 rounded border border-slate-600">
