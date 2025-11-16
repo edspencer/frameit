@@ -5,6 +5,7 @@
  * Usage: tsx test-og-examples.ts
  */
 
+/* eslint-disable no-undef */
 import { writeFile, mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { createServer } from 'node:http'
@@ -23,7 +24,7 @@ interface OGExample {
   filename: string
   originalUrl: string
   pageUrl: string
-  params: Record<string, any> | { usePost: true; body: any }
+  params: Record<string, string> | { usePost: true; body: Record<string, unknown> }
   notes?: string
 }
 
@@ -149,7 +150,7 @@ async function processExample(example: OGExample): Promise<void> {
  * Create a simple HTTP server to serve static assets from public/
  * This allows the API to fetch images via HTTP (works in both dev and production)
  */
-function createStaticServer(): Promise<any> {
+function createStaticServer(): Promise<ReturnType<typeof createServer>> {
   return new Promise((resolve, reject) => {
     const server = createServer(async (req, res) => {
       if (!req.url) {
@@ -172,7 +173,7 @@ function createStaticServer(): Promise<any> {
 
         res.writeHead(200, { 'Content-Type': contentType })
         res.end(data)
-      } catch (error) {
+      } catch {
         res.writeHead(404)
         res.end('Not found')
       }

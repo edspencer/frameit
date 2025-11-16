@@ -13,7 +13,7 @@ export function LayoutPreview({ layout, className = '' }: LayoutPreviewProps) {
   // Track element bounds for auto-positioning (similar to layout-renderer.ts)
   const elementBounds = new Map<string, { y: number; height: number }>()
 
-  const renderElement = (element: LayoutElement, index: number, sortedElements: LayoutElement[]) => {
+  const renderElement = (element: LayoutElement, index: number) => {
 
     // Parse position values (support %, px, or auto)
     const parsePosition = (value: string | number): string | number => {
@@ -171,7 +171,7 @@ export function LayoutPreview({ layout, className = '' }: LayoutPreviewProps) {
     <div className={`relative w-full ${className}`} style={{ paddingBottom: '56.25%' /* 16:9 ratio */ }}>
       <div className="absolute inset-0 bg-slate-700/50 rounded border border-slate-600/50 overflow-hidden">
         {/* Render elements sorted by zIndex */}
-        {sortedElements.map((element, index) => renderElement(element, index, sortedElements))}
+        {sortedElements.map((element, index) => renderElement(element, index))}
       </div>
     </div>
   )
