@@ -1,6 +1,6 @@
 import type React from 'react'
 
-export interface ThumbnailPreset {
+export interface ThumbnailPlatform {
   name: string
   width: number
   height: number
@@ -10,7 +10,7 @@ export interface ThumbnailPreset {
 }
 
 // UI-specific preset with icon component
-export interface ThumbnailPresetWithIcon extends ThumbnailPreset {
+export interface ThumbnailPlatformWithIcon extends ThumbnailPlatform {
   icon: React.ComponentType<{ size?: number; className?: string }>
 }
 
@@ -25,6 +25,7 @@ export interface BackgroundSolidColor {
   name: string
   id: string
   color: string  // Hex color code (e.g., "#000000")
+  family?: string  // Color family name (e.g., "Red", "Blue")
 }
 
 export interface BackgroundImage {
@@ -39,7 +40,7 @@ export interface ThumbnailConfig {
   titleColor: string
   subtitleColor: string
   logoOpacity: number
-  preset: ThumbnailPreset
+  preset: ThumbnailPlatform
   gradientId: string
   backgroundImageUrl?: string
   backgroundImageScale?: number
@@ -95,6 +96,11 @@ export interface LayoutStyling {
   textAlign?: 'left' | 'center' | 'right'
   textTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize'
   color?: string          // Default color (hex)
+  backgroundColor?: string // Background color (hex) for text box
+  borderColor?: string    // Border color (hex)
+  borderWidth?: string    // Border width (e.g., "3px", "0.5%")
+  borderRadius?: string   // Border radius (e.g., "50px", "5%")
+  padding?: string        // Padding (e.g., "2% 8%" for vertical horizontal)
 }
 
 export interface OverlaySizing {
@@ -146,11 +152,12 @@ export interface LayoutDefinition {
   id: string
   name: string
   description: string
+  enabled?: boolean       // Optional - defaults to true, if false layout is hidden in UI only (API ignores this)
   elements: LayoutElement[]
 }
 
 export interface ThumbnailConfigNew {
-  preset: ThumbnailPresetWithIcon
+  preset: ThumbnailPlatformWithIcon
   layoutId: string        // References LayoutDefinition.id
   background: BackgroundConfig
   textElements: TextElement[]

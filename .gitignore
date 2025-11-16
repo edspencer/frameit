@@ -32,3 +32,6 @@ dist-ssr
 tasks
 .vercel
 img/
+
+
+layouts
