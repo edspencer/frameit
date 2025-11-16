@@ -32,11 +32,11 @@ interface OGExample {
  * Convert pre-transformed config to API request format
  * Only transformation needed: convert relative image URLs to HTTP URLs for API
  */
-function convertToAPIFormat(config: typeof EXAMPLE_THUMBNAIL_CONFIGS[number]): OGExample {
+function convertToAPIFormat(config: typeof ALL_EXAMPLE_CONFIGS[number]): OGExample {
   // Convert relative image URLs (/frameit-logo.png) to HTTP URLs for API server
-  const imageElements = config.imageElements.map(img => ({
+  const imageElements = config.imageElements.map((img: { url?: string; id: string; opacity?: number; scale?: number }) => ({
     ...img,
-    url: img.url.startsWith('/') ? `${STATIC_HOST}${img.url}` : img.url
+    url: img.url?.startsWith('/') ? `${STATIC_HOST}${img.url}` : img.url
   }))
 
   // Convert background format: API uses 'color' instead of 'solidColor'
@@ -97,7 +97,7 @@ async function generateOurVersion(example: OGExample): Promise<void> {
     // Check if this uses POST mode (advanced parameters)
     if ('usePost' in example.params && example.params.usePost) {
       // POST mode with JSON body
-      console.log(`   Using POST mode with advanced parameters`)
+      console.log('   Using POST mode with advanced parameters')
       response = await fetch(`${HOST}/api/generate`, {
         method: 'POST',
         headers: {
@@ -131,8 +131,8 @@ async function processExample(example: OGExample): Promise<void> {
 
   // Extract layoutId from either GET or POST params
   const layoutId = 'usePost' in example.params && example.params.usePost
-    ? example.params.body.layoutId
-    : example.params.layoutId
+    ? (example.params.body.layoutId as string)
+    : (example.params as Record<string, string>).layoutId
   console.log(`   Layout: ${layoutId}`)
 
   if (example.notes) {
@@ -226,7 +226,7 @@ async function main() {
   console.log(`   Processed: ${successCount}/${ogExamples.length}`)
   console.log(`   Time: ${elapsed}s`)
   console.log(`   Average: ${(Number.parseFloat(elapsed) / ogExamples.length).toFixed(2)}s per example`)
-  console.log(`\n📁 Compare images:`)
+  console.log('\n📁 Compare images:')
   console.log(`   Originals: ${ORIGINAL_OUTPUT_DIR}/`)
   console.log(`   Our versions: ${API_OUTPUT_DIR}/`)
 

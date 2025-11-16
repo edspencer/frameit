@@ -33,6 +33,7 @@ export function Examples({ onSelectExample }: ExamplesProps) {
       <div className="grid grid-cols-4 gap-4 max-h-[32rem] overflow-y-auto pr-2">
         {EXAMPLES.map((example) => (
           <button
+            type="button"
             key={example.id}
             onClick={() => handleSelectExample(example)}
             className="text-left rounded-lg bg-slate-700/50 hover:bg-slate-700 border border-slate-600 hover:border-slate-500 transition-all group overflow-hidden"

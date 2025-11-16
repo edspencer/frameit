@@ -106,17 +106,21 @@ export function LayoutPreview({ layout, className = '' }: LayoutPreviewProps) {
       const x = parsePosition(element.position.x)
       const anchor = element.position.anchor || 'top-left'
 
+      // Convert to strings for CSS
+      const xStr = typeof x === 'number' ? `${x}px` : x
+      const yStr = typeof y === 'number' ? `${y}px` : y
+
       // Map anchor to CSS transform origin and positioning
       const anchorMap: Record<string, { left?: string; right?: string; top?: string; bottom?: string; transform?: string }> = {
-        'top-left': { left: x, top: y },
-        'top-center': { left: x, top: y, transform: 'translateX(-50%)' },
-        'top-right': { right: x === '0%' ? '0%' : `calc(100% - ${x})`, top: y },
-        'center-left': { left: x, top: y, transform: 'translateY(-50%)' },
-        'center': { left: x, top: y, transform: 'translate(-50%, -50%)' },
-        'center-right': { right: x === '0%' ? '0%' : `calc(100% - ${x})`, top: y, transform: 'translateY(-50%)' },
-        'bottom-left': { left: x, bottom: y === '0%' ? '0%' : `calc(100% - ${y})` },
-        'bottom-center': { left: x, bottom: y === '0%' ? '0%' : `calc(100% - ${y})`, transform: 'translateX(-50%)' },
-        'bottom-right': { right: x === '0%' ? '0%' : `calc(100% - ${x})`, bottom: y === '0%' ? '0%' : `calc(100% - ${y})` },
+        'top-left': { left: xStr, top: yStr },
+        'top-center': { left: xStr, top: yStr, transform: 'translateX(-50%)' },
+        'top-right': { right: xStr === '0%' ? '0%' : `calc(100% - ${xStr})`, top: yStr },
+        'center-left': { left: xStr, top: yStr, transform: 'translateY(-50%)' },
+        'center': { left: xStr, top: yStr, transform: 'translate(-50%, -50%)' },
+        'center-right': { right: xStr === '0%' ? '0%' : `calc(100% - ${xStr})`, top: yStr, transform: 'translateY(-50%)' },
+        'bottom-left': { left: xStr, bottom: yStr === '0%' ? '0%' : `calc(100% - ${yStr})` },
+        'bottom-center': { left: xStr, bottom: yStr === '0%' ? '0%' : `calc(100% - ${yStr})`, transform: 'translateX(-50%)' },
+        'bottom-right': { right: xStr === '0%' ? '0%' : `calc(100% - ${xStr})`, bottom: yStr === '0%' ? '0%' : `calc(100% - ${yStr})` },
       }
 
       // Store element bounds for auto-positioning of next elements
