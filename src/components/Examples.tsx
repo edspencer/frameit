@@ -33,7 +33,7 @@ export function Examples({ onSelectExample, onSectionExpanded, onSectionCollapse
       title="Example Configurations"
       storageKey="examples"
       preview={preview}
-      defaultExpanded={false}
+      defaultExpanded={true}
       onExpanded={onSectionExpanded}
       onCollapsed={onSectionCollapsed}
     >
