@@ -113,6 +113,23 @@ curl -X POST https://frameit.dev/api/generate \
   }' -o thumbnail.webp
 ```
 
+**New Layout Examples:**
+
+Statement layout for bold announcements:
+```bash
+curl "https://frameit.dev/api/generate?layout=statement&title=Bold%20Move&subtitle=Do%20it%20now&format=png" -o statement.png
+```
+
+Quote layout for testimonials:
+```bash
+curl "https://frameit.dev/api/generate?layout=quote&title=Success%20is%20not%20final&subtitle=Winston%20Churchill&format=png" -o quote.png
+```
+
+Data-focused layout for metrics:
+```bash
+curl "https://frameit.dev/api/generate?layout=data-focused&title=350%25%20Growth&subtitle=Year%20over%20year&format=png" -o metrics.png
+```
+
 ### API Parameters
 
 | Parameter | Type | Required | Default | Description |
@@ -125,15 +142,22 @@ curl -X POST https://frameit.dev/api/generate \
 | `background` | string | No | `default` | Gradient ID: `default`, `dark-blue`, `sunset`, `ocean-blue`, `forest-green`, `purple-pink`, etc. |
 | `logoOpacity` | number | No | `0.3` | Logo opacity (0-1) |
 | `logoUrl` | string | No | - | Custom logo image URL |
-| `layoutId` | string | No | `default` | Layout style: `default`, `classic`, `minimal`, `photo-essay` |
+| `layoutId` | string | No | `default` | Layout style: `default`, `classic`, `minimal`, `photo-essay`, `statement`, `sidebar`, `headline`, `accent-split`, `quote`, `data-focused`, `feature-card` |
 | `format` | string | No | `webp` | Output format: `png` or `webp` |
 
 ### Layout Styles
 
 - **default**: Logo top-right, text left-aligned at 30% height
-- **classic**: Traditional top-left layout
-- **minimal**: Centered, minimalist aesthetic
-- **photo-essay**: Prominent centered text
+- **classic**: Traditional top-left layout with subtitle
+- **minimal**: Large title with minimal subtitle
+- **photo-essay**: Keynote-style layout with artist and photo title
+- **statement**: Large centered title for bold announcements
+- **sidebar**: Logo-prominent design with left branding
+- **headline**: Blog post headline style with byline
+- **accent-split**: Two-tone accent design for branded content
+- **quote**: Centered testimonial and featured text layout
+- **data-focused**: Statistics and metrics presentation
+- **feature-card**: Product feature highlight cards
 
 ### Available Gradients
 

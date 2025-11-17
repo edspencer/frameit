@@ -1,17 +1,17 @@
-import { PRESETS_WITH_ICONS } from '../lib/ui-constants'
-import type { ThumbnailPresetWithIcon } from '../lib/types'
+import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
+import type { ThumbnailPlatformWithIcon } from '../lib/types'
 import { ConfigSection } from './ConfigSection'
 
 interface PlatformSelectorProps {
-  selectedPreset: ThumbnailPresetWithIcon
-  onPresetChange: (preset: ThumbnailPresetWithIcon) => void
+  selectedPreset: ThumbnailPlatformWithIcon
+  onPresetChange: (preset: ThumbnailPlatformWithIcon) => void
   onSectionExpanded?: (sectionName: string) => void
   onSectionCollapsed?: (sectionName: string) => void
 }
 
 export function PlatformSelector({ selectedPreset, onPresetChange, onSectionExpanded, onSectionCollapsed }: PlatformSelectorProps) {
-  const videoPresets = PRESETS_WITH_ICONS.filter(p => p.category === 'video')
-  const socialPresets = PRESETS_WITH_ICONS.filter(p => p.category === 'social')
+  const videoPresets = PLATFORMS_WITH_ICONS.filter(p => p.category === 'video')
+  const socialPresets = PLATFORMS_WITH_ICONS.filter(p => p.category === 'social')
 
   const SelectedIcon = selectedPreset.icon
   const preview = (

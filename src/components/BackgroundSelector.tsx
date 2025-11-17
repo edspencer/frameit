@@ -108,27 +108,43 @@ export function BackgroundSelector({ background, onBackgroundChange }: Backgroun
         </div>
       )}
 
-      {/* Colors Grid */}
+      {/* Colors Grid - Tailwind style: 4 shades per row with family labels */}
       {activeTab === 'colors' && (
-        <div className="grid grid-cols-4 gap-2">
-          {SOLID_COLORS.map((solidColor) => (
-            <button
-              type="button"
-              key={solidColor.id}
-              onClick={() => onBackgroundChange({ type: 'solid', solidColor: solidColor.color })}
-              className={`relative h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                background.type === 'solid' && background.solidColor === solidColor.color
-                  ? 'border-blue-500 ring-2 ring-blue-400'
-                  : 'border-slate-600 hover:border-slate-500'
-              }`}
-              title={solidColor.name}
-              style={{ backgroundColor: solidColor.color }}
-            >
-              <span className="text-xs text-white font-medium px-2 py-1 bg-black/50 rounded">
-                {solidColor.name}
-              </span>
-            </button>
-          ))}
+        <div className="max-h-80 overflow-y-auto pr-2 space-y-2">
+          {(() => {
+            // Group colors by family
+            const colorsByFamily = SOLID_COLORS.reduce((acc, color) => {
+              const family = color.family || 'Other'
+              if (!acc[family]) acc[family] = []
+              acc[family].push(color)
+              return acc
+            }, {} as Record<string, typeof SOLID_COLORS>)
+
+            return Object.entries(colorsByFamily).map(([family, colors]) => (
+              <div key={family} className="flex items-center gap-3">
+                <span className="text-slate-400 text-sm font-medium w-16 text-right flex-shrink-0">
+                  {family}
+                </span>
+                <div className="flex gap-2 flex-1">
+                  {colors.map((solidColor) => (
+                    <button
+                      type="button"
+                      key={solidColor.id}
+                      onClick={() => onBackgroundChange({ type: 'solid', solidColor: solidColor.color })}
+                      className={`flex-1 h-8 rounded-md transition-all ${
+                        background.type === 'solid' && background.solidColor === solidColor.color
+                          ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-800 scale-105'
+                          : 'hover:scale-105'
+                      }`}
+                      title={solidColor.name}
+                      style={{ backgroundColor: solidColor.color }}
+                      aria-label={solidColor.name}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))
+          })()}
         </div>
       )}
     </ConfigSection>

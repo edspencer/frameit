@@ -11,7 +11,7 @@ import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas'
 import { join } from 'node:path'
 import { LayoutRenderer } from '../src/lib/layout-renderer.js'
 import { validateParams, generateCacheKey, type ImageGenerationParams } from '../src/lib/api-types.js'
-import { PRESETS, GRADIENTS, LAYOUTS } from '../src/lib/constants.js'
+import { PLATFORMS, GRADIENTS, LAYOUTS } from '../src/lib/constants.js'
 import type { ThumbnailConfigNew, BackgroundConfig, TextElement, ImageElement } from '../src/lib/types.js'
 
 // Register fonts for server-side rendering
@@ -63,86 +63,58 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const cacheKey = generateCacheKey(config)
 
     // Find the preset (already validated)
-    const preset = PRESETS.find((p) => p.name.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-') === config.layout)
+    const preset = PLATFORMS.find((p) => p.name.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-') === config.layout)
     if (!preset) {
       throw new Error(`Preset not found for layout: ${config.layout}`)
     }
 
-    // Determine layoutId from params or use 'default'
-    const layoutId = (params as ImageGenerationParams).layoutId || 'default'
-    const layout = LAYOUTS.find(l => l.id === layoutId)
+    // Find the layout (already validated)
+    const layout = LAYOUTS.find(l => l.id === config.layoutId)
     if (!layout) {
-      throw new Error(`Layout not found: ${layoutId}. Valid options: ${LAYOUTS.map(l => l.id).join(', ')}`)
+      throw new Error(`Layout not found: ${config.layoutId}. Valid options: ${LAYOUTS.map(l => l.id).join(', ')}`)
     }
 
-    // Build background config
+    // Build background config from validated params
     let backgroundConfig: BackgroundConfig
 
-    if (config.background.startsWith('http://') || config.background.startsWith('https://')) {
-      // External image URL - not supported in background config, will be ignored
-      // Use default gradient instead
+    if (config.background.type === 'solid') {
+      // Solid color background - use the hex color directly
+      backgroundConfig = {
+        type: 'solid',
+        solidColor: config.background.color, // Already validated and normalized with #
+      }
+    } else if (config.background.type === 'gradient') {
+      // Gradient background - validate gradient ID exists
+      const gradient = GRADIENTS.find(g => g.id === config.background.gradientId)
+      if (!gradient) {
+        throw new Error(`Gradient not found: ${config.background.gradientId}. Valid options: ${GRADIENTS.map(g => g.id).join(', ')}`)
+      }
       backgroundConfig = {
         type: 'gradient',
-        gradientId: GRADIENTS[0].id
+        gradientId: gradient.id
       }
     } else {
-      // Try to match gradient by ID or name
-      const gradient = GRADIENTS.find(g =>
-        g.id === config.background ||
-        g.name.toLowerCase() === config.background.toLowerCase()
-      )
-
-      if (gradient) {
-        backgroundConfig = {
-          type: 'gradient',
-          gradientId: gradient.id
-        }
-      } else {
-        // Default gradient
-        backgroundConfig = {
-          type: 'gradient',
-          gradientId: GRADIENTS[0].id
-        }
-      }
+      // None
+      backgroundConfig = { type: 'none' }
     }
 
-    // Build text elements from params
-    const textElements: TextElement[] = []
+    // Map text elements from config (already validated)
+    const textElements: TextElement[] = config.textElements.map(el => ({
+      id: el.id,
+      content: el.content,
+      color: el.color,
+      fontSize: el.fontSize,
+      fontFamily: el.fontFamily,
+      fontWeight: el.fontWeight,
+    }))
 
-    // Title is always required
-    textElements.push({
-      id: 'title',
-      content: config.title,
-      color: `#${config.titleColor}`,
-    })
-
-    // Subtitle is optional
-    if (config.subtitle) {
-      textElements.push({
-        id: 'subtitle',
-        content: config.subtitle,
-        color: `#${config.subtitleColor}`,
-      })
-    }
-
-    // Build image elements
-    const imageElements: ImageElement[] = []
-
-    // Logo element with opacity
-    const typedParams = params as ImageGenerationParams
-    if (typedParams.logoUrl) {
-      imageElements.push({
-        id: 'logo',
-        url: typedParams.logoUrl,
-        opacity: config.logoOpacity,
-      })
-    } else {
-      // Default logo with opacity (will use default logo if layout has one)
-      imageElements.push({
-        id: 'logo',
-        opacity: config.logoOpacity,
-      })
-    }
+    // Map image elements from config (already validated)
+    const imageElements: ImageElement[] = config.imageElements.map(el => ({
+      id: el.id,
+      url: el.url,
+      opacity: el.opacity,
+      scale: el.scale,
+    }))
 
     // Build ThumbnailConfigNew
     const thumbnailConfig: ThumbnailConfigNew = {

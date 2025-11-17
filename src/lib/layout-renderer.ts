@@ -144,37 +144,79 @@ export class LayoutRenderer {
     const textHeight = lines.length * lineHeightPx
     const textWidth = maxWidth
 
-    // Apply anchor offset BEFORE drawing
+    // Parse padding (default: no padding)
+    const padding = this.parsePadding(element.styling?.padding, canvas.width)
+
+    // Calculate box dimensions (text + padding)
+    const boxWidth = textWidth + padding.left + padding.right
+    const boxHeight = textHeight + padding.top + padding.bottom
+
+    // Apply anchor offset BEFORE drawing (using box dimensions)
     const anchorPoint = this.applyAnchorOffset(
       x,
       y,
-      textWidth,
-      textHeight,
+      boxWidth,
+      boxHeight,
       element.position.anchor || 'top-left'
     )
 
-    // Draw each line
-    let currentY = anchorPoint.y
+    // Draw background and border if specified
+    if (element.styling?.backgroundColor || element.styling?.borderColor) {
+      // Calculate border radius (default to pill shape if not specified)
+      let borderRadius = 0
+      if (element.styling?.borderRadius) {
+        // If borderRadius is specified, resolve it relative to box height for better proportions
+        borderRadius = this.resolveSize(element.styling.borderRadius, boxHeight)
+      } else if (element.styling?.backgroundColor) {
+        // Default to pill shape (semicircular ends)
+        borderRadius = boxHeight / 2
+      }
+
+      // Draw background
+      if (element.styling.backgroundColor) {
+        ctx.fillStyle = element.styling.backgroundColor
+        this.drawRoundedRect(ctx, anchorPoint.x, anchorPoint.y, boxWidth, boxHeight, borderRadius, true, false)
+      }
+
+      // Draw border
+      if (element.styling.borderColor && element.styling.borderWidth) {
+        const borderWidth = this.resolveSize(element.styling.borderWidth, canvas.width)
+        ctx.strokeStyle = element.styling.borderColor
+        ctx.lineWidth = borderWidth
+        this.drawRoundedRect(ctx, anchorPoint.x, anchorPoint.y, boxWidth, boxHeight, borderRadius, false, true)
+      }
+    }
+
+    // Reset fillStyle for text
+    ctx.fillStyle = color
+    ctx.textAlign = textAlign
+
+    // Calculate vertical centering for text within box
+    const textBlockHeight = lines.length * lineHeightPx
+    const verticalOffset = (boxHeight - textBlockHeight) / 2
+
+    // Draw each line (vertically centered with horizontal padding)
+    let currentY = anchorPoint.y + verticalOffset
     for (const line of lines) {
-      let drawX = anchorPoint.x
+      let drawX = anchorPoint.x + padding.left
 
       // Adjust X position based on text alignment
       if (textAlign === 'center') {
-        drawX = anchorPoint.x + textWidth / 2
+        drawX = anchorPoint.x + padding.left + textWidth / 2
       } else if (textAlign === 'right') {
-        drawX = anchorPoint.x + textWidth
+        drawX = anchorPoint.x + padding.left + textWidth
       }
 
       ctx.fillText(line, drawX, currentY)
       currentY += lineHeightPx
     }
 
-    // Store bounds for auto-positioning
+    // Store bounds for auto-positioning (using box dimensions)
     this.lastElementBounds.set(element.id, {
       x: anchorPoint.x,
       y: anchorPoint.y,
-      width: textWidth,
-      height: textHeight,
+      width: boxWidth,
+      height: boxHeight,
     })
   }
 
@@ -215,17 +257,10 @@ export class LayoutRenderer {
       element.position.anchor || 'top-left'
     )
 
-    // Disable image smoothing for crisp rendering
-    const imageSmoothingEnabled = ctx.imageSmoothingEnabled
-    ctx.imageSmoothingEnabled = false
-
-    // Apply opacity and draw
+    // Apply opacity and draw (keep image smoothing enabled for proper alpha blending)
     ctx.globalAlpha = imageEl.opacity ?? 1.0
     ctx.drawImage(img, anchorPoint.x, anchorPoint.y, width, height)
     ctx.globalAlpha = 1.0
-
-    // Restore image smoothing setting
-    ctx.imageSmoothingEnabled = imageSmoothingEnabled
 
     // Store bounds for auto-positioning
     this.lastElementBounds.set(element.id, {
@@ -398,5 +433,71 @@ export class LayoutRenderer {
     }
 
     return { x: offsetX, y: offsetY }
+  }
+
+  /**
+   * Parses padding string into individual values
+   * Supports: "10px", "5% 10%", "2% 5% 3% 8%"
+   */
+  private parsePadding(
+    padding: string | undefined,
+    referenceDimension: number
+  ): { top: number; right: number; bottom: number; left: number } {
+    if (!padding) {
+      return { top: 0, right: 0, bottom: 0, left: 0 }
+    }
+
+    const parts = padding.trim().split(/\s+/)
+    const values = parts.map(p => this.resolveSize(p, referenceDimension))
+
+    if (values.length === 1) {
+      // All sides same
+      return { top: values[0], right: values[0], bottom: values[0], left: values[0] }
+    } else if (values.length === 2) {
+      // Vertical horizontal
+      return { top: values[0], right: values[1], bottom: values[0], left: values[1] }
+    } else if (values.length === 4) {
+      // Top right bottom left
+      return { top: values[0], right: values[1], bottom: values[2], left: values[3] }
+    }
+
+    return { top: 0, right: 0, bottom: 0, left: 0 }
+  }
+
+  /**
+   * Draws a rectangle with optional rounded corners
+   */
+  private drawRoundedRect(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radius: number,
+    fill: boolean,
+    stroke: boolean
+  ): void {
+    if (radius === 0) {
+      // Simple rectangle
+      if (fill) ctx.fillRect(x, y, width, height)
+      if (stroke) ctx.strokeRect(x, y, width, height)
+      return
+    }
+
+    // Rounded rectangle using path
+    ctx.beginPath()
+    ctx.moveTo(x + radius, y)
+    ctx.lineTo(x + width - radius, y)
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius)
+    ctx.lineTo(x + width, y + height - radius)
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height)
+    ctx.lineTo(x + radius, y + height)
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius)
+    ctx.lineTo(x, y + radius)
+    ctx.quadraticCurveTo(x, y, x + radius, y)
+    ctx.closePath()
+
+    if (fill) ctx.fill()
+    if (stroke) ctx.stroke()
   }
 }

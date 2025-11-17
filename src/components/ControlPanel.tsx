@@ -4,11 +4,11 @@ import { BackgroundSelector } from './BackgroundSelector'
 import { TextElementControl } from './TextElementControl'
 import { ImageElementControl } from './ImageElementControl'
 import { LAYOUTS } from '../lib/constants'
-import type { ThumbnailPresetWithIcon, ThumbnailConfigNew, BackgroundConfig } from '../lib/types'
+import type { ThumbnailPlatformWithIcon, ThumbnailConfigNew, BackgroundConfig } from '../lib/types'
 
 interface ControlPanelProps {
-  selectedPreset: ThumbnailPresetWithIcon
-  onPresetChange: (preset: ThumbnailPresetWithIcon) => void
+  selectedPreset: ThumbnailPlatformWithIcon
+  onPresetChange: (preset: ThumbnailPlatformWithIcon) => void
   selectedLayoutId: string
   onLayoutChange: (layoutId: string) => void
   config: ThumbnailConfigNew // Full config instead of individual props

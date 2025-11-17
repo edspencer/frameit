@@ -3,8 +3,8 @@
  * This file is only imported by UI components, NOT by the API
  */
 
-import type { ThumbnailPresetWithIcon } from './types'
-import { PRESETS } from './constants'
+import type { ThumbnailPlatformWithIcon } from './types'
+import { PLATFORMS } from './constants'
 import {
   YouTubeIcon,
   LinkedInIcon,
@@ -19,15 +19,15 @@ import {
  * Presets with icon components for UI use
  * Extends the base PRESETS from constants.ts
  */
-export const PRESETS_WITH_ICONS: ThumbnailPresetWithIcon[] = [
-  { ...PRESETS[0], icon: YouTubeIcon }, // YouTube
-  { ...PRESETS[1], icon: YouTubeIcon }, // YouTube Shorts
-  { ...PRESETS[2], icon: LinkedInIcon }, // LinkedIn Video
-  { ...PRESETS[3], icon: XIcon }, // Twitter/X
-  { ...PRESETS[4], icon: TikTokIcon }, // TikTok
-  { ...PRESETS[5], icon: InstagramIcon }, // Instagram Reels
-  { ...PRESETS[6], icon: OpenGraphIcon }, // Open Graph
-  { ...PRESETS[7], icon: InstagramIcon }, // Instagram Feed
-  { ...PRESETS[8], icon: XIcon }, // X Header
-  { ...PRESETS[9], icon: PinterestIcon }, // Pinterest Pin
+export const PLATFORMS_WITH_ICONS: ThumbnailPlatformWithIcon[] = [
+  { ...PLATFORMS[0], icon: YouTubeIcon }, // YouTube
+  { ...PLATFORMS[1], icon: YouTubeIcon }, // YouTube Shorts
+  { ...PLATFORMS[2], icon: LinkedInIcon }, // LinkedIn Video
+  { ...PLATFORMS[3], icon: XIcon }, // Twitter/X
+  { ...PLATFORMS[4], icon: TikTokIcon }, // TikTok
+  { ...PLATFORMS[5], icon: InstagramIcon }, // Instagram Reels
+  { ...PLATFORMS[6], icon: OpenGraphIcon }, // Open Graph
+  { ...PLATFORMS[7], icon: InstagramIcon }, // Instagram Feed
+  { ...PLATFORMS[8], icon: XIcon }, // X Header
+  { ...PLATFORMS[9], icon: PinterestIcon }, // Pinterest Pin
 ]

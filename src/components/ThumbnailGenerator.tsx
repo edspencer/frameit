@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
-import { PRESETS_WITH_ICONS } from '../lib/ui-constants'
+import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
 import { GRADIENTS, LAYOUTS } from '../lib/constants'
-import type { ThumbnailPresetWithIcon, ThumbnailConfigNew } from '../lib/types'
+import type { ThumbnailPlatformWithIcon, ThumbnailConfigNew } from '../lib/types'
 import { CanvasPreview } from './CanvasPreview'
 import { ControlPanel } from './ControlPanel'
 import { Tooltip } from './Tooltip'
+import { Examples } from './Examples'
 import { FeedbackWidget } from '@wishnova/react'
 import '@wishnova/react/styles'
 import {
@@ -25,6 +26,25 @@ import {
 
 const STORAGE_KEY = 'thumbnailGeneratorConfig'
 
+/**
+ * Get default URL for an image element based on its ID
+ * Uses frameit-logo.png for 'logo' elements, frameit-icon.png for others
+ */
+function getDefaultImageUrl(elementId: string): string | undefined {
+  if (elementId === 'logo') {
+    return '/frameit-logo.png'
+  }
+
+  // For other image elements (icons, etc), use the square icon
+  // This works for layout elements that want a square icon/avatar
+  if (elementId === 'icon' || elementId === 'brand-icon') {
+    return '/frameit-icon.png'
+  }
+
+  // For main-image or other elements, return undefined (user must upload)
+  return undefined
+}
+
 function loadConfigFromStorage(): ThumbnailConfigNew | null {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
@@ -35,7 +55,7 @@ function loadConfigFromStorage(): ThumbnailConfigNew | null {
     if (parsed.textElements && parsed.imageElements) {
       // Restore preset object from name
       if (parsed.presetName) {
-        const preset = PRESETS_WITH_ICONS.find(p => p.name === parsed.presetName)
+        const preset = PLATFORMS_WITH_ICONS.find(p => p.name === parsed.presetName)
         if (preset) {
           parsed.preset = preset
           return parsed as ThumbnailConfigNew
@@ -69,17 +89,21 @@ function saveConfigToStorage(config: ThumbnailConfigNew): void {
 }
 
 function getDefaultConfig(): ThumbnailConfigNew {
+  const layoutId = LAYOUTS[0].id
   return {
-    preset: PRESETS_WITH_ICONS[0],
-    layoutId: LAYOUTS[0].id,
+    preset: PLATFORMS_WITH_ICONS[0],
+    layoutId,
     background: { type: 'gradient', gradientId: GRADIENTS[0].id },
     textElements: [
       { id: 'title', content: 'This is a template', color: '#ffffff' },
       { id: 'subtitle', content: 'Change layout, upload images, and edit text with the controls on the right', color: '#ffffff' },
       { id: 'artist', content: 'Artist Name', color: '#ffffff' },
+      { id: 'cta', content: 'Get Started', color: '#ffffff' },
+      { id: 'brand', content: 'frameit.dev', color: '#ffffff' },
+      { id: 'domain', content: 'frameit.dev', color: '#ffffff' },
     ],
     imageElements: [
-      { id: 'logo', url: '/frameit-logo.png', opacity: 1.0, scale: 100 },
+      { id: 'logo', url: getDefaultImageUrl('logo'), opacity: 1.0, scale: 100 },
       { id: 'main-image', url: '/default-photo.jpg', opacity: 1.0, scale: 100 },
     ],
   }
@@ -109,7 +133,7 @@ export function ThumbnailGenerator() {
         textElements.push({ id: el.id, content: '', color: '#ffffff' })
       }
       if (el.type === 'image' && !imageElements.find(i => i.id === el.id)) {
-        imageElements.push({ id: el.id, opacity: 1.0, scale: 100 })
+        imageElements.push({ id: el.id, url: getDefaultImageUrl(el.id), opacity: 1.0, scale: 100 })
       }
     }
 
@@ -194,7 +218,7 @@ export function ThumbnailGenerator() {
     setConfig(prev => ({ ...prev, background: { ...prev.background, ...updates } }))
   }
 
-  const updatePreset = (preset: ThumbnailPresetWithIcon) => {
+  const updatePreset = (preset: ThumbnailPlatformWithIcon) => {
     // Track preset selection
     if (!isInitialMount.current) {
       trackPresetSelected({ preset_name: preset.name })
@@ -223,7 +247,7 @@ export function ThumbnailGenerator() {
           textElements.push({ id: el.id, content: '', color: '#ffffff' })
         }
         if (el.type === 'image' && !imageElements.find(i => i.id === el.id)) {
-          imageElements.push({ id: el.id, opacity: 1.0, scale: 100 })
+          imageElements.push({ id: el.id, url: getDefaultImageUrl(el.id), opacity: 1.0, scale: 100 })
         }
       }
 
@@ -305,6 +329,37 @@ export function ThumbnailGenerator() {
 
   const handleSectionCollapsed = (sectionName: string): void => {
     trackConfigSectionCollapsed({ section_name: sectionName })
+  }
+
+  // Handler for selecting an example configuration
+  const handleSelectExample = (exampleConfig: Partial<ThumbnailConfigNew>): void => {
+    setConfig(prev => {
+      const newLayoutId = exampleConfig.layoutId || prev.layoutId
+      const newLayout = LAYOUTS.find(l => l.id === newLayoutId) || LAYOUTS[0]
+
+      // Initialize text elements based on the new layout
+      const textElements = [...(exampleConfig.textElements || [])]
+      for (const el of newLayout.elements) {
+        if (el.type === 'text' && !textElements.find(t => t.id === el.id)) {
+          textElements.push({ id: el.id, content: '', color: '#ffffff' })
+        }
+      }
+
+      // Initialize image elements based on the new layout
+      const imageElements = [...(exampleConfig.imageElements || [])]
+      for (const el of newLayout.elements) {
+        if (el.type === 'image' && !imageElements.find(i => i.id === el.id)) {
+          imageElements.push({ id: el.id, opacity: 1.0, scale: 100 })
+        }
+      }
+
+      return {
+        ...prev,
+        ...exampleConfig,
+        textElements,
+        imageElements,
+      }
+    })
   }
 
   return (
@@ -397,6 +452,9 @@ export function ThumbnailGenerator() {
                   📋 Copy to Clipboard
                 </button>
               </div>
+
+              {/* Example Configurations */}
+              <Examples onSelectExample={handleSelectExample} />
             </div>
           </div>
 
