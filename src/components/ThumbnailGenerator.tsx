@@ -363,7 +363,7 @@ export function ThumbnailGenerator() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-2 md:p-6 pb-24">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -379,7 +379,7 @@ export function ThumbnailGenerator() {
         </div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Preview Section */}
           <div className="lg:col-span-2 flex flex-col lg:sticky lg:top-6 lg:self-start">
             {/* Canvas Preview */}
@@ -410,9 +410,9 @@ export function ThumbnailGenerator() {
             </div>
 
             {/* Info and Buttons Below Canvas */}
-            <div className="mt-6 space-y-4">
+            <div className="sm:mt-6 mt-4 flex flex-col gap-4">
               {/* Info Section */}
-              <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
+              <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 hidden sm:block">
                 <div className="flex justify-between items-start">
                   <div className="space-y-2 text-sm">
                     <p className="text-slate-300">
@@ -440,21 +440,25 @@ export function ThumbnailGenerator() {
                 <button
                   onClick={downloadThumbnail}
                   type="button"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium sm:py-3 py-1 sm:px-4 px-2 rounded-lg transition-colors"
                 >
                   ⬇️ Download PNG
                 </button>
                 <button
                   onClick={copyToClipboard}
                   type="button"
-                  className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                  className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-medium sm:py-3 py-1 sm:px-4 px-2 rounded-lg transition-colors"
                 >
                   📋 Copy to Clipboard
                 </button>
               </div>
 
               {/* Example Configurations */}
-              <Examples onSelectExample={handleSelectExample} />
+              <Examples
+                onSelectExample={handleSelectExample}
+                onSectionExpanded={handleSectionExpanded}
+                onSectionCollapsed={handleSectionCollapsed}
+              />
             </div>
           </div>
 
@@ -483,6 +487,7 @@ export function ThumbnailGenerator() {
           position="bottom-right"
           collectSentiment={true}
           offerEmailFollowup={true}
+          triggerLabel="Bug? Feedback?"
         />
 
         {/* Footer */}

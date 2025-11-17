@@ -37,7 +37,7 @@ export function ConfigSection({ title, children, defaultExpanded = true, storage
   }
 
   return (
-    <div className="bg-slate-800 rounded-lg p-4 border border-slate-700">
+    <div className="bg-slate-800 rounded-lg p-2 md:p-4 border border-slate-700">
       <button
         type="button"
         onClick={handleToggle}
