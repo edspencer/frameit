@@ -18,7 +18,7 @@ export function LayoutSelector({ selectedLayoutId, onLayoutChange, onSectionExpa
 
   return (
     <ConfigSection title="Layout" storageKey="layout" preview={preview} onExpanded={onSectionExpanded} onCollapsed={onSectionCollapsed}>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
         {enabledLayouts.map((layout) => {
           const isSelected = layout.id === selectedLayoutId
           return (
@@ -28,7 +28,7 @@ export function LayoutSelector({ selectedLayoutId, onLayoutChange, onSectionExpa
               onClick={() => onLayoutChange(layout.id)}
               title={layout.description}
               className={`
-                p-3 rounded-lg border transition-all text-left group relative
+                p-1 sm:p-3 rounded-lg border transition-all text-left group relative
                 ${
                   isSelected
                     ? 'border-blue-500 bg-blue-500/10 text-white'

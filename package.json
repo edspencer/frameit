@@ -16,7 +16,7 @@
     "@headlessui/react": "^2.2.9",
     "@napi-rs/canvas": "^0.1.81",
     "@vercel/analytics": "^1.5.0",
-    "@wishnova/react": "^0.7.0",
+    "@wishnova/react": "^0.7.2",
     "lucide-react": "^0.553.0",
     "posthog-js": "^1.292.0",
     "react": "^19.0.0-rc.1",

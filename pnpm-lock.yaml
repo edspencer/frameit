@@ -18,8 +18,8 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0(next@16.0.1(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)
       '@wishnova/react':
-        specifier: ^0.7.0
-        version: 0.7.0(next@16.0.1(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))
+        specifier: ^0.7.2
+        version: 0.7.2(next@16.0.1(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))
       lucide-react:
         specifier: ^0.553.0
         version: 0.553.0(react@19.2.0)
@@ -1225,8 +1225,8 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
-  '@wishnova/react@0.7.0':
-    resolution: {integrity: sha512-rvInLKIBYir70aj/TA7zSyC1NtP1yoli07wcAE0fWg+OWhZ4A1oCjisr5hIWw9uM2BTvlno4mzj21doaMvO+QA==}
+  '@wishnova/react@0.7.2':
+    resolution: {integrity: sha512-B1cdmpE4cuay31I8uTq1Xue8RAxFuC21d+1/zSK29MQSslkzbW+biA/91irPJz3Msqy8/GwLkDnBrnnmWou0qA==}
 
   abbrev@3.0.1:
     resolution: {integrity: sha512-AO2ac6pjRB3SJmGJo+v5/aK6Omggp6fsLrs6wN9bd35ulu4cCwaAU9+7ZhXjeqHVkaHThLuzH0nZr0YpCDhygg==}
@@ -3905,7 +3905,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@wishnova/react@0.7.0(next@16.0.1(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))':
+  '@wishnova/react@0.7.2(next@16.0.1(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))':
     dependencies:
       next-themes: 0.2.1(next@16.0.1(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1

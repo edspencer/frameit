@@ -44,7 +44,7 @@ export function ControlPanel({
   const selectedLayout = LAYOUTS.find(l => l.id === selectedLayoutId) || LAYOUTS[0]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2 sm:space-y-6">
       {/* Global controls (always shown, layout-agnostic) */}
       <PlatformSelector selectedPreset={selectedPreset} onPresetChange={onPresetChange} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
       <LayoutSelector selectedLayoutId={selectedLayoutId} onLayoutChange={onLayoutChange} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
