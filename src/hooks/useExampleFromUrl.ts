@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { EXAMPLE_THUMBNAIL_CONFIGS } from '../lib/example-configs'
 import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
-import type { ThumbnailConfigNew } from '../lib/types'
+import type { ThumbnailConfig } from '../lib/types'
 
 /**
  * Extract example ID from URL path
@@ -13,9 +13,9 @@ function getExampleIdFromUrl(): string | null {
 }
 
 /**
- * Find example config by ID and transform it to ThumbnailConfigNew format
+ * Find example config by ID and transform it to ThumbnailConfig format
  */
-function getExampleConfig(exampleId: string): Partial<ThumbnailConfigNew> | null {
+function getExampleConfig(exampleId: string): Partial<ThumbnailConfig> | null {
   const example = EXAMPLE_THUMBNAIL_CONFIGS.find(e => e.id === exampleId)
   if (!example) return null
 
@@ -36,7 +36,7 @@ function getExampleConfig(exampleId: string): Partial<ThumbnailConfigNew> | null
  * @param onSelectExample - Callback to apply the example configuration
  */
 export function useExampleFromUrl(
-  onSelectExample: (config: Partial<ThumbnailConfigNew>) => void
+  onSelectExample: (config: Partial<ThumbnailConfig>) => void
 ): void {
   const hasLoadedRef = useRef(false)
 

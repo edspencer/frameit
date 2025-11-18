@@ -4,14 +4,14 @@ import { BackgroundSelector } from './BackgroundSelector'
 import { TextElementControl } from './TextElementControl'
 import { ImageElementControl } from './ImageElementControl'
 import { LAYOUTS } from '../lib/constants'
-import type { ThumbnailPlatformWithIcon, ThumbnailConfigNew, BackgroundConfig } from '../lib/types'
+import type { ThumbnailPlatformWithIcon, ThumbnailConfig, BackgroundConfig } from '../lib/types'
 
 interface ControlPanelProps {
   selectedPreset: ThumbnailPlatformWithIcon
   onPresetChange: (preset: ThumbnailPlatformWithIcon) => void
   selectedLayoutId: string
   onLayoutChange: (layoutId: string) => void
-  config: ThumbnailConfigNew // Full config instead of individual props
+  config: ThumbnailConfig // Full config instead of individual props
   onTextElementChange: (id: string, updates: Partial<{ content: string; color: string; fontSize: string; fontWeight: number; fontFamily: string }>) => void
   onTextElementPreview?: (id: string, updates: { fontFamily?: string; color?: string; fontWeight?: number }) => void // For hover preview
   onImageElementChange: (id: string, updates: Partial<{ url: string | undefined; opacity: number; scale: number }>) => void

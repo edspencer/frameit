@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
 import { GRADIENTS, LAYOUTS } from '../lib/constants'
-import type { ThumbnailPlatformWithIcon, ThumbnailConfigNew } from '../lib/types'
+import type { ThumbnailPlatformWithIcon, ThumbnailConfig } from '../lib/types'
 import { CanvasPreview } from './CanvasPreview'
 import { ControlPanel } from './ControlPanel'
 import { Tooltip } from './Tooltip'
@@ -46,7 +46,7 @@ function getDefaultImageUrl(elementId: string): string | undefined {
   return undefined
 }
 
-function loadConfigFromStorage(): ThumbnailConfigNew | null {
+function loadConfigFromStorage(): ThumbnailConfig | null {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (!stored) return null
@@ -59,7 +59,7 @@ function loadConfigFromStorage(): ThumbnailConfigNew | null {
         const preset = PLATFORMS_WITH_ICONS.find(p => p.name === parsed.presetName)
         if (preset) {
           parsed.preset = preset
-          return parsed as ThumbnailConfigNew
+          return parsed as ThumbnailConfig
         }
       }
       // If preset not found, return null to use defaults
@@ -75,7 +75,7 @@ function loadConfigFromStorage(): ThumbnailConfigNew | null {
   }
 }
 
-function saveConfigToStorage(config: ThumbnailConfigNew): void {
+function saveConfigToStorage(config: ThumbnailConfig): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       presetName: config.preset.name,
@@ -89,7 +89,7 @@ function saveConfigToStorage(config: ThumbnailConfigNew): void {
   }
 }
 
-function getDefaultConfig(): ThumbnailConfigNew {
+function getDefaultConfig(): ThumbnailConfig {
   const layoutId = LAYOUTS[0].id
   return {
     preset: PLATFORMS_WITH_ICONS[0],
@@ -121,7 +121,7 @@ export function ThumbnailGenerator() {
   }, [])
 
   const savedConfig = loadConfigFromStorage()
-  const [config, setConfig] = useState<ThumbnailConfigNew>(() => {
+  const [config, setConfig] = useState<ThumbnailConfig>(() => {
     const initialConfig = savedConfig || getDefaultConfig()
     const layout = LAYOUTS.find(l => l.id === initialConfig.layoutId) || LAYOUTS[0]
 
@@ -333,7 +333,7 @@ export function ThumbnailGenerator() {
   }
 
   // Handler for selecting an example configuration
-  const handleSelectExample = useCallback((exampleConfig: Partial<ThumbnailConfigNew>): void => {
+  const handleSelectExample = useCallback((exampleConfig: Partial<ThumbnailConfig>): void => {
     setConfig(prev => {
       const newLayoutId = exampleConfig.layoutId || prev.layoutId
       const newLayout = LAYOUTS.find(l => l.id === newLayoutId) || LAYOUTS[0]

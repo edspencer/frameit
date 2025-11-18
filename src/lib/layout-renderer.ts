@@ -4,7 +4,7 @@ import type {
   TextLayoutElement,
   ImageLayoutElement,
   OverlayLayoutElement,
-  ThumbnailConfigNew,
+  ThumbnailConfig,
   BackgroundConfig,
 } from './types.js'
 import { GRADIENTS } from './constants.js'
@@ -37,7 +37,7 @@ export class LayoutRenderer {
   public render(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
-    config: ThumbnailConfigNew,
+    config: ThumbnailConfig,
     layout: LayoutDefinition,
     loadedImages: Map<string, HTMLImageElement>
   ): void {
@@ -86,7 +86,7 @@ export class LayoutRenderer {
   private renderElement(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
-    config: ThumbnailConfigNew,
+    config: ThumbnailConfig,
     element: LayoutElement,
     loadedImages: Map<string, HTMLImageElement>
   ): void {
@@ -105,7 +105,7 @@ export class LayoutRenderer {
   private renderText(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
-    config: ThumbnailConfigNew,
+    config: ThumbnailConfig,
     element: TextLayoutElement
   ): void {
     // Find the text element by ID
@@ -226,7 +226,7 @@ export class LayoutRenderer {
   private renderImage(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
-    config: ThumbnailConfigNew,
+    config: ThumbnailConfig,
     element: ImageLayoutElement,
     loadedImages: Map<string, HTMLImageElement>
   ): void {

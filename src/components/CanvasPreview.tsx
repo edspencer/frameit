@@ -1,9 +1,9 @@
 import { useRef, useEffect, forwardRef, useImperativeHandle, useState } from 'react'
-import type { ThumbnailConfigNew, LayoutDefinition } from '../lib/types'
+import type { ThumbnailConfig, LayoutDefinition } from '../lib/types'
 import { LayoutRenderer } from '../lib/layout-renderer'
 
 interface CanvasPreviewProps {
-  config: ThumbnailConfigNew
+  config: ThumbnailConfig
   layout: LayoutDefinition
 }
 
