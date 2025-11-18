@@ -2,6 +2,7 @@ import type { ThumbnailConfigNew } from '../lib/types'
 import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
 import { EXAMPLE_THUMBNAIL_CONFIGS } from '../lib/example-configs'
 import { ConfigSection } from './ConfigSection'
+import { updateUrlForExample } from '../hooks/useExampleFromUrl'
 
 const EXAMPLES = EXAMPLE_THUMBNAIL_CONFIGS
 
@@ -24,6 +25,7 @@ export function Examples({ onSelectExample, onSectionExpanded, onSectionCollapse
     }
 
     onSelectExample(config)
+    updateUrlForExample(example.id)
   }
 
   const preview = <span className="text-xs">{EXAMPLES.length} examples available</span>

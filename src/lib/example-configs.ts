@@ -120,6 +120,9 @@ export const EXAMPLE_CONFIGS: ExampleConfig[] = [
     pageUrl: 'https://opengraphexamples.com/examples/niche-business-idea/',
     originalImageUrl: '/layouts/original/niche-business-idea.png',
     notes: 'Custom niche-business-idea layout with domain text at top-left (25%), large bold title below (auto-positioned), and decorative icon in bottom-right corner. Clean minimal design with lots of whitespace.',
+    customTextElements: [
+      { id: 'domain', content: 'BragDoc.ai', color: '#000000' },
+    ],
   },
   // {
   //   id: 'hyperbolic-statement',

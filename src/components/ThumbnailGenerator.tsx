@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
 import { GRADIENTS, LAYOUTS } from '../lib/constants'
 import type { ThumbnailPlatformWithIcon, ThumbnailConfigNew } from '../lib/types'
@@ -23,6 +23,7 @@ import {
   trackConfigSectionExpanded,
   trackConfigSectionCollapsed,
 } from '../lib/posthog'
+import { useExampleFromUrl } from '../hooks/useExampleFromUrl'
 
 const STORAGE_KEY = 'thumbnailGeneratorConfig'
 
@@ -332,7 +333,7 @@ export function ThumbnailGenerator() {
   }
 
   // Handler for selecting an example configuration
-  const handleSelectExample = (exampleConfig: Partial<ThumbnailConfigNew>): void => {
+  const handleSelectExample = useCallback((exampleConfig: Partial<ThumbnailConfigNew>): void => {
     setConfig(prev => {
       const newLayoutId = exampleConfig.layoutId || prev.layoutId
       const newLayout = LAYOUTS.find(l => l.id === newLayoutId) || LAYOUTS[0]
@@ -360,7 +361,10 @@ export function ThumbnailGenerator() {
         imageElements,
       }
     })
-  }
+  }, [])
+
+  // Load example from URL if present (e.g., /example/birthday-cake)
+  useExampleFromUrl(handleSelectExample)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-2 md:p-6 pb-24">
