@@ -168,7 +168,7 @@ export const EXAMPLE_CONFIGS: ExampleConfig[] = [
         { id: 'subtitle', content: 'bragdoc.ai reads your git commits and beautiful docs for your boss', color: '#ffffff' },
       ],
       imageElements: [
-        { id: 'icon', url: '/frameit-icon.png', opacity: 1.0, scale: 100 },
+        { id: 'main', url: '/bragdoc-icon.png', opacity: 1.0, scale: 100 },
       ],
     },
   },

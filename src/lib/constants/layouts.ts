@@ -137,7 +137,7 @@ export const LAYOUTS: LayoutDefinition[] = [
     elements: [
       // Main photo - fills entire canvas
       {
-        id: 'main-image',
+        id: 'main',
         type: 'image',
         name: 'Main Image',
         position: { x: '50%', y: '50%', anchor: 'center' },
@@ -373,7 +373,7 @@ export const LAYOUTS: LayoutDefinition[] = [
     description: 'Product feature highlight with icon and right-aligned description',
     elements: [
       {
-        id: 'main-image',
+        id: 'main',
         type: 'image',
         position: { x: '20%', y: '50%', anchor: 'center' },
         sizing: { maxWidth: '30%' },

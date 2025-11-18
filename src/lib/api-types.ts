@@ -47,7 +47,7 @@ export interface TextElementParam {
  * Image element parameter (for POST requests)
  */
 export interface ImageElementParam {
-  /** Element ID (e.g., 'logo', 'main-image') */
+  /** Element ID (e.g., 'logo', 'main') */
   id: string
   /** Optional image URL */
   url?: string

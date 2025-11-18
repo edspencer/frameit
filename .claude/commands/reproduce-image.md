@@ -111,7 +111,7 @@ Now create a brand new layout in `/Users/ed/Code/thumbnail-generator/src/lib/con
 - Image element IDs determine default assets:
   - `'logo'` → `/frameit-logo.png` (wide horizontal logo with text)
   - `'icon'` → `/frameit-icon.png` (square icon without text)
-  - `'main-image'` → no default (user must upload)
+  - `'main'` → no default (user must upload)
 - Use Inter font family for all text
 
 ### 5. Create Example Configuration
