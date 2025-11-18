@@ -6,11 +6,7 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/example/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/((?!api/)(?!assets/)(?!example/).*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ]
