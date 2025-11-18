@@ -10,7 +10,7 @@ import { writeFile, mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { createServer } from 'node:http'
 import { readFile } from 'node:fs/promises'
-import { ALL_EXAMPLE_CONFIGS } from './src/lib/example-configs.js'
+import { getAllExamples, type ExampleConfig } from './src/lib/example-configs.js'
 
 // Configuration
 const HOST = 'http://localhost:3000'  // Main app server
@@ -29,12 +29,14 @@ interface OGExample {
 }
 
 /**
- * Convert pre-transformed config to API request format
+ * Convert ExampleConfig to API request format
  * Only transformation needed: convert relative image URLs to HTTP URLs for API
  */
-function convertToAPIFormat(config: typeof ALL_EXAMPLE_CONFIGS[number]): OGExample {
+function convertToAPIFormat(example: ExampleConfig): OGExample {
+  const { config } = example
+
   // Convert relative image URLs (/frameit-logo.png) to HTTP URLs for API server
-  const imageElements = config.imageElements.map((img: { url?: string; id: string; opacity?: number; scale?: number }) => ({
+  const imageElements = config.imageElements.map(img => ({
     ...img,
     url: img.url?.startsWith('/') ? `${STATIC_HOST}${img.url}` : img.url
   }))
@@ -45,11 +47,11 @@ function convertToAPIFormat(config: typeof ALL_EXAMPLE_CONFIGS[number]): OGExamp
     : config.background
 
   return {
-    name: config.name,
-    filename: config.id,
-    originalUrl: config.originalImageUrl || '',
-    pageUrl: config.pageUrl,
-    notes: config.notes,
+    name: example.name,
+    filename: example.id,
+    originalUrl: example.originalImageUrl || '',
+    pageUrl: example.pageUrl,
+    notes: example.notes,
     params: {
       usePost: true,
       body: {
@@ -64,8 +66,8 @@ function convertToAPIFormat(config: typeof ALL_EXAMPLE_CONFIGS[number]): OGExamp
   }
 }
 
-// Convert all pre-transformed configs to API format (including disabled ones)
-const ogExamples: OGExample[] = ALL_EXAMPLE_CONFIGS.map(convertToAPIFormat)
+// Convert all example configs to API format (including disabled ones)
+const ogExamples: OGExample[] = getAllExamples().map(convertToAPIFormat)
 
 async function downloadOriginalImage(example: OGExample): Promise<void> {
   const outputPath = join(ORIGINAL_OUTPUT_DIR, `${example.filename}.jpg`)

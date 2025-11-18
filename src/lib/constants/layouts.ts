@@ -798,7 +798,7 @@ export const LAYOUTS: LayoutDefinition[] = [
     description: 'Split layout with large screenshot on left (60%) and text with centered logo on right',
     elements: [
       {
-        id: 'icon',
+        id: 'main',
         type: 'image',
         position: { x: '28%', y: '50%', anchor: 'center' },
         sizing: { maxWidth: '45%' },
