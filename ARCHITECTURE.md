@@ -84,27 +84,43 @@ wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[
 #### `lib/types.ts`
 
 ```typescript
-interface ThumbnailPreset {
+interface ThumbnailPlatform {
   name: string
   width: number
   height: number
   aspectRatio: string
   description: string
+  category: 'video' | 'social'
 }
 
-interface BackgroundImage {
-  name: string
-  url: string
-  thumbnail?: string
+interface BackgroundConfig {
+  type: 'gradient' | 'solid' | 'none'
+  gradientId?: string      // For gradient backgrounds
+  solidColor?: string      // For solid backgrounds
+}
+
+interface TextElement {
+  id: string              // "title", "subtitle", etc.
+  content: string
+  color?: string
+  fontSize?: string
+  fontFamily?: string
+  fontWeight?: number
+}
+
+interface ImageElement {
+  id: string              // "logo", "avatar", etc.
+  url?: string
+  opacity?: number        // 0-1
+  scale?: number          // 0-200
 }
 
 interface ThumbnailConfig {
-  title: string
-  subtitle: string
-  textColor: string
-  logoOpacity: number
-  preset: ThumbnailPreset
-  background: string
+  preset: ThumbnailPlatformWithIcon
+  layoutId: string        // References LayoutDefinition.id
+  background: BackgroundConfig
+  textElements: TextElement[]
+  imageElements: ImageElement[]
 }
 ```
 

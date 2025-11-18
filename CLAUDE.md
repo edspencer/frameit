@@ -407,7 +407,7 @@ Both the UI and API use the same rendering pipeline for 1:1 parity:
 
 ### API Implementation
 
-The API ([api/generate.ts](api/generate.ts)) transforms URL parameters into the same `ThumbnailConfigNew` format used by the UI, then uses `LayoutRenderer` to generate images server-side with @napi-rs/canvas.
+The API ([api/generate.ts](api/generate.ts)) transforms URL parameters into the same `ThumbnailConfig` format used by the UI, then uses `LayoutRenderer` to generate images server-side with @napi-rs/canvas.
 
 ## Future Enhancements
 

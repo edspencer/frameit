@@ -34,19 +34,6 @@ export interface BackgroundImage {
   thumbnail?: string
 }
 
-export interface ThumbnailConfig {
-  title: string
-  subtitle: string
-  titleColor: string
-  subtitleColor: string
-  logoOpacity: number
-  preset: ThumbnailPlatform
-  gradientId: string
-  backgroundImageUrl?: string
-  backgroundImageScale?: number
-  customLogo?: string
-}
-
 // ============================================================================
 // Layout System Types
 // ============================================================================
@@ -156,7 +143,7 @@ export interface LayoutDefinition {
   elements: LayoutElement[]
 }
 
-export interface ThumbnailConfigNew {
+export interface ThumbnailConfig {
   preset: ThumbnailPlatformWithIcon
   layoutId: string        // References LayoutDefinition.id
   background: BackgroundConfig

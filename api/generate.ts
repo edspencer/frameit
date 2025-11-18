@@ -12,7 +12,7 @@ import { join } from 'node:path'
 import { LayoutRenderer } from '../src/lib/layout-renderer.js'
 import { validateParams, generateCacheKey, type ImageGenerationParams } from '../src/lib/api-types.js'
 import { PLATFORMS, GRADIENTS, LAYOUTS } from '../src/lib/constants.js'
-import type { ThumbnailConfigNew, BackgroundConfig, TextElement, ImageElement } from '../src/lib/types.js'
+import type { ThumbnailConfig, BackgroundConfig, TextElement, ImageElement } from '../src/lib/types.js'
 
 // Register fonts for server-side rendering
 // This runs once when the serverless function cold-starts
@@ -116,8 +116,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       scale: el.scale,
     }))
 
-    // Build ThumbnailConfigNew
-    const thumbnailConfig: ThumbnailConfigNew = {
+    // Build ThumbnailConfig
+    const thumbnailConfig: ThumbnailConfig = {
       // @ts-expect-error - preset doesn't have icon field but UI requires it
       preset: preset,
       layoutId: layout.id,
