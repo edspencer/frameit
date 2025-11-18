@@ -150,3 +150,16 @@ export interface ThumbnailConfig {
   textElements: TextElement[]
   imageElements: ImageElement[]
 }
+
+/**
+ * Serializable thumbnail configuration that uses presetName instead of preset object.
+ * Used for examples, API requests, and localStorage - can be converted to ThumbnailConfig
+ * by looking up the preset from PLATFORMS_WITH_ICONS.
+ */
+export interface SerializableThumbnailConfig {
+  presetName: string      // References ThumbnailPlatform.name (e.g., "Open Graph")
+  layoutId: string        // References LayoutDefinition.id
+  background: BackgroundConfig
+  textElements: TextElement[]
+  imageElements: ImageElement[]
+}

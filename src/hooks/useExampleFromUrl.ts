@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { EXAMPLE_THUMBNAIL_CONFIGS } from '../lib/example-configs'
+import { getExampleById } from '../lib/example-configs'
 import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
 import type { ThumbnailConfig } from '../lib/types'
 
@@ -16,17 +16,17 @@ function getExampleIdFromUrl(): string | null {
  * Find example config by ID and transform it to ThumbnailConfig format
  */
 function getExampleConfig(exampleId: string): Partial<ThumbnailConfig> | null {
-  const example = EXAMPLE_THUMBNAIL_CONFIGS.find(e => e.id === exampleId)
+  const example = getExampleById(exampleId)
   if (!example) return null
 
-  const preset = PLATFORMS_WITH_ICONS.find(p => p.name === example.presetName) || PLATFORMS_WITH_ICONS[0]
+  const preset = PLATFORMS_WITH_ICONS.find(p => p.name === example.config.presetName) || PLATFORMS_WITH_ICONS[0]
 
   return {
     preset,
-    layoutId: example.layoutId,
-    background: example.background,
-    textElements: example.textElements,
-    imageElements: example.imageElements,
+    layoutId: example.config.layoutId,
+    background: example.config.background,
+    textElements: example.config.textElements,
+    imageElements: example.config.imageElements,
   }
 }
 

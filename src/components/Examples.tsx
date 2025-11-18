@@ -1,10 +1,10 @@
 import type { ThumbnailConfig } from '../lib/types'
 import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
-import { EXAMPLE_THUMBNAIL_CONFIGS } from '../lib/example-configs'
+import { getEnabledExamples, type ExampleConfig } from '../lib/example-configs'
 import { ConfigSection } from './ConfigSection'
 import { updateUrlForExample } from '../hooks/useExampleFromUrl'
 
-const EXAMPLES = EXAMPLE_THUMBNAIL_CONFIGS
+const EXAMPLES = getEnabledExamples()
 
 interface ExamplesProps {
   onSelectExample: (config: Partial<ThumbnailConfig>) => void
@@ -13,15 +13,15 @@ interface ExamplesProps {
 }
 
 export function Examples({ onSelectExample, onSectionExpanded, onSectionCollapsed }: ExamplesProps) {
-  const handleSelectExample = (example: typeof EXAMPLES[number]) => {
-    const preset = PLATFORMS_WITH_ICONS.find(p => p.name === example.presetName) || PLATFORMS_WITH_ICONS[0]
+  const handleSelectExample = (example: ExampleConfig) => {
+    const preset = PLATFORMS_WITH_ICONS.find(p => p.name === example.config.presetName) || PLATFORMS_WITH_ICONS[0]
 
     const config: Partial<ThumbnailConfig> = {
       preset,
-      layoutId: example.layoutId,
-      background: example.background,
-      textElements: example.textElements,
-      imageElements: example.imageElements,
+      layoutId: example.config.layoutId,
+      background: example.config.background,
+      textElements: example.config.textElements,
+      imageElements: example.config.imageElements,
     }
 
     onSelectExample(config)
