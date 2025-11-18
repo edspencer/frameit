@@ -14,6 +14,7 @@ import { getAllExamples, type ExampleConfig } from './src/lib/example-configs.js
 
 // Configuration
 const HOST = 'http://localhost:3000'  // Main app server
+// const HOST = 'https://frameit.dev'  // prod
 const STATIC_SERVER_PORT = 3001        // Static file server for test assets
 const STATIC_HOST = `http://localhost:${STATIC_SERVER_PORT}`
 const API_OUTPUT_DIR = './layouts/api'

@@ -42,7 +42,7 @@ function getDefaultImageUrl(elementId: string): string | undefined {
     return '/frameit-icon.png'
   }
 
-  // For main-image or other elements, return undefined (user must upload)
+  // For `main` or other elements, return undefined (user must upload)
   return undefined
 }
 
@@ -105,7 +105,7 @@ function getDefaultConfig(): ThumbnailConfig {
     ],
     imageElements: [
       { id: 'logo', url: getDefaultImageUrl('logo'), opacity: 1.0, scale: 100 },
-      { id: 'main-image', url: '/default-photo.jpg', opacity: 1.0, scale: 100 },
+      { id: 'main', url: '/default-photo.jpg', opacity: 1.0, scale: 100 },
     ],
   }
 }
