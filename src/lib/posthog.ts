@@ -166,13 +166,6 @@ export function initializePostHog(): void {
   })
 
   isInitialized = true
-  console.log('PostHog initialized successfully.')
-  console.log('PostHog config:', posthog.config)
-  console.log('PostHog API host:', posthog.config?.api_host)
-
-  // Expose globally for debugging
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(window as any).__posthog = posthog
 }
 
 /**
@@ -185,14 +178,9 @@ function captureEvent(eventName: string, properties: EventProperties): void {
     console.warn('PostHog not initialized. Event will not be captured.')
     return
   }
-  console.log('Capturing event:', eventName, properties)
-  console.log('PostHog __loaded:', posthog.__loaded)
-  console.log('PostHog disabled:', posthog.config?.disable_persistence)
-  console.log('PostHog opt_out:', posthog.has_opted_out_capturing?.())
   posthog.capture(eventName, properties as Record<string, unknown>, {
     send_instantly: true,
   })
-  console.log('Captured event:', eventName, properties)
 }
 
 /**
