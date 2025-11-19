@@ -154,11 +154,9 @@ export function initializePostHog(): void {
     api_host: apiHost || 'https://us.posthog.com',
     person_profiles: 'identified_only',
     autocapture: false,
-    disable_persistence: true, // No cookies or localStorage
-    persistence: 'memory',
-    capture_pageview: true,
+    persistence: 'memory', // No cookies or localStorage - memory only
+    capture_pageview: false, // We handle this manually
     capture_pageleave: true,
-    respect_dnt: true,
     loaded: (ph) => {
       // Disable session recording
       ph.set_config({ disable_session_recording: true })
@@ -168,21 +166,21 @@ export function initializePostHog(): void {
   })
 
   isInitialized = true
-  console.log('PostHog initialized successfully.')
 }
 
 /**
  * Capture a PostHog event
  * Silently fails if PostHog is not initialized
+ * Uses send_instantly to ensure events are sent immediately since we use memory persistence
  */
 function captureEvent(eventName: string, properties: EventProperties): void {
   if (!isInitialized) {
     console.warn('PostHog not initialized. Event will not be captured.')
     return
   }
-  console.log('Capturing event:', eventName, properties)
-  posthog.capture(eventName, properties as Record<string, unknown>)
-  console.log('Captured event:', eventName, properties)
+  posthog.capture(eventName, properties as Record<string, unknown>, {
+    send_instantly: true,
+  })
 }
 
 /**
