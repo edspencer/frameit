@@ -119,13 +119,16 @@ let isInitialized = false
  * - Disables session recording and surveys
  */
 export function initializePostHog(): void {
+  console.log('Initializing PostHog...')
   // Guard: Skip if already initialized
   if (isInitialized) {
+    console.log('PostHog already initialized. Skipping initialization.')
     return
   }
 
   // Skip in development mode to avoid polluting analytics
   if (import.meta.env.MODE === 'development') {
+    console.log('PostHog disabled in development mode. Skipping initialization.')
     return
   }
 
@@ -156,6 +159,7 @@ export function initializePostHog(): void {
   })
 
   isInitialized = true
+  console.log('PostHog initialized successfully.')
 }
 
 /**
