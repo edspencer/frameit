@@ -158,7 +158,6 @@ export function initializePostHog(): void {
     persistence: 'memory',
     capture_pageview: true,
     capture_pageleave: true,
-    respect_dnt: true,
     loaded: (ph) => {
       // Disable session recording
       ph.set_config({ disable_session_recording: true })
@@ -169,6 +168,12 @@ export function initializePostHog(): void {
 
   isInitialized = true
   console.log('PostHog initialized successfully.')
+  console.log('PostHog config:', posthog.config)
+  console.log('PostHog API host:', posthog.config?.api_host)
+
+  // Expose globally for debugging
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(window as any).__posthog = posthog
 }
 
 /**
@@ -182,6 +187,9 @@ function captureEvent(eventName: string, properties: EventProperties): void {
     return
   }
   console.log('Capturing event:', eventName, properties)
+  console.log('PostHog __loaded:', posthog.__loaded)
+  console.log('PostHog disabled:', posthog.config?.disable_persistence)
+  console.log('PostHog opt_out:', posthog.has_opted_out_capturing?.())
   posthog.capture(eventName, properties as Record<string, unknown>, {
     send_instantly: true,
   })
