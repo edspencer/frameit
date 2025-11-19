@@ -106,6 +106,9 @@ type EventProperties =
   | ConfigSectionExpandedProps
   | ConfigSectionCollapsedProps
 
+// Track initialization state
+let isInitialized = false
+
 /**
  * Initialize PostHog with privacy-first configuration
  * - Skips initialization in development mode
@@ -117,7 +120,7 @@ type EventProperties =
  */
 export function initializePostHog(): void {
   // Guard: Skip if already initialized
-  if (typeof window !== 'undefined' && window.posthog) {
+  if (isInitialized) {
     return
   }
 
@@ -132,6 +135,7 @@ export function initializePostHog(): void {
 
   // Skip if API key is not provided
   if (!apiKey) {
+    console.warn('PostHog API key not provided. Analytics will not be initialized.')
     return
   }
 
@@ -150,6 +154,8 @@ export function initializePostHog(): void {
       ph.set_config({ disable_surveys: true })
     },
   })
+
+  isInitialized = true
 }
 
 /**
@@ -157,7 +163,7 @@ export function initializePostHog(): void {
  * Silently fails if PostHog is not initialized
  */
 function captureEvent(eventName: string, properties: EventProperties): void {
-  if (typeof window === 'undefined' || !window.posthog) {
+  if (!isInitialized) {
     return
   }
   posthog.capture(eventName, properties as Record<string, unknown>)
