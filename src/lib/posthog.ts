@@ -154,9 +154,8 @@ export function initializePostHog(): void {
     api_host: apiHost || 'https://us.posthog.com',
     person_profiles: 'identified_only',
     autocapture: false,
-    disable_persistence: true, // No cookies or localStorage
-    persistence: 'memory',
-    capture_pageview: true,
+    persistence: 'memory', // No cookies or localStorage - memory only
+    capture_pageview: false, // We handle this manually
     capture_pageleave: true,
     loaded: (ph) => {
       // Disable session recording
