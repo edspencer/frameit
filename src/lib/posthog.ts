@@ -168,8 +168,10 @@ export function initializePostHog(): void {
  */
 function captureEvent(eventName: string, properties: EventProperties): void {
   if (!isInitialized) {
+    console.warn('PostHog not initialized. Event will not be captured.')
     return
   }
+  console.log('Capturing event:', eventName, properties)
   posthog.capture(eventName, properties as Record<string, unknown>)
 }
 
