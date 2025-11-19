@@ -174,6 +174,7 @@ export function initializePostHog(): void {
 /**
  * Capture a PostHog event
  * Silently fails if PostHog is not initialized
+ * Uses send_instantly to ensure events are sent immediately since we use memory persistence
  */
 function captureEvent(eventName: string, properties: EventProperties): void {
   if (!isInitialized) {
@@ -181,7 +182,9 @@ function captureEvent(eventName: string, properties: EventProperties): void {
     return
   }
   console.log('Capturing event:', eventName, properties)
-  posthog.capture(eventName, properties as Record<string, unknown>)
+  posthog.capture(eventName, properties as Record<string, unknown>, {
+    send_instantly: true,
+  })
   console.log('Captured event:', eventName, properties)
 }
 
