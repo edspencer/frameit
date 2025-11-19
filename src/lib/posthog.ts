@@ -66,6 +66,12 @@ export interface BackgroundImageUploadedProps {}
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface LogoUploadedProps {}
 
+export interface ExampleSelectedProps {
+  example_id: string
+  example_name: string
+  layout_id: string
+}
+
 /**
  * Engagement event interfaces
  * Events that represent user interaction patterns
@@ -101,6 +107,7 @@ type EventProperties =
   | ImageScaleChangedProps
   | BackgroundImageUploadedProps
   | LogoUploadedProps
+  | ExampleSelectedProps
   | PageViewedProps
   | SessionStartedProps
   | ConfigSectionExpandedProps
@@ -147,8 +154,10 @@ export function initializePostHog(): void {
     api_host: apiHost || 'https://us.posthog.com',
     person_profiles: 'identified_only',
     autocapture: false,
-    capture_pageview: true,
+    disable_persistence: true, // No cookies or localStorage
     persistence: 'memory',
+    capture_pageview: true,
+    capture_pageleave: true,
     respect_dnt: true,
     loaded: (ph) => {
       // Disable session recording
@@ -173,6 +182,7 @@ function captureEvent(eventName: string, properties: EventProperties): void {
   }
   console.log('Capturing event:', eventName, properties)
   posthog.capture(eventName, properties as Record<string, unknown>)
+  console.log('Captured event:', eventName, properties)
 }
 
 /**
@@ -235,6 +245,10 @@ export function trackBackgroundImageUploaded(
 
 export function trackLogoUploaded(props: LogoUploadedProps): void {
   captureEvent('logo_uploaded', props)
+}
+
+export function trackExampleSelected(props: ExampleSelectedProps): void {
+  captureEvent('example_selected', props)
 }
 
 /**

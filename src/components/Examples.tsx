@@ -3,6 +3,7 @@ import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
 import { getEnabledExamples, type ExampleConfig } from '../lib/example-configs'
 import { ConfigSection } from './ConfigSection'
 import { updateUrlForExample } from '../hooks/useExampleFromUrl'
+import { trackExampleSelected } from '../lib/posthog'
 
 const EXAMPLES = getEnabledExamples()
 
@@ -23,6 +24,12 @@ export function Examples({ onSelectExample, onSectionExpanded, onSectionCollapse
       textElements: example.config.textElements,
       imageElements: example.config.imageElements,
     }
+
+    trackExampleSelected({
+      example_id: example.id,
+      example_name: example.name,
+      layout_id: example.config.layoutId,
+    })
 
     onSelectExample(config)
     updateUrlForExample(example.id)
