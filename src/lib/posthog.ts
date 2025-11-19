@@ -66,6 +66,12 @@ export interface BackgroundImageUploadedProps {}
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface LogoUploadedProps {}
 
+export interface ExampleSelectedProps {
+  example_id: string
+  example_name: string
+  layout_id: string
+}
+
 /**
  * Engagement event interfaces
  * Events that represent user interaction patterns
@@ -101,10 +107,14 @@ type EventProperties =
   | ImageScaleChangedProps
   | BackgroundImageUploadedProps
   | LogoUploadedProps
+  | ExampleSelectedProps
   | PageViewedProps
   | SessionStartedProps
   | ConfigSectionExpandedProps
   | ConfigSectionCollapsedProps
+
+// Track initialization state
+let isInitialized = false
 
 /**
  * Initialize PostHog with privacy-first configuration
@@ -116,13 +126,16 @@ type EventProperties =
  * - Disables session recording and surveys
  */
 export function initializePostHog(): void {
+  console.log('Initializing PostHog...')
   // Guard: Skip if already initialized
-  if (typeof window !== 'undefined' && window.posthog) {
+  if (isInitialized) {
+    console.log('PostHog already initialized. Skipping initialization.')
     return
   }
 
   // Skip in development mode to avoid polluting analytics
   if (import.meta.env.MODE === 'development') {
+    console.log('PostHog disabled in development mode. Skipping initialization.')
     return
   }
 
@@ -132,6 +145,7 @@ export function initializePostHog(): void {
 
   // Skip if API key is not provided
   if (!apiKey) {
+    console.warn('PostHog API key not provided. Analytics will not be initialized.')
     return
   }
 
@@ -140,8 +154,10 @@ export function initializePostHog(): void {
     api_host: apiHost || 'https://us.posthog.com',
     person_profiles: 'identified_only',
     autocapture: false,
-    capture_pageview: true,
+    disable_persistence: true, // No cookies or localStorage
     persistence: 'memory',
+    capture_pageview: true,
+    capture_pageleave: true,
     respect_dnt: true,
     loaded: (ph) => {
       // Disable session recording
@@ -150,6 +166,9 @@ export function initializePostHog(): void {
       ph.set_config({ disable_surveys: true })
     },
   })
+
+  isInitialized = true
+  console.log('PostHog initialized successfully.')
 }
 
 /**
@@ -157,10 +176,13 @@ export function initializePostHog(): void {
  * Silently fails if PostHog is not initialized
  */
 function captureEvent(eventName: string, properties: EventProperties): void {
-  if (typeof window === 'undefined' || !window.posthog) {
+  if (!isInitialized) {
+    console.warn('PostHog not initialized. Event will not be captured.')
     return
   }
+  console.log('Capturing event:', eventName, properties)
   posthog.capture(eventName, properties as Record<string, unknown>)
+  console.log('Captured event:', eventName, properties)
 }
 
 /**
@@ -223,6 +245,10 @@ export function trackBackgroundImageUploaded(
 
 export function trackLogoUploaded(props: LogoUploadedProps): void {
   captureEvent('logo_uploaded', props)
+}
+
+export function trackExampleSelected(props: ExampleSelectedProps): void {
+  captureEvent('example_selected', props)
 }
 
 /**
