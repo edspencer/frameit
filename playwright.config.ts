@@ -21,7 +21,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
-  workers: process.env.CI ? 8 : 24,
+  workers: process.env.CI ? 4 : 24,
 
   // Reporter configuration
   reporter: [
