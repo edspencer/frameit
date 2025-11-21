@@ -35,3 +35,7 @@ img/
 
 
 layouts
+
+# Playwright test artifacts
+test-results/
+.playwright/

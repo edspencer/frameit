@@ -139,7 +139,7 @@ curl "https://frameit.dev/api/generate?layout=data-focused&title=350%25%20Growth
 | `subtitle` | string | No | `""` | Subheading text (max 300 chars) |
 | `titleColor` | string | No | `ffffff` | Title color as hex without # |
 | `subtitleColor` | string | No | `cccccc` | Subtitle color as hex without # |
-| `background` | string | No | `default` | Gradient ID: `default`, `dark-blue`, `sunset`, `ocean-blue`, `forest-green`, `purple-pink`, etc. |
+| `background` | string | No | `default` | Gradient ID: `default`, `dark-blue`, `sunset`, `ocean`, `forest-green`, `purple`, etc. |
 | `logoOpacity` | number | No | `0.3` | Logo opacity (0-1) |
 | `logoUrl` | string | No | - | Custom logo image URL |
 | `layoutId` | string | No | `default` | Layout style: `default`, `classic`, `minimal`, `photo-essay`, `statement`, `sidebar`, `headline`, `accent-split`, `quote`, `data-focused`, `feature-card` |
@@ -161,7 +161,7 @@ curl "https://frameit.dev/api/generate?layout=data-focused&title=350%25%20Growth
 
 ### Available Gradients
 
-`default`, `dark-blue`, `purple-gradient`, `sunset`, `ocean-blue`, `teal-cyan`, `red-orange`, `purple-pink`, `yellow-orange`, `green-teal`, `indigo-purple`, `pink-red`, `forest-green`, `navy-blue`, `warm-sunset`, `cool-ocean`, `dark-slate`
+`default`, `dark-blue`, `purple-gradient`, `sunset`, `ocean`, `teal-cyan`, `red-orange`, `purple`, `yellow-orange`, `green-teal`, `indigo-purple`, `pink-red`, `forest-green`, `navy-blue`, `warm-sunset`, `cool-ocean`, `dark-slate`
 
 ### Example: Build Process Integration
 
@@ -173,7 +173,7 @@ const params = new URLSearchParams({
   layout: 'open-graph',
   title: process.env.PAGE_TITLE,
   subtitle: process.env.PAGE_DESCRIPTION,
-  background: 'ocean-blue',
+  background: 'ocean',
   format: 'png'
 })
 

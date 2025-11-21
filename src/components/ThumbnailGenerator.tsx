@@ -294,10 +294,23 @@ export function ThumbnailGenerator() {
     // Track thumbnail download
     trackThumbnailDownloaded({ preset_used: config.preset.name, image_format: 'png' })
 
-    const link = document.createElement('a')
-    link.href = canvas.toDataURL('image/png')
-    link.download = `thumbnail-${config.preset.name.toLowerCase().replace(/\s+/g, '-')}.png`
-    link.click()
+    // Use toBlob for proper download event (works with test frameworks like Playwright)
+    canvas.toBlob((blob) => {
+      if (!blob) return
+
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `thumbnail-${config.preset.name.toLowerCase().replace(/\s+/g, '-')}.png`
+
+      // Append to DOM for proper download event handling in test environments
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      // Clean up the object URL after download
+      setTimeout(() => URL.revokeObjectURL(url), 100)
+    }, 'image/png')
   }
 
   const copyToClipboard = async () => {
