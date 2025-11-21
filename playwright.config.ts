@@ -21,12 +21,13 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
-  workers: process.env.CI ? 8 : 16,
+  workers: process.env.CI ? 8 : 24,
 
   // Reporter configuration
   reporter: [
     ['list'],
     ['html', { outputFolder: 'test-results' }],
+    ['junit', { outputFile: 'test-results/test-results.xml' }],
   ],
 
   // Shared settings for all projects
