@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   test,
   expect,
   setupFreshApp,
-  selectPlatformPreset,
   editTextElement,
   changeColor,
   waitForCanvasRender,
@@ -144,7 +144,6 @@ test.describe('Accessibility', () => {
     await setupFreshApp(page)
 
     // Check for semantic elements
-    const main = page.locator('main, [role="main"]')
     const buttons = page.locator('button')
     const inputs = page.locator('input[type="text"], textarea')
 

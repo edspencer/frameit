@@ -161,10 +161,9 @@ test.describe('Background Selection', () => {
 
       // Canvas should be visible with background
       const canvas = page.locator('canvas').first()
-      const isVisible = await canvas.isVisible().catch(() => false)
 
       // Canvas should exist and be rendered
-      expect(canvas).toBeDefined()
+      expect(await canvas.isVisible().catch(() => false)).toBe(true)
     } catch {
       expect(true).toBe(true)
     }

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { test as base, expect } from '@playwright/test'
 import {
   setupFreshApp,

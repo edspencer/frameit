@@ -115,9 +115,6 @@ test.describe('Platform Selection', () => {
   }) => {
     await setupFreshApp(page)
 
-    // Get YouTube button
-    const youtubeButton = page.locator('button:has-text("YouTube")').first()
-
     // Click YouTube to select it
     await selectPlatformPreset(page, 'YouTube')
 

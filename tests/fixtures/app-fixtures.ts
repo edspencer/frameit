@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { test as base, expect, type Page } from '@playwright/test'
 
 /**
@@ -142,7 +143,7 @@ async function getCanvasContext(
         height: canvas.height,
         data: Array.from(imageData.data), // Convert to array for serialization
       }
-    } catch (error) {
+    } catch {
       // ImageData may not be accessible in headless mode or due to CORS
       return {
         width: canvas.width,
@@ -493,9 +494,9 @@ const test = base.extend({
    * Page fixture with added convenience methods
    * Standard Playwright page object with fixtures attached
    */
-  page: async ({ page }, use) => {
+  page: async ({ page: playwrightPage }, use) => {
     // Could add page setup/teardown here if needed
-    await use(page)
+    await use(playwrightPage)
   },
 })
 

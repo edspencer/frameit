@@ -1,9 +1,9 @@
+/* eslint-disable no-undef */
 import {
   test,
   expect,
   setupFreshApp,
   selectLayout,
-  selectPlatformPreset,
   getLocalStorageConfig,
   waitForCanvasRender,
 } from '../fixtures/app-fixtures'
@@ -49,12 +49,6 @@ test.describe('Image Uploads', () => {
 
       if ((await fileInputs.count()) > 0) {
         const firstFileInput = fileInputs.first()
-
-        // Create a simple test image (small PNG)
-        const testImageData = Buffer.from(
-          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-          'base64'
-        )
 
         // File upload typically requires data URL or actual file
         // For now, just verify the input is accessible
@@ -307,7 +301,6 @@ test.describe('Image Uploads', () => {
 
           // Get image URL before preset change
           let config = await getLocalStorageConfig(page)
-          const imageUrlBefore = config?.imageElements?.[0]?.url
 
           // Switch preset
           await selectPlatformPreset(page, 'Instagram Feed')
@@ -341,10 +334,9 @@ test.describe('Image Uploads', () => {
 
           // Get image before layout change
           let config = await getLocalStorageConfig(page)
-          const imageUrlBefore = config?.imageElements?.[0]?.url
 
           // Switch layout
-          await selectLayout(page, 'classic')
+          await selectLayout(page, 'sidebar')
 
           // Verify image persists if layout has image elements
           config = await getLocalStorageConfig(page)

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   test,
   expect,
@@ -9,7 +10,6 @@ import {
   selectBackground,
   changeOpacity,
   getLocalStorageConfig,
-  setLocalStorageConfig,
   clearLocalStorage,
   waitForCanvasRender,
 } from '../fixtures/app-fixtures'
@@ -232,7 +232,6 @@ test.describe('localStorage Persistence', () => {
 
     // Set opacity
     await changeOpacity(page, 0.7)
-    const configBefore = await getLocalStorageConfig(page)
 
     // Reload page
     await page.reload({ waitUntil: 'networkidle' })
@@ -382,7 +381,7 @@ test.describe('localStorage Persistence', () => {
     // Verify page loads without errors (canvas renders)
     try {
       await waitForCanvasRender(page, 5000)
-    } catch (e) {
+    } catch {
       // If canvas doesn't render due to error, that's a failure
       throw new Error('App failed to handle corrupted localStorage gracefully')
     }
@@ -499,7 +498,6 @@ test.describe('localStorage Persistence', () => {
 
     // Get initial config
     let config = await getLocalStorageConfig(page)
-    const initialImageElements = config?.imageElements
 
     // Make various changes
     await selectLayout(page, 'default')

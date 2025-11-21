@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { defineConfig, devices } from '@playwright/test'
 
 /**
@@ -44,11 +45,12 @@ export default defineConfig({
     acceptDownloads: true,
   },
 
-  // Web Server configuration (optional - can run dev server separately)
+  // Web Server configuration - always reuse existing server if available
+  // CI workflow starts the server manually before tests
   webServer: {
     command: 'pnpm dev',
     url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
   },
 
   // Projects (browsers)

@@ -174,9 +174,7 @@ test.describe('Clipboard Operations', () => {
     await setupFreshApp(page)
 
     // Set up dialog handler to capture any error messages
-    let dialogHandled = false
     page.on('dialog', async (dialog) => {
-      dialogHandled = true
       // Could be either success or error message
       await dialog.accept()
     })

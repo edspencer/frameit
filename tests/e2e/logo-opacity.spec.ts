@@ -116,7 +116,6 @@ test.describe('Logo Opacity', () => {
 
       // Get opacity value before preset change
       let config = await getLocalStorageConfig(page)
-      const opacityBefore = config?.imageElements?.[0]?.opacity
 
       // Switch preset
       await selectPlatformPreset(page, 'Instagram Feed')
@@ -140,10 +139,9 @@ test.describe('Logo Opacity', () => {
 
       // Get opacity before layout change
       let config = await getLocalStorageConfig(page)
-      const opacityBefore = config?.imageElements?.[0]?.opacity
 
       // Switch layout
-      await selectLayout(page, 'classic')
+      await selectLayout(page, 'sidebar')
 
       // Verify opacity persists
       config = await getLocalStorageConfig(page)

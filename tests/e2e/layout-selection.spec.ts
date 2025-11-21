@@ -31,12 +31,6 @@ test.describe('Layout Selection', () => {
   test('should display all available layout styles', async ({ page }) => {
     await setupFreshApp(page)
 
-    // Try to find layout selection buttons - they should exist somewhere in the UI
-    // Look for buttons that might contain layout names or descriptions
-    const defaultLayout = page.locator('button').filter({ hasText: 'default' })
-    const minimalLayout = page.locator('button').filter({ hasText: 'Minimal' })
-    const classicLayout = page.locator('button').filter({ hasText: 'Classic' })
-
     // At minimum, we should find some layout controls
     const layoutButtons = page.locator('button[data-testid*="layout"]')
     const count = await layoutButtons.count()
@@ -48,9 +42,6 @@ test.describe('Layout Selection', () => {
 
   test('should update canvas when switching layouts', async ({ page }) => {
     await setupFreshApp(page)
-
-    // Get initial canvas dimensions
-    const initialDimensions = await getCanvasDimensions(page)
 
     // Select a layout (try 'default' or 'minimal' if available)
     try {
@@ -140,13 +131,13 @@ test.describe('Layout Selection', () => {
     // This could be buttons, a dropdown, or other UI elements
     const page_content = await page.content()
 
-    // Check if layout-related text appears in the page
-    // This is flexible as implementation might vary
-    const hasLayoutUI =
+    // Check if layout-related text appears in the page - assertion below
+    expect(
       page_content.includes('layout') ||
       page_content.includes('Layout') ||
       page_content.includes('style') ||
       page_content.includes('Style')
+    ).toBe(true)
 
     // Page should load successfully at minimum
     expect(page).not.toBeNull()
@@ -166,7 +157,6 @@ test.describe('Layout Selection', () => {
 
       // Get initial config
       let config = await getLocalStorageConfig(page)
-      const initialTextElements = config?.textElements
 
       // Switch to another layout
       await selectLayout(page, 'minimal')
