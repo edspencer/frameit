@@ -1,0 +1,60 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+type Guide = CollectionEntry<'guides'>
+
+const guides = (await getCollection('guides'))
+  .sort((a: Guide, b: Guide) => (a.data.order ?? 99) - (b.data.order ?? 99))
+---
+
+<BaseLayout
+  title="OG Image Guides - FrameIt"
+  description="Learn how to create effective Open Graph images with our comprehensive guides covering design, technical specs, automation, and best practices."
+>
+  <main class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold text-white mb-4">OG Image Guides</h1>
+    <p class="text-gray-400 text-lg mb-12">
+      Everything you need to know about creating effective Open Graph images
+      for social media engagement.
+    </p>
+
+    <div class="space-y-6">
+      {guides.map((guide: Guide) => (
+        <a
+          href={`/guides/${guide.slug}`}
+          class="block p-6 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+        >
+          <h2 class="text-xl font-semibold text-white mb-2">
+            {guide.data.title}
+          </h2>
+          <p class="text-gray-400">{guide.data.description}</p>
+          {guide.data.tags && (
+            <div class="flex flex-wrap gap-2 mt-4">
+              {guide.data.tags.map((tag: string) => (
+                <span class="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </a>
+      ))}
+    </div>
+
+    <div class="mt-12 p-6 bg-gradient-to-r from-blue-900 to-purple-900 rounded-lg text-center">
+      <h2 class="text-2xl font-bold text-white mb-4">
+        Ready to create your own OG images?
+      </h2>
+      <p class="text-gray-300 mb-6">
+        Try FrameIt's free thumbnail generator with 10+ platform presets.
+      </p>
+      <a
+        href="/"
+        class="inline-block bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        Try FrameIt Free
+      </a>
+    </div>
+  </main>
+</BaseLayout>

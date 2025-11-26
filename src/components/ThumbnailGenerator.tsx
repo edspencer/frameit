@@ -382,19 +382,6 @@ export function ThumbnailGenerator() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-2 md:p-6 pb-24">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="120" height="28.8" className="h-8" aria-label="FrameIt logo">
-              <title>FrameIt logo</title>
-              <rect x="0" y="0" width="48" height="48" rx="8" fill="hsl(221.2 83.2% 53.3%)"/>
-              <text x="24" y="28" fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif" fontSize="24" fontWeight="bold" fill="white" textAnchor="middle" dominantBaseline="middle">FI</text>
-              <text x="60" y="27" fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif" fontSize="36" fontWeight="600" fill="white" dominantBaseline="middle">FrameIt</text>
-            </svg>
-          </div>
-          <p className="text-slate-400">Create beautiful title images for thumbnails, OG images, and title cards</p>
-        </div>
-
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Preview Section */}

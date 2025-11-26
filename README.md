@@ -1,6 +1,6 @@
 # FrameIt
 
-A lightweight, open-source image generator for creating beautiful title images—thumbnails, OG images, and title cards—across multiple platforms. Built with React, TypeScript, and Tailwind CSS, deployable to Cloudflare Pages.
+A lightweight, open-source image generator for creating beautiful title images—thumbnails, OG images, and title cards—across multiple platforms. Built with Astro, React, TypeScript, and Tailwind CSS.
 
 ## Features
 
@@ -18,8 +18,8 @@ A lightweight, open-source image generator for creating beautiful title images�
 
 ### Prerequisites
 
-- Node.js 16+ and pnpm (version 9 recommended)
-- Cloudflare account (for deployment)
+- Node.js 18+ and pnpm (version 9 recommended)
+- Vercel account (for deployment, optional)
 
 ### Installation
 
@@ -39,7 +39,7 @@ pnpm install
 pnpm dev
 ```
 
-The application will open at `http://localhost:5173`
+The application will open at `http://localhost:4321`
 
 ### Building
 
@@ -56,36 +56,26 @@ pnpm preview
 ```
 frameit/
 ├── src/
-│   ├── main.tsx                 # React entry point
-│   ├── App.tsx                  # Main app component
-│   ├── index.css                # Global styles (Tailwind imports)
-│   ├── lib/
-│   │   ├── constants.ts         # PRESETS and BACKGROUND_IMAGES
-│   │   ├── types.ts             # TypeScript interfaces
-│   │   └── canvas-utils.ts      # Shared canvas drawing functions
-│   ├── components/
-│   │   ├── ThumbnailGenerator.tsx    # Main generator component
-│   │   ├── CanvasPreview.tsx         # Canvas rendering wrapper
-│   │   ├── ControlPanel.tsx          # Control UI wrapper
-│   │   ├── PlatformSelector.tsx      # Platform preset selector
-│   │   ├── HeadingContent.tsx        # Heading text and color controls
-│   │   ├── SubheadingContent.tsx     # Subheading text and color controls
-│   │   ├── BackgroundSelector.tsx    # Background gallery
-│   │   ├── ColorPicker.tsx           # Text color control
-│   │   └── OpacitySlider.tsx         # Logo opacity control
-│   └── pages/
-│       ├── Home.tsx             # Home page
-│       └── NotFound.tsx          # 404 page
-├── public/
-│   └── favicon.ico
-├── index.html                   # HTML entry point
-├── vite.config.ts              # Vite configuration
-├── tsconfig.json               # TypeScript configuration
-├── tailwind.config.ts          # Tailwind CSS configuration
-├── postcss.config.js           # PostCSS configuration
-├── package.json                # Project metadata and dependencies
-└── README.md                   # This file
+│   ├── pages/                   # Astro pages (file-based routing)
+│   │   ├── index.astro          # Homepage with ThumbnailGenerator
+│   │   └── guides/              # Guide pages
+│   ├── layouts/                 # Astro layouts
+│   │   └── BaseLayout.astro     # Shared layout with meta tags
+│   ├── content/                 # Content collections
+│   │   ├── config.ts            # Collection schema (Zod)
+│   │   └── guides/              # Markdown guide files
+│   ├── components/              # React + Astro components
+│   ├── lib/                     # Shared utilities
+│   └── index.css                # Global styles (Tailwind)
+├── api/
+│   └── generate.ts              # Serverless image generation API
+├── public/                      # Static assets
+├── astro.config.ts              # Astro configuration
+├── tailwind.config.ts           # Tailwind CSS configuration
+└── package.json                 # Project metadata
 ```
+
+See [CLAUDE.md](./CLAUDE.md) for detailed project structure documentation.
 
 ## Architecture
 
@@ -93,17 +83,23 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed technical documentation.
 
 ### Tech Stack
 
-- **Framework**: React 19 (React Server Components compatible)
-- **Build Tool**: Vite 5
+- **Framework**: Astro 5 with React islands (React 19)
 - **Language**: TypeScript 5 (strict mode)
 - **Styling**: Tailwind CSS 3
-- **Deployment**: Cloudflare Pages
-- **Future Backend**: Cloudflare Workers (for API endpoints)
+- **Content**: Astro Content Collections with Zod schema
+- **Deployment**: Vercel (with Serverless Functions)
+- **Canvas**: HTML5 Canvas API + @napi-rs/canvas (server-side)
+
+## Features
+
+- **Programmatic API** (`/api/generate`): Generate images via REST API
+- **OG Image Guides**: Learn best practices at `/guides`
+- **10+ Platform Presets**: YouTube, LinkedIn, Twitter/X, TikTok, and more
+- **Custom Backgrounds**: Choose from gradient backgrounds or upload custom images
+- **Real-time Preview**: Live canvas preview as you customize
 
 ## Future Features
 
-- **API Endpoint** (`/api/generate`): Generate images programmatically via API
-- **Custom Backgrounds**: Upload your own background images
 - **Template System**: Create and save custom image templates
 - **Batch Generation**: Generate multiple images at once
 - **Animation Support**: Create animated GIF/MP4 videos
@@ -111,54 +107,57 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed technical documentation.
 
 ## Deployment
 
-### Cloudflare Pages (Recommended)
+### Vercel (Recommended)
 
-The easiest way to deploy FrameIt is to connect your GitHub repository to Cloudflare Pages for automatic deployments.
+FrameIt is deployed to Vercel with automatic deployments via the `@astrojs/vercel` adapter.
 
 **Git-based Deployment:**
 1. Push your code to GitHub
-2. Go to [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages**
-3. Click **"Create Application"** → **"Pages"** → **"Connect to Git"**
-4. Select your repository
-5. Configure build settings:
+2. Go to [Vercel Dashboard](https://vercel.com/new)
+3. Import your GitHub repository
+4. Vercel auto-detects Astro and configures build settings:
    - **Build command**: `pnpm build`
-   - **Build output directory**: `dist`
-   - **Deploy command**: Leave blank (Cloudflare automatically deploys the build output)
-6. Click **"Save and Deploy"**
+   - **Output directory**: `dist`
+5. Click **"Deploy"**
 
 FrameIt will now deploy automatically on every push to your main branch.
 
-**Direct Upload (One-time):**
+**Manual Deployment:**
 ```bash
 # Build the project
 pnpm build
 
-# Install Wrangler CLI (if not already installed)
-pnpm add -g wrangler
+# Install Vercel CLI (if not already installed)
+pnpm add -g vercel
 
-# Deploy the dist/ folder
-wrangler pages deploy dist/
+# Deploy
+vercel
 ```
 
 ### Custom Domain
 
 To use a custom domain (like `frameit.dev`):
-1. In your Cloudflare Pages project settings
-2. Go to **Custom domains**
+1. In your Vercel project settings
+2. Go to **Domains**
 3. Add your domain
-4. Update your domain's DNS if needed (Cloudflare will provide instructions)
+4. Update your domain's DNS as instructed
 
 ## API Documentation
 
-### Planned Endpoints
-
-#### Generate Image
+### Generate Image Endpoint
 
 ```
-GET /api/generate?title=...&subtitle=...&preset=youtube&background=dark-blue&titleColor=%23ffffff&subtitleColor=%23ffffff
+GET /api/generate?layout=youtube&title=Hello%20World&subtitle=My%20Subtitle&format=png
 ```
 
-Returns a PNG image with the specified configuration. See [ARCHITECTURE.md](./ARCHITECTURE.md) for complete API documentation.
+Returns a PNG or WebP image with the specified configuration.
+
+**Example:**
+```bash
+curl "https://frameit.dev/api/generate?layout=open-graph&title=My%20Title&format=png" -o og-image.png
+```
+
+See [CLAUDE.md](./CLAUDE.md) for complete API documentation including all parameters and layout options.
 
 ## Contributing
 

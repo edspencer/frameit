@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test'
  */
 test.describe('Smoke Tests', () => {
   test('can load the app', async ({ page }) => {
-    await page.goto('http://localhost:5173')
+    await page.goto('/')  // Uses baseURL from config
     // Just verify the page loaded - we'll add proper assertions in Phase 3
     expect(page).toBeDefined()
   })

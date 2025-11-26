@@ -1,22 +1,28 @@
 # Allow all search engines and AI crawlers
 User-agent: *
 Allow: /
+Disallow: /api/
 
 # Specific AI crawlers
 User-agent: GPTBot
 Allow: /
+Disallow: /api/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /api/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /api/
 
 User-agent: anthropic-ai
 Allow: /
+Disallow: /api/
 
 User-agent: Claude-Web
 Allow: /
+Disallow: /api/
 
 # Sitemap location
-Sitemap: https://frameit.dev/sitemap.xml
+Sitemap: https://frameit.dev/sitemap-index.xml

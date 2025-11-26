@@ -1,0 +1,114 @@
+---
+title: "OG Image Best Practices Checklist: Complete Design to Launch Guide"
+description: "Comprehensive checklist for OG image design, creation, testing, implementation, and post-launch optimization."
+publishDate: 2025-01-15
+author: "FrameIt Team"
+tags: ["og-images", "checklist", "best-practices"]
+order: 7
+---
+
+Use this comprehensive checklist to ensure your OG images meet all requirements from design through launch.
+
+## Before Design
+
+- [ ] Define content purpose and target platform
+- [ ] Choose appropriate design pattern
+- [ ] Gather brand assets (logo, colors, fonts)
+- [ ] Identify key message (headline)
+
+## Design & Creation
+
+### Dimensions & Format
+
+- [ ] Use correct dimensions (1200×630px)
+- [ ] Choose appropriate format (JPG for photos, PNG for graphics)
+- [ ] Target file size 100-200KB (max 500KB)
+
+### Typography
+
+- [ ] Title: 60-100px, bold, max 80 characters
+- [ ] Subtitle: 40-50px, regular, max 150 characters (if used)
+- [ ] Use sans-serif fonts for readability
+
+### Layout
+
+- [ ] Maintain 8-12% padding on all sides
+- [ ] Use dark background (#1a1a1a to #333333)
+- [ ] Follow chosen design pattern consistently
+
+### Visual Elements
+
+- [ ] Verify contrast ratio (4.5:1 minimum, 7:1 preferred)
+- [ ] Include logo (visible size, proper positioning)
+- [ ] Limit to 2-3 colors maximum
+
+## Testing
+
+### Contrast & Readability
+
+- [ ] Check contrast with [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
+- [ ] Verify text readability at 50% scale
+
+### Platform Validation
+
+- [ ] Test with [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/sharing/)
+- [ ] Test with [Twitter Card Validator](https://cards-dev.twitter.com/validator)
+- [ ] Test with [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
+
+### Device Testing
+
+- [ ] Test on mobile and desktop browsers
+- [ ] Verify load time (<2 seconds)
+- [ ] Check for pixelation or artifacts
+
+## Implementation
+
+### HTML Meta Tags
+
+- [ ] Use absolute URL for og:image (https://...)
+- [ ] Set og:image:width (1200)
+- [ ] Set og:image:height (630)
+- [ ] Set og:image:type (image/jpeg or image/png)
+- [ ] Set og:image:alt with description
+
+### Infrastructure
+
+- [ ] Verify image URL is stable and accessible
+- [ ] Use reliable CDN for image hosting
+- [ ] Ensure og:title and og:description complement the image
+
+## Post-Launch
+
+- [ ] Monitor click-through rates from social shares
+- [ ] Keep images fresh and updated
+- [ ] Maintain brand consistency across all OG images
+- [ ] Test new designs periodically
+- [ ] Update underperforming images
+
+## Quick Reference
+
+### Recommended Values
+
+| Property | Value |
+|----------|-------|
+| Dimensions | 1200×630px |
+| Aspect Ratio | 1.91:1 |
+| File Size | 100-200KB |
+| Format | JPG (photos) or PNG (graphics) |
+| Title Font Size | 60-100px |
+| Subtitle Font Size | 40-50px |
+| Padding | 8-12% |
+| Contrast Ratio | 4.5:1 minimum |
+
+### Common Pitfalls to Avoid
+
+1. Using relative URLs instead of absolute
+2. Text too small for mobile viewing
+3. File size over 500KB
+4. Insufficient contrast
+5. Missing width/height meta tags
+6. Inconsistent branding
+
+---
+
+Ready to create OG images that check all the boxes? [Try FrameIt](/) for professional results in minutes.

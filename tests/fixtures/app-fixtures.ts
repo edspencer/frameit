@@ -459,7 +459,7 @@ async function setupFreshApp(
   options: SetupFreshAppOptions = {}
 ): Promise<void> {
   // Navigate to the app
-  await page.goto('http://localhost:5173', { waitUntil: 'networkidle' })
+  await page.goto('/', { waitUntil: 'networkidle' })
 
   // Clear localStorage for clean state
   await clearLocalStorage(page)

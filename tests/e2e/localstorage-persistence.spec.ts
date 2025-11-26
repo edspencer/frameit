@@ -368,7 +368,7 @@ test.describe('localStorage Persistence', () => {
     page,
   }) => {
     // Navigate to app
-    await page.goto('http://localhost:5173', { waitUntil: 'networkidle' })
+    await page.goto('/', { waitUntil: 'networkidle' })
 
     // Intentionally set invalid JSON in localStorage
     await page.evaluate(() => {
@@ -398,7 +398,7 @@ test.describe('localStorage Persistence', () => {
     page,
   }) => {
     // Navigate to app
-    await page.goto('http://localhost:5173', { waitUntil: 'networkidle' })
+    await page.goto('/', { waitUntil: 'networkidle' })
 
     // Clear localStorage completely
     await page.evaluate(() => {
