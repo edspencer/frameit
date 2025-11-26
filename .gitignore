@@ -33,6 +33,7 @@ tasks
 .vercel
 img/
 
+.astro
 
 # Layout images (not src/layouts which is Astro components)
 /layouts
