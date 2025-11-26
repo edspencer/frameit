@@ -58,8 +58,8 @@ test.describe('Accessibility', () => {
         }
       })
 
-      // Should navigate through interactive elements
-      expect(element.tagName).toMatch(/BUTTON|INPUT|SELECT/i)
+      // Should navigate through interactive elements (including anchor links)
+      expect(element.tagName).toMatch(/BUTTON|INPUT|SELECT|A/i)
     }
   })
 

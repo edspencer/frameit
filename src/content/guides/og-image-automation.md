@@ -1,0 +1,122 @@
+---
+title: "OG Image Automation: Programmatic Generation Approaches"
+description: "Compare OG image automation solutions including Vercel OG, Puppeteer, @napi-rs/canvas, and SaaS options."
+publishDate: 2025-01-15
+author: "FrameIt Team"
+tags: ["og-images", "automation", "api", "tools"]
+order: 5
+---
+
+Manually creating OG images for every piece of content doesn't scale. Here are proven approaches for automated generation.
+
+## Vercel (@vercel/og + Satori)
+
+**What:** Official Vercel library for rendering React/JSX components as images using Satori (headless rendering).
+
+**Performance:** ~100ms per image (very fast)
+
+**Pros:**
+- Official support
+- Seamless Next.js integration
+- Component reuse
+- Serverless-compatible
+
+**Cons:**
+- Primarily Vercel-focused
+- JSX-only
+- Doesn't use a real browser (edge cases may not render perfectly)
+
+**Best for:** Next.js projects on Vercel, React teams wanting rapid implementation
+
+### Example Code
+
+```typescript
+import { ImageResponse } from '@vercel/og'
+
+export async function GET() {
+  return new ImageResponse(
+    (
+      <div style={{ fontSize: 80, background: '#1a1a1a', color: 'white' }}>
+        Your Title Here
+      </div>
+    ),
+    { width: 1200, height: 630 }
+  )
+}
+```
+
+## Puppeteer (Headless Chrome)
+
+**What:** Programmatically control headless Chrome to render HTML and capture screenshots.
+
+**Performance:** 1-3 seconds per image (slower but maximum flexibility)
+
+**Pros:**
+- Full browser environment
+- No platform restrictions
+- Generates from any HTML/CSS
+
+**Cons:**
+- Resource-intensive
+- Slower
+- Requires Chrome/Chromium
+- Overkill for simple designs
+
+**Best for:** Batch generation, complex designs, scheduled generation tasks
+
+## Canvas-based Solutions (@napi-rs/canvas)
+
+**What:** Direct canvas rendering without browser overhead—this is FrameIt's approach.
+
+**Performance:** <100ms per image (fastest option)
+
+**Pros:**
+- Extremely fast
+- No browser dependency
+- Works on any Node.js environment
+- What FrameIt uses for its API
+
+**Cons:**
+- More technical setup
+- Requires custom rendering code
+
+**Best for:** Performance-critical applications, high-volume generation, FrameIt integration
+
+## SaaS Solutions (Bannerbear, Robolly, Placid)
+
+**What:** Third-party APIs with template builders and REST interfaces.
+
+**Pros:**
+- No-code template creation
+- Handles infrastructure
+- Good for non-technical teams
+
+**Cons:**
+- Monthly subscription costs
+- External dependency
+- API rate limits
+
+**Best for:** Marketing teams, non-developers, rapid deployment without infrastructure
+
+## Comparison Table
+
+| Solution | Speed | Flexibility | Complexity | Best For |
+|----------|-------|-------------|------------|----------|
+| Vercel @vercel/og | Fast (100ms) | Medium | Low | Next.js on Vercel |
+| Puppeteer | Slow (1-3s) | Very High | Medium | Batch/complex |
+| Canvas (@napi-rs/canvas) | Very Fast (<100ms) | High | High | Performance-critical |
+| SaaS (Bannerbear, etc.) | Medium | Low | Very Low | Non-technical teams |
+
+## Recommendation
+
+Use FrameIt's API directly for fast, flexible OG image generation across any platform. For Next.js projects specifically on Vercel, @vercel/og provides seamless integration. For batch processing or scheduled generation, Puppeteer offers maximum flexibility despite slower performance.
+
+### FrameIt API Example
+
+```bash
+curl "https://frameit.dev/api/generate?layout=youtube&title=Your%20Title&format=png" -o og-image.png
+```
+
+---
+
+Ready for automated OG image generation? [Try FrameIt's API](/) for the fastest canvas-based solution.

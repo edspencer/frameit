@@ -60,7 +60,7 @@ jobs:
       - name: Wait for dev server
         run: |
           for i in {1..30}; do
-            if curl -s http://localhost:5173 > /dev/null; then
+            if curl -s http://localhost:4321 > /dev/null; then
               echo "Dev server is ready"
               exit 0
             fi

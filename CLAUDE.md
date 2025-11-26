@@ -8,24 +8,31 @@ FrameIt is a lightweight, open-source image generator for creating beautiful tit
 # Install dependencies
 pnpm install
 
-# Start development server
+# Start development server (runs on http://localhost:4321)
 pnpm dev
 
-# Build for production
+# Build for production (Astro SSG output to dist/)
 pnpm build
 
 # Preview production build
 pnpm preview
+
+# Type-check Astro and TypeScript files
+pnpm type-check
 ```
+
+**Note:** The development server runs on port 4321 (Astro's default), not port 5173 (Vite's default).
 
 ## Technology Stack
 
-- **Framework**: React 19 RC with TypeScript 5 (strict mode)
-- **Build Tool**: Vite 5
-- **Styling**: Tailwind CSS 3
-- **Deployment**: Vercel (with Serverless Functions)
+- **Framework**: Astro 5 with React islands (React 19 RC)
+- **Language**: TypeScript 5 (strict mode)
+- **Styling**: Tailwind CSS 3 with @tailwindcss/typography for prose
+- **Content**: Astro Content Collections with Zod schema
+- **Deployment**: Vercel (with @astrojs/vercel adapter)
 - **Canvas**: HTML5 Canvas API (UI) + @napi-rs/canvas (API)
 - **API**: Vercel Serverless Functions for programmatic generation
+- **Analytics**: PostHog (privacy-compliant) + Vercel Analytics
 
 GitHub repo: https://github.com/edspencer/frameit
 
@@ -33,25 +40,55 @@ GitHub repo: https://github.com/edspencer/frameit
 
 ```
 src/
-├── main.tsx                 # React entry point
-├── App.tsx                  # Main app component
-├── index.css                # Global styles (Tailwind imports)
-├── lib/
-│   ├── constants.ts         # Platform presets and backgrounds
-│   ├── types.ts             # TypeScript interfaces
-│   └── canvas-utils.ts      # Canvas drawing utilities
+├── pages/                        # Astro pages (file-based routing)
+│   ├── index.astro               # Homepage with ThumbnailGenerator island
+│   └── guides/
+│       ├── index.astro           # Guide listing page
+│       └── [...slug].astro       # Dynamic guide pages (content collection)
+├── layouts/
+│   └── BaseLayout.astro          # Shared layout with meta tags, fonts, analytics
+├── content/
+│   ├── config.ts                 # Content collection schema (Zod validation)
+│   └── guides/                   # Guide markdown files with frontmatter
+│       ├── why-og-images-matter.md
+│       ├── og-image-technical-specs.md
+│       ├── og-image-design-principles.md
+│       ├── og-image-design-patterns.md
+│       ├── og-image-automation.md
+│       ├── og-image-testing-validation.md
+│       ├── og-image-best-practices-checklist.md
+│       └── og-image-common-mistakes.md
 ├── components/
-│   ├── ThumbnailGenerator.tsx    # Main component (state management)
+│   ├── ThumbnailGenerator.tsx    # Main component (React island with client:only)
 │   ├── CanvasPreview.tsx         # Canvas rendering wrapper
 │   ├── ControlPanel.tsx          # Control UI container
-│   ├── PlatformSelector.tsx      # Platform preset buttons
-│   ├── HeadingContent.tsx        # Heading text & color controls
-│   ├── SubheadingContent.tsx     # Subheading text & color controls
-│   ├── BackgroundSelector.tsx    # Background gallery
-│   ├── ColorPicker.tsx           # Reusable color picker
-│   └── OpacitySlider.tsx         # Logo opacity control
-└── public/
-    └── favicon.ico
+│   ├── Navigation.astro          # Site navigation (Astro component)
+│   ├── Footer.astro              # Site footer (Astro component)
+│   ├── GuideNavigation.astro     # Prev/next guide navigation
+│   ├── TableOfContents.astro     # Auto-generated TOC from headings
+│   └── ... (other React components)
+├── lib/
+│   ├── constants.ts              # Platform presets and backgrounds
+│   ├── constants/layouts.ts      # Layout definitions
+│   ├── types.ts                  # TypeScript interfaces
+│   ├── canvas-utils.ts           # Canvas drawing utilities
+│   ├── layout-renderer.ts        # Layout rendering engine
+│   ├── posthog.ts                # Analytics tracking functions
+│   └── ui-state.ts               # State management utilities
+├── hooks/
+│   └── useExampleFromUrl.ts      # URL query parameter handling
+└── index.css                     # Global styles (Tailwind imports)
+
+api/
+└── generate.ts                   # Serverless API for image generation
+
+public/
+├── frameit-logo.png              # Site logo
+├── frameit-icon.png              # Favicon
+├── open-graph.png                # Default OG image
+└── robots.txt                    # Search engine directives
+
+astro.config.ts                   # Astro configuration with integrations
 ```
 
 ## Key Features
@@ -199,11 +236,31 @@ npx tsx test-api.ts
 
 ### Vercel
 
-FrameIt is deployed to Vercel with automatic deployments:
+FrameIt is deployed to Vercel with automatic deployments using the `@astrojs/vercel` adapter:
 
-1. **Build command**: `pnpm build`
-2. **Output directory**: `dist`
+1. **Build command**: `pnpm build` (runs `astro build`)
+2. **Output directory**: `dist` (auto-detected by Vercel)
 3. **Serverless Functions**: Automatically deployed from `api/` directory
+4. **Static Pages**: Pre-rendered at build time (homepage, guide pages)
+5. **Vercel Analytics**: Enabled via adapter configuration
+
+The Astro adapter configuration (`astro.config.ts`):
+```typescript
+import vercel from '@astrojs/vercel'
+
+export default defineConfig({
+  output: 'static',
+  adapter: vercel({
+    webAnalytics: { enabled: true }
+  }),
+})
+```
+
+**Key Differences from Vite:**
+- Static pages are pre-rendered as HTML files (SEO-friendly)
+- React components only hydrate where needed (React islands)
+- Content collection pages are generated at build time
+- Sitemap is automatically generated from all pages
 
 The API uses [@napi-rs/canvas](https://github.com/Brooooooklyn/canvas) for server-side rendering with the Inter font registered for consistent typography.
 
@@ -408,6 +465,105 @@ Both the UI and API use the same rendering pipeline for 1:1 parity:
 ### API Implementation
 
 The API ([api/generate.ts](api/generate.ts)) transforms URL parameters into the same `ThumbnailConfig` format used by the UI, then uses `LayoutRenderer` to generate images server-side with @napi-rs/canvas.
+
+## Content Collections
+
+FrameIt uses Astro's Content Collections for the guide pages, providing type-safe content management with Zod schema validation.
+
+### Guide Schema
+
+The guide collection is defined in `src/content/config.ts`:
+
+```typescript
+import { defineCollection, z } from 'astro:content'
+
+const guidesCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string().max(160),  // SEO-optimized length
+    publishDate: z.date(),
+    author: z.string().default('FrameIt Team'),
+    tags: z.array(z.string()).optional(),
+    ogImage: z.string().optional(),
+    lastUpdated: z.date().optional(),
+    order: z.number().optional(),  // Controls sort order in listing
+  }),
+})
+```
+
+### Adding a New Guide
+
+1. Create a markdown file in `src/content/guides/`:
+   ```markdown
+   ---
+   title: "Your Guide Title"
+   description: "A brief description for SEO (max 160 chars)"
+   publishDate: 2025-01-15
+   author: "FrameIt Team"
+   tags: ["og-images", "tutorial"]
+   order: 9
+   ---
+
+   Your guide content in markdown...
+   ```
+
+2. The guide will automatically appear on `/guides` and be accessible at `/guides/your-guide-slug`
+
+3. Run `pnpm type-check` to validate frontmatter against the schema
+
+### Querying Guides
+
+In Astro pages, use the `getCollection` helper:
+
+```typescript
+import { getCollection } from 'astro:content'
+
+const guides = (await getCollection('guides'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+```
+
+## React Islands
+
+FrameIt uses Astro's island architecture to optimize performance. Most pages are static HTML with React components hydrating only where interactivity is needed.
+
+### Client Directives
+
+Astro provides several directives for controlling when React components hydrate:
+
+| Directive | Usage | Description |
+|-----------|-------|-------------|
+| `client:load` | `<Component client:load />` | Hydrates immediately on page load |
+| `client:only="react"` | `<Component client:only="react" />` | Renders only on client (no SSR) |
+| `client:idle` | `<Component client:idle />` | Hydrates after page is idle |
+| `client:visible` | `<Component client:visible />` | Hydrates when component enters viewport |
+
+### ThumbnailGenerator Island
+
+The main `ThumbnailGenerator` component uses `client:only="react"` because it:
+- Requires browser APIs (Canvas, localStorage) that don't work during SSR
+- Manages complex state that should initialize in the browser
+- Provides immediate interactivity on the homepage
+
+```astro
+---
+import { ThumbnailGenerator } from '../components/ThumbnailGenerator'
+---
+
+<ThumbnailGenerator client:only="react" />
+```
+
+### Static vs. Interactive Components
+
+- **Astro Components** (`.astro`): Navigation, Footer, GuideNavigation, TableOfContents - render as static HTML
+- **React Islands** (`.tsx` with client directive): ThumbnailGenerator and its child components - hydrate for interactivity
+
+### Best Practices
+
+1. **Prefer static Astro components** for content that doesn't need interactivity
+2. **Use `client:only="react"`** for components requiring browser APIs at initialization
+3. **Use `client:idle`** for non-critical interactive components (like FeedbackWidget)
+4. **Keep island boundaries clear** - all child components of an island are also interactive
 
 ## Future Enhancements
 

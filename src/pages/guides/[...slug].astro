@@ -1,0 +1,115 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import GuideNavigation from '../../components/GuideNavigation.astro'
+import TableOfContents from '../../components/TableOfContents.astro'
+
+type Guide = CollectionEntry<'guides'>
+
+export async function getStaticPaths() {
+  const guides = await getCollection('guides')
+  return guides.map((guide: Guide) => ({
+    params: { slug: guide.slug },
+    props: { guide },
+  }))
+}
+
+interface Props {
+  guide: CollectionEntry<'guides'>
+}
+
+const { guide } = Astro.props
+const { Content, headings } = await guide.render()
+
+// Get all guides for navigation
+const allGuides = (await getCollection('guides'))
+  .sort((a: Guide, b: Guide) => (a.data.order ?? 99) - (b.data.order ?? 99))
+
+const currentIndex = allGuides.findIndex((g: Guide) => g.slug === guide.slug)
+const prevGuide = currentIndex > 0 ? allGuides[currentIndex - 1] : null
+const nextGuide = currentIndex < allGuides.length - 1 ? allGuides[currentIndex + 1] : null
+
+const ogImageUrl = guide.data.ogImage || '/open-graph.png'
+
+// JSON-LD structured data for article
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": guide.data.title,
+  "description": guide.data.description,
+  "author": {
+    "@type": "Person",
+    "name": guide.data.author
+  },
+  "datePublished": guide.data.publishDate.toISOString(),
+  "dateModified": (guide.data.lastUpdated || guide.data.publishDate).toISOString(),
+  "publisher": {
+    "@type": "Organization",
+    "name": "FrameIt",
+    "url": "https://frameit.dev"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": `https://frameit.dev/guides/${guide.slug}`
+  }
+}
+---
+
+<BaseLayout
+  title={`${guide.data.title} - FrameIt`}
+  description={guide.data.description}
+  ogImage={ogImageUrl}
+  article={true}
+  structuredData={structuredData}
+>
+  <main class="max-w-4xl mx-auto px-4 py-12">
+    <article class="prose prose-invert prose-lg max-w-none">
+      <header class="mb-12 not-prose">
+        <a
+          href="/guides"
+          class="text-blue-400 hover:text-blue-300 text-sm mb-4 inline-block"
+        >
+          &larr; Back to Guides
+        </a>
+        <h1 class="text-4xl font-bold text-white mt-4 mb-4">
+          {guide.data.title}
+        </h1>
+        <p class="text-gray-400 text-lg">{guide.data.description}</p>
+        <div class="flex items-center gap-4 mt-4 text-sm text-gray-500">
+          <span>By {guide.data.author}</span>
+          <span>&bull;</span>
+          <time datetime={guide.data.publishDate.toISOString()}>
+            {guide.data.publishDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </time>
+        </div>
+      </header>
+
+      {headings.length > 0 && (
+        <TableOfContents headings={headings} />
+      )}
+
+      <Content />
+    </article>
+
+    <GuideNavigation prevGuide={prevGuide} nextGuide={nextGuide} />
+
+    <div class="mt-12 p-6 bg-gradient-to-r from-blue-900 to-purple-900 rounded-lg text-center">
+      <h2 class="text-2xl font-bold text-white mb-4">
+        Ready to create professional OG images?
+      </h2>
+      <p class="text-gray-300 mb-6">
+        Use FrameIt to generate beautiful thumbnails in minutes.
+      </p>
+      <a
+        href="/"
+        class="inline-block bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        Try FrameIt Free
+      </a>
+    </div>
+  </main>
+</BaseLayout>

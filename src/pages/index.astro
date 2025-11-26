@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { ThumbnailGenerator } from '../components/ThumbnailGenerator'
+---
+
+<BaseLayout
+  title="FrameIt - Free Online Thumbnail Generator for YouTube, LinkedIn & Social Media"
+  description="Create stunning YouTube, LinkedIn, and social media thumbnails instantly. Free, open-source thumbnail generator with 10+ platform presets, custom layouts, and beautiful gradients."
+  ogImage="/open-graph.png"
+>
+  <ThumbnailGenerator client:only="react" />
+</BaseLayout>

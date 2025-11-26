@@ -1,0 +1,42 @@
+---
+const currentYear = new Date().getFullYear()
+---
+
+<footer class="border-t border-gray-800 mt-auto">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-gray-400 text-sm">
+        <span>Built by</span>
+        <a
+          href="https://edspencer.net"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-white hover:text-blue-400 transition-colors"
+        >
+          Ed Spencer
+        </a>
+      </div>
+
+      <div class="flex items-center gap-6 text-sm">
+        <a
+          href="/guides"
+          class="text-gray-400 hover:text-white transition-colors"
+        >
+          Guides
+        </a>
+        <a
+          href="https://github.com/edspencer/frameit"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-gray-400 hover:text-white transition-colors"
+        >
+          GitHub
+        </a>
+      </div>
+
+      <div class="text-gray-500 text-sm">
+        &copy; {currentYear} FrameIt. Open source under MIT license.
+      </div>
+    </div>
+  </div>
+</footer>

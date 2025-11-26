@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test'
 
 /**
  * Playwright configuration for FrameIt E2E tests
- * Tests run against the Vite dev server at http://localhost:5173
+ * Tests run against the Astro dev server at http://localhost:4321
  */
 export default defineConfig({
   // Test directory
@@ -32,8 +32,8 @@ export default defineConfig({
 
   // Shared settings for all projects
   use: {
-    // Base URL for all tests
-    baseURL: 'http://localhost:5173',
+    // Base URL for all tests (Astro 5 runs on port 4321 by default)
+    baseURL: 'http://localhost:4321',
 
     // Screenshot and video on failure
     screenshot: 'only-on-failure',
@@ -50,7 +50,7 @@ export default defineConfig({
   // CI workflow starts the server manually before tests
   webServer: {
     command: 'pnpm dev',
-    url: 'http://localhost:5173',
+    url: 'http://localhost:4321',
     reuseExistingServer: true,
   },
 

@@ -4,12 +4,14 @@ import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
 import type { ThumbnailConfig } from '../lib/types'
 
 /**
- * Extract example ID from URL path
- * Matches patterns like /example/birthday-cake
+ * Extract example ID from URL query parameters
+ * Matches patterns like /?example=birthday-cake
+ * SSR-safe: returns null if window is undefined
  */
 function getExampleIdFromUrl(): string | null {
-  const match = window.location.pathname.match(/^\/example\/([^/]+)$/)
-  return match ? match[1] : null
+  if (typeof window === 'undefined') return null
+  const params = new URLSearchParams(window.location.search)
+  return params.get('example')
 }
 
 /**
@@ -58,18 +60,20 @@ export function useExampleFromUrl(
 /**
  * Update URL when an example is selected
  * Uses history.pushState to avoid page reload
+ * Uses query parameter format: /?example={id}
  */
 export function updateUrlForExample(exampleId: string): void {
-  const newUrl = `/example/${exampleId}`
+  const newUrl = `/?example=${exampleId}`
   window.history.pushState({ exampleId }, '', newUrl)
 }
 
 /**
  * Clear example from URL (e.g., when user modifies config)
- * Resets to root path
+ * Removes the example query parameter
  */
 export function clearExampleFromUrl(): void {
-  if (window.location.pathname.startsWith('/example/')) {
+  const params = new URLSearchParams(window.location.search)
+  if (params.has('example')) {
     window.history.pushState({}, '', '/')
   }
 }

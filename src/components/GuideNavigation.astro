@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  prevGuide: CollectionEntry<'guides'> | null
+  nextGuide: CollectionEntry<'guides'> | null
+}
+
+const { prevGuide, nextGuide } = Astro.props
+---
+
+<nav class="flex justify-between items-center mt-12 pt-8 border-t border-gray-700">
+  {prevGuide ? (
+    <a
+      href={`/guides/${prevGuide.slug}`}
+      class="flex flex-col items-start hover:text-blue-400 transition-colors"
+    >
+      <span class="text-sm text-gray-500">Previous</span>
+      <span class="text-white font-medium">{prevGuide.data.title}</span>
+    </a>
+  ) : (
+    <div></div>
+  )}
+  {nextGuide ? (
+    <a
+      href={`/guides/${nextGuide.slug}`}
+      class="flex flex-col items-end hover:text-blue-400 transition-colors"
+    >
+      <span class="text-sm text-gray-500">Next</span>
+      <span class="text-white font-medium">{nextGuide.data.title}</span>
+    </a>
+  ) : (
+    <div></div>
+  )}
+</nav>

@@ -118,6 +118,7 @@ let isInitialized = false
 
 /**
  * Initialize PostHog with privacy-first configuration
+ * - Skips initialization in SSR context (no window object)
  * - Skips initialization in development mode
  * - Skips initialization if API key is not provided
  * - Prevents double initialization (idempotent)
@@ -133,9 +134,9 @@ export function initializePostHog(): void {
     return
   }
 
-  // Skip in development mode to avoid polluting analytics
-  if (import.meta.env.MODE === 'development') {
-    console.log('PostHog disabled in development mode. Skipping initialization.')
+  // Skip in SSR context (Astro) or development mode to avoid polluting analytics
+  if (typeof window === 'undefined' || import.meta.env.DEV) {
+    console.log('PostHog disabled (SSR or development mode). Skipping initialization.')
     return
   }
 
