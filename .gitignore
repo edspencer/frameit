@@ -34,7 +34,8 @@ tasks
 img/
 
 
-layouts
+# Layout images (not src/layouts which is Astro components)
+/layouts
 
 # Playwright test artifacts
 test-results/
