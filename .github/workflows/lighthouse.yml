@@ -62,19 +62,43 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            // Try multiple methods to find the PR number
+
+            // Method 1: Check deployment payload
             const deployment = context.payload.deployment;
-            if (deployment && deployment.payload && deployment.payload.pr_id) {
+            if (deployment?.payload?.pr_id) {
+              console.log('Found PR from deployment payload:', deployment.payload.pr_id);
               return deployment.payload.pr_id;
             }
-            // Try to find PR from branch
-            const branch = deployment?.ref || context.ref;
-            const prs = await github.rest.pulls.list({
+
+            // Method 2: Check deployment_status payload
+            const deploymentStatus = context.payload.deployment_status;
+            if (deploymentStatus?.environment_url) {
+              console.log('Deployment URL:', deploymentStatus.environment_url);
+            }
+
+            // Method 3: Get the SHA and find associated PR
+            const sha = deployment?.sha || context.sha;
+            console.log('Looking for PRs with SHA:', sha);
+
+            const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              head: `${context.repo.owner}:${branch}`,
-              state: 'open'
+              commit_sha: sha
             });
-            return prs.data[0]?.number || null;
+
+            if (prs.data.length > 0) {
+              const openPr = prs.data.find(pr => pr.state === 'open');
+              if (openPr) {
+                console.log('Found open PR:', openPr.number);
+                return openPr.number;
+              }
+              console.log('Found PR (not open):', prs.data[0].number);
+              return prs.data[0].number;
+            }
+
+            console.log('No PR found');
+            return null;
           result-encoding: string
 
       - name: Comment on PR
