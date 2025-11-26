@@ -4,10 +4,34 @@ import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import typescript from '@typescript-eslint/eslint-plugin'
 import typescriptParser from '@typescript-eslint/parser'
+import astro from 'eslint-plugin-astro'
+import astroParser from 'astro-eslint-parser'
 
 export default [
   {
-    ignores: ['dist', 'node_modules', '.turbo']
+    ignores: ['dist', 'node_modules', '.turbo', '.astro', '.vercel']
+  },
+  // Astro files
+  ...astro.configs.recommended,
+  {
+    files: ['**/*.astro'],
+    languageOptions: {
+      parser: astroParser,
+      parserOptions: {
+        parser: typescriptParser,
+        extraFileExtensions: ['.astro']
+      },
+      globals: {
+        ...globals.browser,
+        posthog: 'readonly'
+      }
+    },
+    rules: {
+      // Disable rules that conflict with inline scripts in Astro
+      '@typescript-eslint/no-unused-expressions': 'off',
+      'no-unused-expressions': 'off',
+      'no-undef': 'off'
+    }
   },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
