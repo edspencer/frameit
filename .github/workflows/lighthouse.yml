@@ -1,0 +1,140 @@
+name: Lighthouse CI
+
+on:
+  deployment_status:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  lighthouse:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lighthouse CI
+        id: lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            ${{ github.event.deployment_status.target_url }}
+            ${{ github.event.deployment_status.target_url }}/guides/
+            ${{ github.event.deployment_status.target_url }}/guides/why-og-images-matter/
+          configPath: ./lighthouserc.json
+          uploadArtifacts: true
+
+      - name: Format Lighthouse results
+        id: format
+        env:
+          LIGHTHOUSE_MANIFEST: ${{ steps.lighthouse.outputs.manifest }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const results = JSON.parse(process.env.LIGHTHOUSE_MANIFEST);
+
+            const formatScore = (score) => {
+              const percent = Math.round(score * 100);
+              if (percent >= 90) return `🟢 ${percent}`;
+              if (percent >= 50) return `🟠 ${percent}`;
+              return `🔴 ${percent}`;
+            };
+
+            let comment = '## Lighthouse Results\n\n';
+            comment += '| URL | Performance | SEO | Accessibility | Best Practices |\n';
+            comment += '|-----|-------------|-----|---------------|----------------|\n';
+
+            for (const result of results) {
+              const url = new URL(result.url).pathname || '/';
+              const perf = formatScore(result.summary.performance);
+              const seo = formatScore(result.summary.seo);
+              const a11y = formatScore(result.summary.accessibility);
+              const bp = formatScore(result.summary['best-practices']);
+              comment += `| ${url} | ${perf} | ${seo} | ${a11y} | ${bp} |\n`;
+            }
+
+            comment += `\n[View full reports in workflow artifacts](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`;
+
+            core.setOutput('comment', comment);
+
+      - name: Find PR number
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Try multiple methods to find the PR number
+
+            // Method 1: Check deployment payload
+            const deployment = context.payload.deployment;
+            if (deployment?.payload?.pr_id) {
+              console.log('Found PR from deployment payload:', deployment.payload.pr_id);
+              return deployment.payload.pr_id;
+            }
+
+            // Method 2: Check deployment_status payload
+            const deploymentStatus = context.payload.deployment_status;
+            if (deploymentStatus?.environment_url) {
+              console.log('Deployment URL:', deploymentStatus.environment_url);
+            }
+
+            // Method 3: Get the SHA and find associated PR
+            const sha = deployment?.sha || context.sha;
+            console.log('Looking for PRs with SHA:', sha);
+
+            const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: sha
+            });
+
+            if (prs.data.length > 0) {
+              const openPr = prs.data.find(pr => pr.state === 'open');
+              if (openPr) {
+                console.log('Found open PR:', openPr.number);
+                return openPr.number;
+              }
+              console.log('Found PR (not open):', prs.data[0].number);
+              return prs.data[0].number;
+            }
+
+            console.log('No PR found');
+            return null;
+          result-encoding: string
+
+      - name: Comment on PR
+        if: steps.pr.outputs.result != 'null'
+        env:
+          COMMENT_BODY: ${{ steps.format.outputs.comment }}
+          PR_NUMBER: ${{ steps.pr.outputs.result }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = parseInt(process.env.PR_NUMBER);
+            const comment = process.env.COMMENT_BODY;
+
+            // Find existing Lighthouse comment
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber
+            });
+
+            const existing = comments.data.find(c =>
+              c.user.type === 'Bot' && c.body.includes('## Lighthouse Results')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: comment
+              });
+            }
