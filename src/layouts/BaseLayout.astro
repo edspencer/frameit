@@ -2,7 +2,7 @@
 import '../index.css'
 import Navigation from '../components/Navigation.astro'
 import Footer from '../components/Footer.astro'
-import { FeedbackWidget } from '@wishnova/react'
+import { FeedbackWidget } from '@goodideadev/react'
 
 interface Props {
   title: string
@@ -83,6 +83,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site)
     <Navigation />
     <slot />
     <Footer />
-    <FeedbackWidget client:only="react" projectId="frameit" position="bottom-right" />
+    <FeedbackWidget client:only="react" projectId="3b17800e-133e-405c-92fe-19523f499c13" position="bottom-right" />
   </body>
 </html>

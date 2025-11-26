@@ -6,8 +6,8 @@ import { CanvasPreview } from './CanvasPreview'
 import { ControlPanel } from './ControlPanel'
 import { Tooltip } from './Tooltip'
 import { Examples } from './Examples'
-import { FeedbackWidget } from '@wishnova/react'
-import '@wishnova/react/styles'
+import { FeedbackWidget } from '@goodideadev/react'
+import '@goodideadev/react/styles'
 import {
   trackPresetSelected,
   trackLayoutChanged,
