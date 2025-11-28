@@ -46,6 +46,7 @@ export const SatoriPreview = forwardRef<SatoriPreviewHandle, SatoriPreviewProps>
             svgRef.current = svg
             setSvgContent(svg)
             setIsLoading(false)
+            setError(null)
           }
         } catch (err) {
           if (isMounted) {
@@ -56,14 +57,8 @@ export const SatoriPreview = forwardRef<SatoriPreviewHandle, SatoriPreviewProps>
         }
       }
 
-      // Reset state before starting render - this is intentional to show loading
-      // state while rendering happens. The lint rule warns about cascading renders
-      // but this is the expected UX behavior.
-      /* eslint-disable react-hooks/set-state-in-effect */
-      setSvgContent(null)
-      setIsLoading(true)
-      setError(null)
-      /* eslint-enable react-hooks/set-state-in-effect */
+      // Don't clear existing content - keep showing old SVG while new one renders
+      // This prevents the flash/loading state from appearing on every update
       doRender()
 
       return () => {
