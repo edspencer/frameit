@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { PLATFORMS_WITH_ICONS } from '../lib/ui-constants'
 import { GRADIENTS, LAYOUTS } from '../lib/constants'
 import type { ThumbnailPlatformWithIcon, ThumbnailConfig } from '../lib/types'
-import { CanvasPreview } from './CanvasPreview'
+import { SatoriPreview, type SatoriPreviewHandle } from './SatoriPreview'
 import { ControlPanel } from './ControlPanel'
 import { Tooltip } from './Tooltip'
 import { FeedbackWidget } from '@goodideadev/react'
@@ -23,6 +23,8 @@ import {
   trackConfigSectionCollapsed,
 } from '../lib/posthog'
 import { useExampleFromUrl } from '../hooks/useExampleFromUrl'
+import { initResvg, svgToPng } from '../lib/png-generator'
+import { renderToSvg } from '../lib/satori-renderer'
 
 const STORAGE_KEY = 'thumbnailGeneratorConfig'
 
@@ -110,13 +112,19 @@ function getDefaultConfig(): ThumbnailConfig {
 }
 
 export function ThumbnailGenerator() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const previewRef = useRef<SatoriPreviewHandle>(null)
+  const previewContainerRef = useRef<HTMLDivElement>(null)
   const isInitialMount = useRef(true)
   const [zoomLevel, setZoomLevel] = useState<number>(100)
 
   // Set initial mount flag to false after first render
   useEffect(() => {
     isInitialMount.current = false
+  }, [])
+
+  // Initialize resvg WASM on mount
+  useEffect(() => {
+    initResvg().catch(err => console.error('Failed to init resvg:', err))
   }, [])
 
   const savedConfig = loadConfigFromStorage()
@@ -262,40 +270,42 @@ export function ThumbnailGenerator() {
     saveConfigToStorage(config)
   }, [config])
 
-  // Track canvas display size to calculate zoom level
+  // Track preview display size to calculate zoom level
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
+    const container = previewContainerRef.current
+    if (!container) return
 
     const updateZoomLevel = () => {
-      const displayWidth = canvas.offsetWidth
-      const actualWidth = config.preset.width
-      const zoom = Math.round((displayWidth / actualWidth) * 100)
-      setZoomLevel(zoom)
+      // Find the SVG element inside the container
+      const svg = container.querySelector('svg')
+      if (svg) {
+        const displayWidth = svg.clientWidth
+        const actualWidth = config.preset.width
+        const zoom = Math.round((displayWidth / actualWidth) * 100)
+        setZoomLevel(zoom)
+      }
     }
 
-    // Initial calculation
-    updateZoomLevel()
+    // Initial calculation with slight delay to allow SVG to render
+    const timeoutId = setTimeout(updateZoomLevel, 100)
 
     // Watch for resize
     const resizeObserver = new ResizeObserver(updateZoomLevel)
-    resizeObserver.observe(canvas)
+    resizeObserver.observe(container)
 
     return () => {
+      clearTimeout(timeoutId)
       resizeObserver.disconnect()
     }
   }, [config.preset.width])
 
-  const downloadThumbnail = () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
+  const downloadThumbnail = async () => {
     // Track thumbnail download
     trackThumbnailDownloaded({ preset_used: config.preset.name, image_format: 'png' })
 
-    // Use toBlob for proper download event (works with test frameworks like Playwright)
-    canvas.toBlob((blob) => {
-      if (!blob) return
+    try {
+      const svg = await renderToSvg(config.layoutId, config)
+      const blob = await svgToPng(svg, config.preset.width, config.preset.height)
 
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
@@ -309,26 +319,24 @@ export function ThumbnailGenerator() {
 
       // Clean up the object URL after download
       setTimeout(() => URL.revokeObjectURL(url), 100)
-    }, 'image/png')
+    } catch (err) {
+      console.error('Failed to download:', err)
+      alert('Failed to generate thumbnail')
+    }
   }
 
   const copyToClipboard = async () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
     try {
-      canvas.toBlob((blob) => {
-        if (blob) {
-          navigator.clipboard.write([
-            new ClipboardItem({
-              'image/png': blob,
-            }),
-          ])
-          // Track thumbnail copy to clipboard
-          trackThumbnailCopied({ preset_used: config.preset.name })
-          alert('Thumbnail copied to clipboard!')
-        }
-      })
+      const svg = await renderToSvg(config.layoutId, config)
+      const blob = await svgToPng(svg, config.preset.width, config.preset.height)
+
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob }),
+      ])
+
+      // Track thumbnail copy to clipboard
+      trackThumbnailCopied({ preset_used: config.preset.name })
+      alert('Thumbnail copied to clipboard!')
     } catch (err) {
       console.error('Failed to copy:', err)
       alert('Failed to copy to clipboard')
@@ -385,11 +393,11 @@ export function ThumbnailGenerator() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Preview Section */}
           <div className="lg:col-span-2 flex flex-col lg:sticky lg:top-6 lg:self-start">
-            {/* Canvas Preview */}
+            {/* Satori Preview */}
             <div className="bg-slate-800 rounded-lg shadow-2xl border border-slate-700 p-4">
-              <div className="flex items-center justify-center" style={{ maxHeight: '80vh' }}>
-                <CanvasPreview
-                  ref={canvasRef}
+              <div ref={previewContainerRef} className="flex items-center justify-center" style={{ maxHeight: '80vh' }}>
+                <SatoriPreview
+                  ref={previewRef}
                   config={
                     previewState
                       ? {
@@ -415,13 +423,12 @@ export function ThumbnailGenerator() {
             {/* Info and Buttons Below Canvas */}
             <div className="sm:mt-6 mt-4 flex flex-col gap-4">
               {/* Info Section */}
-              <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 hidden sm:block">
+              <div className="bg-slate-800 rounded-lg p-4 border border-slate-700 hidden sm:block">
                 <div className="flex justify-between items-start">
                   <div className="space-y-2 text-sm">
                     <p className="text-slate-300">
                       Dimensions: {config.preset.width} × {config.preset.height}px ({config.preset.aspectRatio})
                     </p>
-                    <p className="text-slate-400">Ready for download and screenshot capture</p>
                   </div>
                   <div className="text-sm text-slate-400 text-right">
                     <p className="flex items-center gap-1">

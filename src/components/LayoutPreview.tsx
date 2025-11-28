@@ -10,7 +10,7 @@ interface LayoutPreviewProps {
  * Uses a 16:9 aspect ratio container with simplified rectangular boxes for each element
  */
 export function LayoutPreview({ layout, className = '' }: LayoutPreviewProps) {
-  // Track element bounds for auto-positioning (similar to layout-renderer.ts)
+  // Track element bounds for auto-positioning
   const elementBounds = new Map<string, { y: number; height: number }>()
 
   const renderElement = (element: LayoutElement, index: number) => {

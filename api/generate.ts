@@ -3,28 +3,14 @@
  * Accepts GET (query params) or POST (JSON body) requests
  * Returns PNG or WebP image
  *
- * Uses LayoutRenderer for 1:1 parity with UI rendering
+ * Uses Satori for JSX to SVG conversion and @resvg/resvg-js for PNG generation
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas'
-import { join } from 'node:path'
-import { LayoutRenderer } from '../src/lib/layout-renderer.js'
+import { renderToSvgServer, svgToPngServer, svgToWebpServer } from './satori-server.js'
 import { validateParams, generateCacheKey, type ImageGenerationParams } from '../src/lib/api-types.js'
 import { PLATFORMS, GRADIENTS, LAYOUTS } from '../src/lib/constants.js'
 import type { ThumbnailConfig, BackgroundConfig, TextElement, ImageElement } from '../src/lib/types.js'
-
-// Register fonts for server-side rendering
-// This runs once when the serverless function cold-starts
-const fontsDir = join(process.cwd(), 'api', 'fonts')
-try {
-  GlobalFonts.registerFromPath(join(fontsDir, 'InterVariable.ttf'), 'Inter')
-  console.log('✓ Inter font registered successfully')
-  console.log('Available system fonts:', GlobalFonts.families.map(f => f.family).slice(0, 20).join(', '))
-} catch (err) {
-  console.error('⚠️  Failed to register Inter font:', err)
-  console.error('Falling back to system fonts')
-}
 
 /**
  * Decodes query parameters, converting + to spaces
@@ -126,41 +112,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       imageElements,
     }
 
-    // Create canvas with preset dimensions
-    const canvas = createCanvas(preset.width, preset.height)
-    const ctx = canvas.getContext('2d') as unknown as CanvasRenderingContext2D
+    // Render using Satori
+    const svg = await renderToSvgServer(layout.id, thumbnailConfig)
 
-    // Load images referenced by imageElements
-    const loadedImages = new Map<string, HTMLImageElement>()
-
-    for (const imgEl of imageElements) {
-      if (imgEl.url) {
-        try {
-          const img = await loadImage(imgEl.url)
-          loadedImages.set(imgEl.id, img as unknown as HTMLImageElement)
-          console.log(`✓ Loaded image: ${imgEl.id} from ${imgEl.url}`)
-        } catch (error) {
-          console.warn(`Failed to load image ${imgEl.id} from ${imgEl.url}:`, error)
-          // Continue without this image
-        }
-      }
-    }
-
-    // Render using LayoutRenderer (same as UI)
-    const renderer = new LayoutRenderer()
-    // @ts-expect-error - Canvas from @napi-rs/canvas is compatible with HTMLCanvasElement interface
-    renderer.render(ctx, canvas, thumbnailConfig, layout, loadedImages)
-
-    // Encode to requested format
+    // Convert to requested format
     let buffer: Buffer
+    let contentType: string
+
     if (config.format === 'png') {
-      buffer = await canvas.encode('png')
+      buffer = await svgToPngServer(svg, preset.width)
+      contentType = 'image/png'
     } else {
-      buffer = await canvas.encode('webp')
+      // WebP requested - currently returns PNG as resvg-js doesn't support WebP
+      // TODO: Add sharp for WebP conversion if needed
+      buffer = await svgToWebpServer(svg, preset.width)
+      contentType = 'image/png' // Return PNG until WebP is implemented
     }
 
     // Set response headers
-    res.setHeader('Content-Type', `image/${config.format}`)
+    res.setHeader('Content-Type', contentType)
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
     res.setHeader('CDN-Cache-Control', 'public, max-age=31536000')
     res.setHeader('X-Cache-Key', cacheKey)

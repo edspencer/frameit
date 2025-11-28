@@ -23,5 +23,10 @@ export default defineConfig({
     build: {
       target: 'ES2020',
     },
+    define: {
+      // Required for Satori to work in browser - it checks process.env.NODE_ENV
+      // eslint-disable-next-line no-undef
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    },
   },
 })
