@@ -5,7 +5,6 @@ import type { ThumbnailPlatformWithIcon, ThumbnailConfig } from '../lib/types'
 import { CanvasPreview } from './CanvasPreview'
 import { ControlPanel } from './ControlPanel'
 import { Tooltip } from './Tooltip'
-import { Examples } from './Examples'
 import { FeedbackWidget } from '@goodideadev/react'
 import '@goodideadev/react/styles'
 import {
@@ -457,12 +456,6 @@ export function ThumbnailGenerator() {
                 </button>
               </div>
 
-              {/* Example Configurations */}
-              <Examples
-                onSelectExample={handleSelectExample}
-                onSectionExpanded={handleSectionExpanded}
-                onSectionCollapsed={handleSectionCollapsed}
-              />
             </div>
           </div>
 

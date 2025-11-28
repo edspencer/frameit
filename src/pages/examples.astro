@@ -1,0 +1,131 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { getEnabledExamples } from '../lib/example-configs'
+import { LAYOUTS } from '../lib/constants/layouts'
+import { GRADIENTS } from '../lib/constants'
+
+const examples = getEnabledExamples()
+
+// Helper to get layout name from layoutId
+function getLayoutName(layoutId: string): string {
+  const layout = LAYOUTS.find(l => l.id === layoutId)
+  return layout?.name ?? layoutId
+}
+
+// Helper to get gradient name from gradientId
+function getGradientName(gradientId: string): string {
+  const gradient = GRADIENTS.find(g => g.id === gradientId)
+  return gradient?.name ?? gradientId
+}
+
+// Helper to format background info
+function getBackgroundInfo(config: { type: string; gradientId?: string; solidColor?: string }): string {
+  if (config.type === 'gradient' && config.gradientId) {
+    return `${getGradientName(config.gradientId)} gradient`
+  }
+  if (config.type === 'solid' && config.solidColor) {
+    return config.solidColor
+  }
+  return 'None'
+}
+---
+
+<BaseLayout
+  title="Example Configurations - FrameIt"
+  description="Browse pre-configured thumbnail examples inspired by real Open Graph images. Click any example to load it in the generator."
+>
+  <main class="max-w-7xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold text-white mb-4">Example Configurations</h1>
+    <p class="text-gray-400 text-lg mb-12">
+      Pre-configured examples inspired by real Open Graph images from around the web.
+      Click any example to load it in the generator.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {examples.map((example) => (
+        <a
+          href={`/?example=${example.id}`}
+          class="group block rounded-xl bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition-all overflow-hidden"
+        >
+          {/* Thumbnail Image */}
+          <div class="relative w-full aspect-video bg-gray-900 overflow-hidden">
+            <img
+              src={`/examples/${example.id}.png`}
+              alt={example.name}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+          </div>
+
+          {/* Card Content */}
+          <div class="p-4">
+            <h2 class="text-lg font-semibold text-white mb-1 group-hover:text-blue-400 transition-colors">
+              {example.name}
+            </h2>
+            <p class="text-gray-400 text-sm mb-4">
+              {example.description}
+            </p>
+
+            {/* Configuration Details */}
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="text-gray-500 w-20">Platform</span>
+                <span class="text-gray-300">{example.config.presetName}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-gray-500 w-20">Layout</span>
+                <span class="text-gray-300">{getLayoutName(example.config.layoutId)}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-gray-500 w-20">Background</span>
+                <span class="text-gray-300 flex items-center gap-2">
+                  {example.config.background.type === 'solid' && example.config.background.solidColor && (
+                    <span
+                      class="w-4 h-4 rounded border border-gray-600"
+                      style={`background-color: ${example.config.background.solidColor}`}
+                    />
+                  )}
+                  {getBackgroundInfo(example.config.background)}
+                </span>
+              </div>
+              {example.config.textElements.filter(t => t.content).length > 0 && (
+                <div class="flex items-start gap-2">
+                  <span class="text-gray-500 w-20 shrink-0">Text</span>
+                  <span class="text-gray-300">
+                    {example.config.textElements
+                      .filter(t => t.content)
+                      .map(t => t.id)
+                      .join(', ')}
+                  </span>
+                </div>
+              )}
+              {example.config.imageElements.length > 0 && (
+                <div class="flex items-start gap-2">
+                  <span class="text-gray-500 w-20 shrink-0">Images</span>
+                  <span class="text-gray-300">
+                    {example.config.imageElements.map(i => i.id).join(', ')}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div class="mt-12 p-6 bg-gradient-to-r from-blue-900 to-purple-900 rounded-lg text-center">
+      <h2 class="text-2xl font-bold text-white mb-4">
+        Want to create your own?
+      </h2>
+      <p class="text-gray-300 mb-6">
+        Try FrameIt's free thumbnail generator with 10+ platform presets and customizable layouts.
+      </p>
+      <a
+        href="/"
+        class="inline-block bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        Open Generator
+      </a>
+    </div>
+  </main>
+</BaseLayout>

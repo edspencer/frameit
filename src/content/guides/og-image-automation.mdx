@@ -6,6 +6,7 @@ author: "FrameIt Team"
 tags: ["og-images", "automation", "api", "tools"]
 order: 5
 ---
+import GuideExample from '../../components/GuideExample.astro'
 
 Manually creating OG images for every piece of content doesn't scale. Here are proven approaches for automated generation.
 
@@ -68,7 +69,7 @@ export async function GET() {
 
 **What:** Direct canvas rendering without browser overhead—this is FrameIt's approach.
 
-**Performance:** <100ms per image (fastest option)
+**Performance:** &lt;100ms per image (fastest option)
 
 **Pros:**
 - Extremely fast
@@ -104,7 +105,7 @@ export async function GET() {
 |----------|-------|-------------|------------|----------|
 | Vercel @vercel/og | Fast (100ms) | Medium | Low | Next.js on Vercel |
 | Puppeteer | Slow (1-3s) | Very High | Medium | Batch/complex |
-| Canvas (@napi-rs/canvas) | Very Fast (<100ms) | High | High | Performance-critical |
+| Canvas (@napi-rs/canvas) | Very Fast (&lt;100ms) | High | High | Performance-critical |
 | SaaS (Bannerbear, etc.) | Medium | Low | Very Low | Non-technical teams |
 
 ## Recommendation
@@ -116,6 +117,10 @@ Use FrameIt's API directly for fast, flexible OG image generation across any pla
 ```bash
 curl "https://frameit.dev/api/generate?layout=youtube&title=Your%20Title&format=png" -o og-image.png
 ```
+
+Here's an example of what FrameIt's API can generate - this CTA-focused design is perfect for programmatic generation:
+
+<GuideExample id="simple-cta" />
 
 ---
 

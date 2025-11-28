@@ -16,7 +16,17 @@ const currentPath = Astro.url.pathname
           currentPath === '/' ? 'text-white' : 'text-gray-400 hover:text-white'
         ]}
       >
-        Generator
+        Generate
+      </a>
+      <a
+        href="/examples"
+        class:list={[
+          'text-sm font-medium transition-colors flex items-center gap-1',
+          currentPath.startsWith('/examples') ? 'text-white' : 'text-gray-400 hover:text-white'
+        ]}
+      >
+        Examples
+        <span class="text-[9px] font-bold text-amber-400 -mt-3">NEW!</span>
       </a>
       <a
         href="/guides"
