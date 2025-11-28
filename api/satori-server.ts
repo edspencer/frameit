@@ -28,17 +28,50 @@ function bufferToArrayBuffer(buffer: Buffer): ArrayBuffer {
   return arrayBuffer
 }
 
-let interRegularData: ArrayBuffer
-let interBoldData: ArrayBuffer
-let interSemiBoldData: ArrayBuffer
-let interLightData: ArrayBuffer
+function loadFont(filename: string): ArrayBuffer {
+  return bufferToArrayBuffer(readFileSync(join(fontsDir, filename)))
+}
+
+// Load all fonts
+let fontsLoaded = false
+const fontData: Record<string, ArrayBuffer> = {}
 
 try {
-  interRegularData = bufferToArrayBuffer(readFileSync(join(fontsDir, 'Inter-Regular.ttf')))
-  interBoldData = bufferToArrayBuffer(readFileSync(join(fontsDir, 'Inter-Bold.ttf')))
-  interSemiBoldData = bufferToArrayBuffer(readFileSync(join(fontsDir, 'Inter-SemiBold.ttf')))
-  interLightData = bufferToArrayBuffer(readFileSync(join(fontsDir, 'Inter-Light.ttf')))
-  console.log('Satori server fonts loaded successfully')
+  // Inter
+  fontData.interLight = loadFont('Inter-Light.ttf')
+  fontData.interRegular = loadFont('Inter-Regular.ttf')
+  fontData.interSemiBold = loadFont('Inter-SemiBold.ttf')
+  fontData.interBold = loadFont('Inter-Bold.ttf')
+  // Arimo (Arial alternative)
+  fontData.arimoRegular = loadFont('Arimo-Regular.ttf')
+  fontData.arimoBold = loadFont('Arimo-Bold.ttf')
+  // Comic Neue
+  fontData.comicNeueRegular = loadFont('ComicNeue-Regular.ttf')
+  fontData.comicNeueBold = loadFont('ComicNeue-Bold.ttf')
+  // Cousine (Courier alternative)
+  fontData.cousineRegular = loadFont('Cousine-Regular.ttf')
+  fontData.cousineBold = loadFont('Cousine-Bold.ttf')
+  // Merriweather (Georgia alternative)
+  fontData.merriweatherRegular = loadFont('Merriweather-Regular.ttf')
+  fontData.merriweatherBold = loadFont('Merriweather-Bold.ttf')
+  // Oswald (Impact alternative)
+  fontData.oswaldRegular = loadFont('Oswald-Regular.ttf')
+  fontData.oswaldBold = loadFont('Oswald-Bold.ttf')
+  // Source Code Pro (Monaco alternative)
+  fontData.sourceCodeProRegular = loadFont('SourceCodePro-Regular.ttf')
+  fontData.sourceCodeProBold = loadFont('SourceCodePro-Bold.ttf')
+  // Open Sans (Verdana alternative)
+  fontData.openSansRegular = loadFont('OpenSans-Regular.ttf')
+  fontData.openSansBold = loadFont('OpenSans-Bold.ttf')
+  // Source Sans 3 (Trebuchet alternative)
+  fontData.sourceSans3Regular = loadFont('SourceSans3-Regular.ttf')
+  fontData.sourceSans3Bold = loadFont('SourceSans3-Bold.ttf')
+  // Tinos (Times New Roman alternative)
+  fontData.tinosRegular = loadFont('Tinos-Regular.ttf')
+  fontData.tinosBold = loadFont('Tinos-Bold.ttf')
+
+  fontsLoaded = true
+  console.log('Satori server fonts loaded successfully (10 font families)')
 } catch (err) {
   console.error('Failed to load fonts for Satori server:', err)
   throw new Error('Font loading failed - cannot initialize Satori renderer')
@@ -51,6 +84,10 @@ export async function renderToSvgServer(
   layoutId: string,
   config: ThumbnailConfig
 ): Promise<string> {
+  if (!fontsLoaded) {
+    throw new Error('Fonts not loaded')
+  }
+
   const LayoutComponent = getLayoutComponent(layoutId)
 
   const element = LayoutComponent({
@@ -65,30 +102,38 @@ export async function renderToSvgServer(
     width: config.preset.width,
     height: config.preset.height,
     fonts: [
-      {
-        name: 'Inter',
-        data: interLightData,
-        weight: 300,
-        style: 'normal',
-      },
-      {
-        name: 'Inter',
-        data: interRegularData,
-        weight: 400,
-        style: 'normal',
-      },
-      {
-        name: 'Inter',
-        data: interSemiBoldData,
-        weight: 600,
-        style: 'normal',
-      },
-      {
-        name: 'Inter',
-        data: interBoldData,
-        weight: 700,
-        style: 'normal',
-      },
+      // Inter (default)
+      { name: 'Inter', data: fontData.interLight, weight: 300, style: 'normal' },
+      { name: 'Inter', data: fontData.interRegular, weight: 400, style: 'normal' },
+      { name: 'Inter', data: fontData.interSemiBold, weight: 600, style: 'normal' },
+      { name: 'Inter', data: fontData.interBold, weight: 700, style: 'normal' },
+      // Arimo (Arial alternative)
+      { name: 'Arimo', data: fontData.arimoRegular, weight: 400, style: 'normal' },
+      { name: 'Arimo', data: fontData.arimoBold, weight: 700, style: 'normal' },
+      // Comic Neue
+      { name: 'Comic Neue', data: fontData.comicNeueRegular, weight: 400, style: 'normal' },
+      { name: 'Comic Neue', data: fontData.comicNeueBold, weight: 700, style: 'normal' },
+      // Cousine (Courier alternative)
+      { name: 'Cousine', data: fontData.cousineRegular, weight: 400, style: 'normal' },
+      { name: 'Cousine', data: fontData.cousineBold, weight: 700, style: 'normal' },
+      // Merriweather (Georgia alternative)
+      { name: 'Merriweather', data: fontData.merriweatherRegular, weight: 400, style: 'normal' },
+      { name: 'Merriweather', data: fontData.merriweatherBold, weight: 700, style: 'normal' },
+      // Oswald (Impact alternative)
+      { name: 'Oswald', data: fontData.oswaldRegular, weight: 400, style: 'normal' },
+      { name: 'Oswald', data: fontData.oswaldBold, weight: 700, style: 'normal' },
+      // Source Code Pro (Monaco alternative)
+      { name: 'Source Code Pro', data: fontData.sourceCodeProRegular, weight: 400, style: 'normal' },
+      { name: 'Source Code Pro', data: fontData.sourceCodeProBold, weight: 700, style: 'normal' },
+      // Open Sans (Verdana alternative)
+      { name: 'Open Sans', data: fontData.openSansRegular, weight: 400, style: 'normal' },
+      { name: 'Open Sans', data: fontData.openSansBold, weight: 700, style: 'normal' },
+      // Source Sans 3 (Trebuchet alternative)
+      { name: 'Source Sans 3', data: fontData.sourceSans3Regular, weight: 400, style: 'normal' },
+      { name: 'Source Sans 3', data: fontData.sourceSans3Bold, weight: 700, style: 'normal' },
+      // Tinos (Times New Roman alternative)
+      { name: 'Tinos', data: fontData.tinosRegular, weight: 400, style: 'normal' },
+      { name: 'Tinos', data: fontData.tinosBold, weight: 700, style: 'normal' },
     ],
   })
 }

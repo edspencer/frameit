@@ -22,23 +22,19 @@ export function FontFamilyControl({
     onChange(undefined)
   }
 
-  // Common web-safe and system fonts (alphabetically sorted)
+  // Fonts available in Satori renderer (using Google Fonts alternatives)
+  // The font name must exactly match what's registered in satori-renderer.ts
   const fontOptions = [
-    { value: 'Arial, Helvetica, sans-serif', label: 'Arial' },
-    { value: 'Baskerville, "Baskerville Old Face", "Hoefler Text", serif', label: 'Baskerville' },
-    { value: '"Comic Sans MS", "Comic Sans", cursive', label: 'Comic Sans MS' },
-    { value: '"Courier New", Courier, monospace', label: 'Courier New' },
-    { value: 'Garamond, "Apple Garamond", serif', label: 'Garamond' },
-    { value: 'Georgia, serif', label: 'Georgia' },
-    { value: '"Helvetica Neue", Helvetica, Arial, sans-serif', label: 'Helvetica Neue' },
-    { value: 'Impact, "Arial Black", sans-serif', label: 'Impact' },
-    { value: 'Inter, -apple-system, sans-serif', label: 'Inter' },
-    { value: 'Monaco, "Lucida Console", monospace', label: 'Monaco' },
-    { value: 'Palatino, "Palatino Linotype", "Book Antiqua", serif', label: 'Palatino' },
-    { value: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif', label: 'System Default' },
-    { value: '"Times New Roman", Times, serif', label: 'Times New Roman' },
-    { value: '"Trebuchet MS", "Lucida Grande", sans-serif', label: 'Trebuchet MS' },
-    { value: 'Verdana, Geneva, sans-serif', label: 'Verdana' },
+    { value: 'Arimo', label: 'Arial' },
+    { value: 'Comic Neue', label: 'Comic Sans' },
+    { value: 'Cousine', label: 'Courier' },
+    { value: 'Inter', label: 'Inter' },
+    { value: 'Merriweather', label: 'Georgia' },
+    { value: 'Open Sans', label: 'Open Sans' },
+    { value: 'Oswald', label: 'Impact' },
+    { value: 'Source Code Pro', label: 'Source Code Pro' },
+    { value: 'Source Sans 3', label: 'Trebuchet' },
+    { value: 'Tinos', label: 'Times New Roman' },
   ]
 
   const selectedOption = fontOptions.find(opt => opt.value === displayValue) || fontOptions[0]
