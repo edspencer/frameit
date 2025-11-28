@@ -6,6 +6,7 @@ import {
   getCanvasDimensions,
   getLocalStorageConfig,
   waitForCanvasRender,
+  waitForDimensions,
 } from '../fixtures/app-fixtures'
 
 /**
@@ -78,6 +79,9 @@ test.describe('Platform Selection', () => {
     // Select YouTube Shorts preset
     await selectPlatformPreset(page, 'YouTube Shorts')
 
+    // Wait for dimensions to update to YouTube Shorts (1080x1920)
+    await waitForDimensions(page, 1080, 1920)
+
     // Verify canvas dimensions match YouTube Shorts (1080x1920)
     const dimensions = await getCanvasDimensions(page)
     expect(dimensions?.width).toBe(1080)
@@ -103,6 +107,9 @@ test.describe('Platform Selection', () => {
     for (const preset of presets) {
       await setupFreshApp(page)
       await selectPlatformPreset(page, preset.name)
+
+      // Wait for specific dimensions
+      await waitForDimensions(page, preset.width, preset.height)
 
       const dimensions = await getCanvasDimensions(page)
       expect(dimensions?.width).toBe(preset.width)
@@ -168,18 +175,21 @@ test.describe('Platform Selection', () => {
 
     // Start with YouTube (1280x720)
     await selectPlatformPreset(page, 'YouTube')
+    await waitForDimensions(page, 1280, 720)
     let dimensions = await getCanvasDimensions(page)
     expect(dimensions?.width).toBe(1280)
     expect(dimensions?.height).toBe(720)
 
     // Switch to Instagram Feed (1080x1080)
     await selectPlatformPreset(page, 'Instagram Feed')
+    await waitForDimensions(page, 1080, 1080)
     dimensions = await getCanvasDimensions(page)
     expect(dimensions?.width).toBe(1080)
     expect(dimensions?.height).toBe(1080)
 
     // Switch to Pinterest Pin (1000x1500)
     await selectPlatformPreset(page, 'Pinterest Pin')
+    await waitForDimensions(page, 1000, 1500)
     dimensions = await getCanvasDimensions(page)
     expect(dimensions?.width).toBe(1000)
     expect(dimensions?.height).toBe(1500)

@@ -1,33 +1,34 @@
-/* eslint-disable no-undef */
+ 
 import { test as base, expect } from '@playwright/test'
 import {
   setupFreshApp,
   selectPlatformPreset,
   editTextElement,
-  changeColor,
   selectLayout,
   getCanvasDimensions,
   waitForCanvasRender,
+  waitForDimensions,
+  waitForContentChange,
 } from '../fixtures/app-fixtures'
 
 const test = base
 
 /**
  * Download Functionality Tests
- * Tests for PNG download functionality including canvas export validation,
- * dimension verification, and data integrity
+ * Tests for PNG download functionality including SVG export validation,
+ * dimension verification, and download button behavior
  *
- * Note: These tests verify canvas export capabilities rather than actual file downloads,
- * since client-side blob downloads don't trigger Playwright's download events.
+ * Note: With Satori migration, the app now renders to SVG and converts to PNG
+ * for download. Satori may convert text to paths for font rendering, so we
+ * test for SVG structural changes rather than literal text content.
  *
  * Test Scenarios:
  * 1. Download button visible and clickable
- * 2. Canvas can export to PNG data URL
- * 3. Exported PNG has valid format
- * 4. Exported PNG has correct dimensions
- * 5. Export works after changes
- * 6. Canvas content accuracy
- * 7. Multiple rapid exports work
+ * 2. SVG preview renders with correct dimensions
+ * 3. Download button triggers download without errors
+ * 4. SVG content updates after changes
+ * 5. Multiple presets render correctly
+ * 6. Multiple exports work without errors
  */
 
 test.describe('Download Functionality', () => {
@@ -45,88 +46,72 @@ test.describe('Download Functionality', () => {
     await expect(downloadButton.first()).toBeEnabled()
   })
 
-  test('should be able to export canvas to PNG data', async ({ page }) => {
+  test('should render SVG preview with valid content', async ({ page }) => {
     await setupFreshApp(page)
 
-    // Get canvas element
-    const canvas = page.locator('canvas').first()
-    await canvas.waitFor({ state: 'visible' })
+    // Get SVG element
+    const svgContainer = page.locator('.satori-preview-svg')
+    await svgContainer.waitFor({ state: 'visible' })
 
-    // Verify canvas can export to data URL
-    const dataUrl = await canvas.evaluate((el: HTMLCanvasElement) => {
-      return el.toDataURL('image/png')
-    })
+    // Verify SVG exists inside container
+    const svg = svgContainer.locator('svg')
+    await expect(svg).toBeVisible()
 
-    // Verify it's a valid PNG data URL
-    expect(dataUrl).toMatch(/^data:image\/png;base64,/)
-    expect(dataUrl.length).toBeGreaterThan(100)
+    // Verify SVG has content (paths, text, or other elements)
+    const svgContent = await svg.innerHTML()
+    expect(svgContent.length).toBeGreaterThan(100)
   })
 
-  test('should export PNG with valid format and signature', async ({ page }) => {
+  test('should render SVG with valid dimensions matching preset', async ({ page }) => {
     await setupFreshApp(page)
 
-    const canvas = page.locator('canvas').first()
-    await canvas.waitFor({ state: 'visible' })
+    // Get SVG dimensions
+    const dimensions = await getCanvasDimensions(page)
+    expect(dimensions).not.toBeNull()
 
-    // Get PNG data as base64
-    const dataUrl = await canvas.evaluate((el: HTMLCanvasElement) => {
-      return el.toDataURL('image/png')
-    })
-
-    // Extract base64 data and convert to buffer
-    const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '')
-    const buffer = Buffer.from(base64Data, 'base64')
-
-    // Verify PNG signature (89 50 4E 47)
-    expect(buffer[0]).toBe(0x89)
-    expect(buffer[1]).toBe(0x50)
-    expect(buffer[2]).toBe(0x4e)
-    expect(buffer[3]).toBe(0x47)
-
-    // Verify reasonable file size
-    expect(buffer.length).toBeGreaterThan(1000)
+    // Default preset is Open Graph (1200x630)
+    expect(dimensions?.width).toBeGreaterThan(0)
+    expect(dimensions?.height).toBeGreaterThan(0)
   })
 
-  test('should export PNG with correct dimensions matching preset', async ({ page }) => {
+  test('should render SVG with correct dimensions for YouTube preset', async ({ page }) => {
     await setupFreshApp(page)
 
     // Select YouTube preset (1280x720)
     await selectPlatformPreset(page, 'YouTube')
+    await waitForDimensions(page, 1280, 720)
 
-    // Get expected dimensions from canvas
-    const expectedDimensions = await getCanvasDimensions(page)
-    expect(expectedDimensions).not.toBeNull()
-    expect(expectedDimensions?.width).toBe(1280)
-    expect(expectedDimensions?.height).toBe(720)
-
-    // Verify canvas can export
-    const canvas = page.locator('canvas').first()
-    const dataUrl = await canvas.evaluate((el: HTMLCanvasElement) => {
-      return el.toDataURL('image/png')
-    })
-
-    expect(dataUrl).toMatch(/^data:image\/png;base64,/)
+    // Get SVG dimensions
+    const dimensions = await getCanvasDimensions(page)
+    expect(dimensions).not.toBeNull()
+    expect(dimensions?.width).toBe(1280)
+    expect(dimensions?.height).toBe(720)
   })
 
-  test('should allow export after making changes to canvas', async ({ page }) => {
+  test('should update SVG content after making changes', async ({ page }) => {
     await setupFreshApp(page)
 
-    // Make some changes to the canvas
+    // Get initial SVG content
+    const svgContainer = page.locator('.satori-preview-svg')
+    const svg = svgContainer.locator('svg')
+    const initialContent = await svg.innerHTML()
+
+    // Make changes to the content
     await editTextElement(page, 'title', 'Test Title Download')
-    await changeColor(page, 'title', '#ff0000')
-    await waitForCanvasRender(page)
 
-    // Verify canvas can still export
-    const canvas = page.locator('canvas').first()
-    const dataUrl = await canvas.evaluate((el: HTMLCanvasElement) => {
-      return el.toDataURL('image/png')
-    })
+    // Wait for content to actually change
+    await waitForContentChange(page, initialContent)
 
-    expect(dataUrl).toMatch(/^data:image\/png;base64,/)
-    expect(dataUrl.length).toBeGreaterThan(100)
+    // Get updated SVG content
+    const updatedContent = await svg.innerHTML()
+
+    // Content should have changed (Satori may convert text to paths,
+    // so we just verify the SVG changed, not the literal text)
+    expect(updatedContent).not.toBe(initialContent)
+    expect(updatedContent.length).toBeGreaterThan(100)
   })
 
-  test('should export canvas with correct dimensions for different presets', async ({ page }) => {
+  test('should render correct SVG dimensions for different presets', async ({ page }) => {
     const presets = [
       { name: 'YouTube', width: 1280, height: 720 },
       { name: 'Instagram Feed', width: 1080, height: 1080 },
@@ -136,138 +121,107 @@ test.describe('Download Functionality', () => {
     for (const preset of presets) {
       await setupFreshApp(page)
       await selectPlatformPreset(page, preset.name)
+      await waitForDimensions(page, preset.width, preset.height)
 
       const dimensions = await getCanvasDimensions(page)
       expect(dimensions?.width).toBe(preset.width)
       expect(dimensions?.height).toBe(preset.height)
-
-      // Verify export works
-      const canvas = page.locator('canvas').first()
-      const dataUrl = await canvas.evaluate((el: HTMLCanvasElement) => {
-        return el.toDataURL('image/png')
-      })
-
-      expect(dataUrl).toMatch(/^data:image\/png;base64,/)
     }
   })
 
-  test('should export canvas content accurately to PNG', async ({ page }) => {
+  test('should render SVG with content after text edit', async ({ page }) => {
     await setupFreshApp(page)
 
-    // Edit text to verify it appears in export
+    // Edit text
     await editTextElement(page, 'title', 'Download Export Test')
     await waitForCanvasRender(page)
 
-    // Get canvas dimensions
-    const dimensions = await getCanvasDimensions(page)
-    expect(dimensions).not.toBeNull()
-    expect(dimensions?.width).toBeGreaterThan(0)
-    expect(dimensions?.height).toBeGreaterThan(0)
+    // Get SVG content - verify it has substantial content
+    const svgContainer = page.locator('.satori-preview-svg')
+    const svg = svgContainer.locator('svg')
+    const svgContent = await svg.innerHTML()
 
-    // Get PNG data
-    const canvas = page.locator('canvas').first()
-    const dataUrl = await canvas.evaluate((el: HTMLCanvasElement) => {
-      return el.toDataURL('image/png')
-    })
-
-    const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '')
-    const buffer = Buffer.from(base64Data, 'base64')
-
-    // Verify PNG file has reasonable size
-    expect(buffer.length).toBeGreaterThan(1000)
+    // Verify SVG has content (Satori converts text to paths)
+    expect(svgContent.length).toBeGreaterThan(100)
+    // Verify it has path elements (Satori renders text as paths)
+    expect(svgContent).toMatch(/<(path|rect|g|text)/i)
   })
 
-  test('should include all visible canvas elements in PNG export', async ({ page }) => {
+  test('should include all visible elements in SVG after text edits', async ({ page }) => {
     await setupFreshApp(page)
 
     // Select a layout with multiple elements
     await selectLayout(page, 'default')
+
+    // Get content before edits
+    const svgContainer = page.locator('.satori-preview-svg')
+    const svg = svgContainer.locator('svg')
+    const beforeContent = await svg.innerHTML()
+
+    // Make edits
     await editTextElement(page, 'title', 'Main Title Text')
+    await waitForContentChange(page, beforeContent)
+    const afterTitleContent = await svg.innerHTML()
+
     await editTextElement(page, 'subtitle', 'Subtitle Text Here')
-    await waitForCanvasRender(page)
+    await waitForContentChange(page, afterTitleContent)
 
-    // Get PNG data
-    const canvas = page.locator('canvas').first()
-    const dataUrl = await canvas.evaluate((el: HTMLCanvasElement) => {
-      return el.toDataURL('image/png')
-    })
+    // Get content after edits
+    const afterContent = await svg.innerHTML()
 
-    const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '')
-    const buffer = Buffer.from(base64Data, 'base64')
-
-    // Verify PNG signature
-    expect(buffer[0]).toBe(0x89)
-    expect(buffer[1]).toBe(0x50)
-    expect(buffer[2]).toBe(0x4e)
-    expect(buffer[3]).toBe(0x47)
-
-    // Verify minimum size for a PNG with content
-    expect(buffer.length).toBeGreaterThan(1000)
+    // Verify SVG changed after edits
+    expect(afterContent).not.toBe(beforeContent)
+    expect(afterContent.length).toBeGreaterThan(100)
   })
 
-  test('should handle rapid successive exports without error', async ({ page }) => {
+  test('should handle rapid successive updates without error', async ({ page }) => {
     await setupFreshApp(page)
 
-    const canvas = page.locator('canvas').first()
-    await canvas.waitFor({ state: 'visible' })
+    const svgContainer = page.locator('.satori-preview-svg')
+    const svg = svgContainer.locator('svg')
+    await svg.waitFor({ state: 'visible' })
 
-    // Perform 3 rapid exports
+    let previousContent = await svg.innerHTML()
+
+    // Perform rapid updates
     for (let i = 0; i < 3; i++) {
-      const dataUrl = await canvas.evaluate((el: HTMLCanvasElement) => {
-        return el.toDataURL('image/png')
-      })
+      await editTextElement(page, 'title', `Update ${i + 1}`)
+      await waitForContentChange(page, previousContent)
 
-      // Verify export
-      expect(dataUrl).toMatch(/^data:image\/png;base64,/)
-      expect(dataUrl.length).toBeGreaterThan(100)
-
-      // Small delay between exports
-      await page.waitForTimeout(50)
+      // Verify SVG is still valid and changed
+      const currentContent = await svg.innerHTML()
+      expect(currentContent.length).toBeGreaterThan(100)
+      expect(currentContent).not.toBe(previousContent)
+      previousContent = currentContent
     }
   })
 
-  test('should verify exported PNG data is valid and complete', async ({ page }) => {
+  test('should verify SVG has valid structure', async ({ page }) => {
     await setupFreshApp(page)
 
-    const canvas = page.locator('canvas').first()
-    await canvas.waitFor({ state: 'visible' })
+    const svgContainer = page.locator('.satori-preview-svg')
+    const svg = svgContainer.locator('svg')
+    await svg.waitFor({ state: 'visible' })
 
-    // Get PNG data
-    const dataUrl = await canvas.evaluate((el: HTMLCanvasElement) => {
-      return el.toDataURL('image/png')
-    })
+    // Check SVG has valid attributes
+    const width = await svg.getAttribute('width')
+    const height = await svg.getAttribute('height')
+    const viewBox = await svg.getAttribute('viewBox')
 
-    const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '')
-    const buffer = Buffer.from(base64Data, 'base64')
-
-    // Check minimum size
-    expect(buffer.length).toBeGreaterThan(8)
-
-    // PNG signature: 89 50 4E 47 (bytes 0-3)
-    expect(buffer[0]).toBe(0x89)
-    expect(buffer[1]).toBe(0x50)
-    expect(buffer[2]).toBe(0x4e)
-    expect(buffer[3]).toBe(0x47)
-
-    // PNG end marker: 49 45 4E 44 AE 42 60 82 (last 8 bytes)
-    const lastEight = buffer.subarray(-8)
-    expect(lastEight[0]).toBe(0x49) // 'I'
-    expect(lastEight[1]).toBe(0x45) // 'E'
-    expect(lastEight[2]).toBe(0x4e) // 'N'
-    expect(lastEight[3]).toBe(0x44) // 'D'
+    expect(width).not.toBeNull()
+    expect(height).not.toBeNull()
+    expect(parseInt(width!)).toBeGreaterThan(0)
+    expect(parseInt(height!)).toBeGreaterThan(0)
+    // ViewBox may or may not be set, but if it is, it should be valid
+    if (viewBox) {
+      expect(viewBox.split(' ').length).toBe(4)
+    }
   })
 
   test('should trigger download when button is clicked', async ({ page }) => {
     await setupFreshApp(page)
 
-    // Click download button and verify no errors
-    const downloadButton = page.locator('button').filter({ hasText: /download|png/i })
-    await downloadButton.first().click()
-
-    // Wait a moment for any async operations
-    await page.waitForTimeout(500)
-
-    // Verify no console errors
+    // Set up to capture console errors
     const errors: string[] = []
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
@@ -275,6 +229,26 @@ test.describe('Download Functionality', () => {
       }
     })
 
-    expect(errors.length).toBe(0)
+    // Click download button
+    const downloadButton = page.locator('button').filter({ hasText: /download|png/i })
+
+    // Set up download listener
+    const downloadPromise = page.waitForEvent('download', { timeout: 5000 }).catch(() => null)
+
+    await downloadButton.first().click()
+
+    // Wait a moment for any async operations
+    await page.waitForTimeout(500)
+
+    // Either download happened or no errors occurred
+    // (In headless mode, downloads may not always trigger the event)
+    const download = await downloadPromise
+    if (download) {
+      // If we got a download, verify it's a PNG
+      expect(download.suggestedFilename()).toMatch(/\.png$/)
+    }
+
+    // Verify no console errors (excluding favicon errors)
+    expect(errors.filter(e => !e.includes('favicon'))).toHaveLength(0)
   })
 })

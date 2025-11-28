@@ -10,6 +10,7 @@ import {
   selectBackground,
   changeOpacity,
   getLocalStorageConfig,
+  getCanvasDimensions,
   clearLocalStorage,
   waitForCanvasRender,
 } from '../fixtures/app-fixtures'
@@ -408,19 +409,14 @@ test.describe('localStorage Persistence', () => {
     // Reload page - app should initialize with defaults
     await page.reload({ waitUntil: 'networkidle' })
 
-    // Wait for canvas to render
+    // Wait for SVG to render
     await waitForCanvasRender(page)
 
-    // Verify app is functional
-    const canvasDimensions = await page.evaluate(() => {
-      const canvas = document.querySelector('canvas')
-      return canvas
-        ? { width: canvas.width, height: canvas.height }
-        : null
-    })
+    // Verify app is functional - use the fixture helper instead of direct canvas query
+    const svgDimensions = await getCanvasDimensions(page)
 
-    expect(canvasDimensions?.width).toBeGreaterThan(0)
-    expect(canvasDimensions?.height).toBeGreaterThan(0)
+    expect(svgDimensions?.width).toBeGreaterThan(0)
+    expect(svgDimensions?.height).toBeGreaterThan(0)
 
     // Verify we can make changes
     await selectPlatformPreset(page, 'Open Graph')

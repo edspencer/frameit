@@ -25,7 +25,8 @@
     "@astrojs/vercel": "^9.0.1",
     "@goodideadev/react": "^2.0.0",
     "@headlessui/react": "^2.2.9",
-    "@napi-rs/canvas": "^0.1.81",
+    "@resvg/resvg-js": "^2.6.2",
+    "@resvg/resvg-wasm": "^2.6.2",
     "@vercel/analytics": "^1.5.0",
     "astro": "^5.16.0",
     "lucide-react": "^0.553.0",
@@ -33,6 +34,7 @@
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1",
     "react-dropzone": "^14.3.8",
+    "satori": "^0.18.3",
     "simple-icons": "^15.19.0"
   },
   "devDependencies": {

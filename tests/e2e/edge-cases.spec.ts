@@ -9,6 +9,7 @@ import {
   changeColor,
   changeOpacity,
   waitForCanvasRender,
+  waitForDimensions,
   getLocalStorageConfig,
   getCanvasDimensions,
 } from '../fixtures/app-fixtures'
@@ -73,8 +74,9 @@ test.describe('Edge Cases', () => {
       // Don't wait for full render between switches
     }
 
-    // Final wait and verify
-    await waitForCanvasRender(page)
+    // Wait for final dimensions to be rendered (YouTube Shorts is 1080x1920)
+    await waitForDimensions(page, 1080, 1920, 10000)
+
     const config = await getLocalStorageConfig(page)
     expect(config?.presetName).toBe('YouTube Shorts')
 
