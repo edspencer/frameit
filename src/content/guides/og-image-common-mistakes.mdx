@@ -6,6 +6,7 @@ author: "FrameIt Team"
 tags: ["og-images", "mistakes", "troubleshooting"]
 order: 8
 ---
+import GuideExample from '../../components/GuideExample.astro'
 
 Even well-intentioned OG images can fail to perform. Here are the most common mistakes and how to avoid them.
 
@@ -17,6 +18,10 @@ Even well-intentioned OG images can fail to perform. Here are the most common mi
 
 **How to avoid:** Limit to 2-3 lines maximum. Often, title alone is better than title + subtitle. Test at 50% scale. Edit ruthlessly—every word must earn its place.
 
+Here's an example of a clean, focused design with minimal text that remains readable at any size:
+
+<GuideExample id="simple-centered" />
+
 ## 2. Ignoring Contrast
 
 **What goes wrong:** Text is hard to read, image looks unprofessional, fails accessibility standards, reduces engagement.
@@ -24,6 +29,10 @@ Even well-intentioned OG images can fail to perform. Here are the most common mi
 **Why it happens:** Choosing color combinations based on aesthetics alone without systematic testing.
 
 **How to avoid:** Always check contrast ratios with [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/). Aim for 7:1 (AAA) or minimum 4.5:1 (AA). Test with color blindness simulator. When in doubt, use high-contrast combinations like dark gray + white.
+
+This example demonstrates excellent contrast with a very dark background and white text:
+
+<GuideExample id="bottom-title" />
 
 ## 3. File Size Too Large
 
@@ -48,6 +57,10 @@ Even well-intentioned OG images can fail to perform. Here are the most common mi
 **Why it happens:** Personal preference or assuming readability works the same as print design.
 
 **How to avoid:** Default to dark backgrounds (#1a1a1a to #333333) with white text. If you must use light backgrounds, verify text contrast carefully and test extensively. Dark backgrounds dominate successful OG images for good reason.
+
+Light backgrounds can work when contrast is maintained. This example uses a light background effectively with dark text:
+
+<GuideExample id="bragdoc" />
 
 ## 6. Wrong Dimensions
 

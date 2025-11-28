@@ -6,6 +6,7 @@ author: "FrameIt Team"
 tags: ["og-images", "design", "typography", "colors"]
 order: 3
 ---
+import GuideExample from '../../components/GuideExample.astro'
 
 Great OG images follow consistent design principles that ensure readability, impact, and brand consistency.
 
@@ -24,6 +25,10 @@ Text is the primary element of most OG images. Get the sizing right:
 Font selection matters. Use sans-serif fonts like Inter, Roboto, or Helvetica for maximum readability. Decorative fonts may look appealing at full size but become illegible when scaled to mobile dimensions. Remember: your image will often be viewed at 200-400px width on phones.
 
 **Testing tip:** Test readability at 50% scale. If your text isn't crisp and readable when the image is scaled to 600×315px, increase font size or reduce text amount.
+
+This example demonstrates proper typography hierarchy with domain text, a large title, and descriptive subtitle:
+
+<GuideExample id="shipped" />
 
 ## Layout Composition
 
@@ -46,6 +51,10 @@ Avoid perfect symmetry—it can feel static. Asymmetrical layouts with intention
 - **Center:** Minimalist approach, maximum impact
 - **Bottom-anchored:** Hero image on top, text band at bottom
 
+This example shows an effective bottom-anchored text placement with brand identity at top:
+
+<GuideExample id="bottom-title" />
+
 ## Color Strategy
 
 ### Dark Backgrounds Dominate
@@ -58,6 +67,10 @@ Avoid perfect symmetry—it can feel static. Asymmetrical layouts with intention
 
 Use dark grays (#1a1a1a to #333333) rather than pure black (#000000) for a more sophisticated look.
 
+Here's an example using a very dark background with high-contrast white text:
+
+<GuideExample id="simple-centered" />
+
 ### Contrast Requirements
 
 Aim for a minimum contrast ratio of 4.5:1 (WCAG AA standard), but 7:1 or higher (AAA) is preferable for social media images that may be viewed in bright sunlight or on low-quality displays.
@@ -66,6 +79,12 @@ Aim for a minimum contrast ratio of 4.5:1 (WCAG AA standard), but 7:1 or higher 
 - Dark gray (#2a2a2a) + white (#ffffff): **15:1** - Excellent
 - Dark gray (#2a2a2a) + light gray (#cccccc): **5.5:1** - Good
 - Dark gray (#2a2a2a) + medium gray (#888888): **2.5:1** - Too low
+
+### Light Backgrounds Can Work
+
+While dark backgrounds dominate, light backgrounds can be effective when you maintain strong contrast with dark text. This approach works well for minimalist, clean brand identities:
+
+<GuideExample id="bragdoc" />
 
 ### Working Color Combinations
 

@@ -1,0 +1,115 @@
+---
+/**
+ * Horizontal example card for embedding in guide pages.
+ * Same markup as examples page cards, but with horizontal flex layout.
+ */
+import { getExampleById } from '../lib/example-configs'
+import { LAYOUTS } from '../lib/constants/layouts'
+import { GRADIENTS } from '../lib/constants'
+
+interface Props {
+  id: string
+}
+
+const { id } = Astro.props
+const example = getExampleById(id)
+
+if (!example) {
+  throw new Error(`Example with id "${id}" not found`)
+}
+
+// Helper to get layout name from layoutId
+function getLayoutName(layoutId: string): string {
+  const layout = LAYOUTS.find(l => l.id === layoutId)
+  return layout?.name ?? layoutId
+}
+
+// Helper to get gradient name from gradientId
+function getGradientName(gradientId: string): string {
+  const gradient = GRADIENTS.find(g => g.id === gradientId)
+  return gradient?.name ?? gradientId
+}
+
+// Helper to format background info
+function getBackgroundInfo(config: { type: string; gradientId?: string; solidColor?: string }): string {
+  if (config.type === 'gradient' && config.gradientId) {
+    return `${getGradientName(config.gradientId)} gradient`
+  }
+  if (config.type === 'solid' && config.solidColor) {
+    return config.solidColor
+  }
+  return 'None'
+}
+---
+
+<a
+  href={`/?example=${example.id}`}
+  class="group flex flex-col sm:flex-row rounded-xl bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition-all overflow-hidden my-6 not-prose"
+>
+  {/* Thumbnail Image */}
+  <div class="relative w-full sm:w-1/2 aspect-video bg-gray-900 overflow-hidden shrink-0">
+    <img
+      src={`/examples/${example.id}.png`}
+      alt={example.name}
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      loading="lazy"
+    />
+  </div>
+
+  {/* Card Content */}
+  <div class="p-4 flex flex-col justify-center">
+    <h3 class="text-lg font-semibold text-white mb-1 group-hover:text-blue-400 transition-colors">
+      {example.name}
+    </h3>
+    <p class="text-gray-400 text-sm mb-4">
+      {example.description}
+    </p>
+
+    {/* Configuration Details */}
+    <div class="space-y-2 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="text-gray-500 w-20">Platform</span>
+        <span class="text-gray-300">{example.config.presetName}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-gray-500 w-20">Layout</span>
+        <span class="text-gray-300">{getLayoutName(example.config.layoutId)}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-gray-500 w-20">Background</span>
+        <span class="text-gray-300 flex items-center gap-2">
+          {example.config.background.type === 'solid' && example.config.background.solidColor && (
+            <span
+              class="w-4 h-4 rounded border border-gray-600"
+              style={`background-color: ${example.config.background.solidColor}`}
+            />
+          )}
+          {getBackgroundInfo(example.config.background)}
+        </span>
+      </div>
+      {example.config.textElements.filter(t => t.content).length > 0 && (
+        <div class="flex items-start gap-2">
+          <span class="text-gray-500 w-20 shrink-0">Text</span>
+          <span class="text-gray-300">
+            {example.config.textElements
+              .filter(t => t.content)
+              .map(t => t.id)
+              .join(', ')}
+          </span>
+        </div>
+      )}
+      {example.config.imageElements.length > 0 && (
+        <div class="flex items-start gap-2">
+          <span class="text-gray-500 w-20 shrink-0">Images</span>
+          <span class="text-gray-300">
+            {example.config.imageElements.map(i => i.id).join(', ')}
+          </span>
+        </div>
+      )}
+    </div>
+
+    <p class="text-blue-400 text-sm mt-4 group-hover:text-blue-300">
+      Try this example &rarr;
+    </p>
+  </div>
+</a>

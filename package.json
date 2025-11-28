@@ -18,14 +18,15 @@
     "test:e2e:chrome": "playwright test --project=chromium"
   },
   "dependencies": {
+    "@astrojs/mdx": "^4.3.12",
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.6.0",
     "@astrojs/tailwind": "^6.0.2",
     "@astrojs/vercel": "^9.0.1",
+    "@goodideadev/react": "^2.0.0",
     "@headlessui/react": "^2.2.9",
     "@napi-rs/canvas": "^0.1.81",
     "@vercel/analytics": "^1.5.0",
-    "@goodideadev/react": "^2.0.0",
     "astro": "^5.16.0",
     "lucide-react": "^0.553.0",
     "posthog-js": "^1.292.0",

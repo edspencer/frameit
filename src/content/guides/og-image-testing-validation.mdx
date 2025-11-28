@@ -6,6 +6,7 @@ author: "FrameIt Team"
 tags: ["og-images", "testing", "validation", "qa"]
 order: 6
 ---
+import GuideExample from '../../components/GuideExample.astro'
 
 Testing your OG images before publishing is essential. Here's how to validate across all major platforms.
 
@@ -33,6 +34,10 @@ Validates OG tags and shows LinkedIn's rendering. Pay attention to the 1200×628
 
 Test every OG image before publishing:
 
+Here's an example that passes all visual QA tests - readable at any size, proper contrast, and clean typography:
+
+<GuideExample id="shipped" />
+
 - [ ] Image displays correctly on all target platforms (Facebook, Twitter/X, LinkedIn)
 - [ ] Text is readable at 50% scale (mobile size)
 - [ ] Contrast meets 4.5:1 minimum (test with WebAIM Contrast Checker)
@@ -41,7 +46,7 @@ Test every OG image before publishing:
 - [ ] File format is correct (JPG/PNG)
 - [ ] Image is properly balanced (not visually lopsided)
 - [ ] Image quality is sharp (no pixelation or compression artifacts)
-- [ ] Image loads quickly (<2 seconds on 3G)
+- [ ] Image loads quickly (&lt;2 seconds on 3G)
 
 ## Browser and Device Testing
 

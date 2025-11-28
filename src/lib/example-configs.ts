@@ -119,7 +119,7 @@ export const EXAMPLE_CONFIGS: ExampleConfig[] = [
     originalImageUrl: '/layouts/original/niche-business-idea.png',
     notes: 'Custom niche-business-idea layout with domain text at top-left (25%), large bold title below (auto-positioned), and decorative icon in bottom-right corner. Clean minimal design with lots of whitespace.',
     config: {
-      presetName: 'Open Graph',
+      presetName: 'LinkedIn Video',
       layoutId: 'domain-and-title',
       background: { type: 'solid', solidColor: '#F5F5F5' },
       textElements: [
@@ -160,7 +160,7 @@ export const EXAMPLE_CONFIGS: ExampleConfig[] = [
     pageUrl: 'https://opengraphexamples.com/examples/meteor-files/',
     notes: 'Feature-card layout, missing upload icon',
     config: {
-      presetName: 'Open Graph',
+      presetName: 'Twitter/X',
       layoutId: 'feature-card',
       background: { type: 'gradient', gradientId: 'teal' },
       textElements: [
@@ -200,7 +200,7 @@ export const EXAMPLE_CONFIGS: ExampleConfig[] = [
     originalImageUrl: 'https://clerk.com/opengraph-image.jpg',
     notes: 'Custom clerk layout with brand top-left and title bottom-left, missing large 3D graphic element',
     config: {
-      presetName: 'Open Graph',
+      presetName: 'Twitter/X',
       layoutId: 'bottom-title',
       background: { type: 'solid', solidColor: '#0a0e1a' },
       textElements: [
