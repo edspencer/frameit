@@ -82,12 +82,12 @@ async function setLocalStorageConfig(
 }
 
 // ============================================================================
-// Canvas Helper Functions
+// SVG Preview Helper Functions (Satori renders to SVG)
 // ============================================================================
 
 /**
- * Wait for canvas to be rendered and ready
- * Checks that canvas element exists and has non-zero dimensions
+ * Wait for SVG preview to be rendered and ready
+ * Checks that SVG element exists inside .satori-preview-svg container
  */
 async function waitForCanvasRender(
   page: Page,
@@ -95,64 +95,110 @@ async function waitForCanvasRender(
 ): Promise<void> {
   await page.waitForFunction(
     () => {
-      const canvas = document.querySelector('canvas')
-      return canvas && canvas.width > 0 && canvas.height > 0
+      const container = document.querySelector('.satori-preview-svg')
+      if (!container) return false
+      const svg = container.querySelector('svg')
+      return svg?.getAttribute('width') && svg?.getAttribute('height')
     },
     { timeout }
   )
+  // Add a small delay for React state updates and re-renders
+  await page.waitForTimeout(100)
 }
 
 /**
- * Get the canvas element dimensions
- * Returns null if canvas not found
+ * Get the SVG element dimensions
+ * Returns null if SVG not found
  */
 async function getCanvasDimensions(
   page: Page
 ): Promise<{ width: number; height: number } | null> {
   const dimensions = await page.evaluate(() => {
-    const canvas = document.querySelector('canvas')
-    if (!canvas) return null
-    return {
-      width: canvas.width,
-      height: canvas.height,
-    }
+    const container = document.querySelector('.satori-preview-svg')
+    if (!container) return null
+    const svg = container.querySelector('svg')
+    if (!svg) return null
+    const width = Number.parseInt(svg.getAttribute('width') || '0', 10)
+    const height = Number.parseInt(svg.getAttribute('height') || '0', 10)
+    if (width === 0 || height === 0) return null
+    return { width, height }
   })
 
   return dimensions as { width: number; height: number } | null
 }
 
 /**
- * Get canvas context information
- * Returns dimensions and optionally image data
- * Note: ImageData retrieval may be limited in headless mode
+ * Get SVG content information (replaces getCanvasContext)
+ * Returns dimensions and SVG content
  */
 async function getCanvasContext(
   page: Page
-): Promise<{ width: number; height: number; data?: number[] } | null> {
+): Promise<{ width: number; height: number; svgContent?: string } | null> {
   const context = await page.evaluate(() => {
-    const canvas = document.querySelector('canvas') as HTMLCanvasElement | null
-    if (!canvas) return null
+    const container = document.querySelector('.satori-preview-svg')
+    if (!container) return null
+    const svg = container.querySelector('svg')
+    if (!svg) return null
 
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return null
+    const width = Number.parseInt(svg.getAttribute('width') || '0', 10)
+    const height = Number.parseInt(svg.getAttribute('height') || '0', 10)
+    if (width === 0 || height === 0) return null
 
-    try {
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-      return {
-        width: canvas.width,
-        height: canvas.height,
-        data: Array.from(imageData.data), // Convert to array for serialization
-      }
-    } catch {
-      // ImageData may not be accessible in headless mode or due to CORS
-      return {
-        width: canvas.width,
-        height: canvas.height,
-      }
+    return {
+      width,
+      height,
+      svgContent: svg.outerHTML,
     }
   })
 
-  return context as { width: number; height: number; data?: number[] } | null
+  return context as { width: number; height: number; svgContent?: string } | null
+}
+
+/**
+ * Wait for SVG to have specific dimensions
+ * Useful after changing presets when you know the expected dimensions
+ */
+async function waitForDimensions(
+  page: Page,
+  expectedWidth: number,
+  expectedHeight: number,
+  timeout = 5000
+): Promise<void> {
+  await page.waitForFunction(
+    ({ width, height }) => {
+      const container = document.querySelector('.satori-preview-svg')
+      if (!container) return false
+      const svg = container.querySelector('svg')
+      if (!svg) return false
+      const svgWidth = Number.parseInt(svg.getAttribute('width') || '0', 10)
+      const svgHeight = Number.parseInt(svg.getAttribute('height') || '0', 10)
+      return svgWidth === width && svgHeight === height
+    },
+    { width: expectedWidth, height: expectedHeight },
+    { timeout }
+  )
+}
+
+/**
+ * Wait for SVG content to change from a known previous content
+ * Useful when testing that edits actually update the SVG
+ */
+async function waitForContentChange(
+  page: Page,
+  previousContent: string,
+  timeout = 5000
+): Promise<void> {
+  await page.waitForFunction(
+    (prevContent) => {
+      const container = document.querySelector('.satori-preview-svg')
+      if (!container) return false
+      const svg = container.querySelector('svg')
+      if (!svg) return false
+      return svg.innerHTML !== prevContent
+    },
+    previousContent,
+    { timeout }
+  )
 }
 
 // ============================================================================
@@ -513,6 +559,8 @@ export {
   getLocalStorageConfig,
   setLocalStorageConfig,
   waitForCanvasRender,
+  waitForDimensions,
+  waitForContentChange,
   getCanvasDimensions,
   getCanvasContext,
   expandSection,
