@@ -14,7 +14,7 @@ const rootDir = join(__dirname, '..')
 async function buildApi() {
   try {
     await build({
-      entryPoints: [join(rootDir, 'api/generate.ts')],
+      entryPoints: [join(rootDir, 'api/_generate.ts')],
       bundle: true,
       outfile: join(rootDir, 'api/generate.js'),
       platform: 'node',

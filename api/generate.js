@@ -24438,7 +24438,7 @@ function generateCacheKey(config) {
   return `img-${config.layout}-${config.layoutId}-${config.width}x${config.height}-${bgKey}-${textKey}-${imageKey}-${config.format}`.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-_.]/g, "").substring(0, 200);
 }
 
-// api/generate.ts
+// api/_generate.ts
 function decodeQueryParams(params) {
   const decoded = {};
   for (const [key, value] of Object.entries(params)) {
