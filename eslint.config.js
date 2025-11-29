@@ -9,7 +9,7 @@ import astroParser from 'astro-eslint-parser'
 
 export default [
   {
-    ignores: ['dist', 'node_modules', '.turbo', '.astro', '.vercel']
+    ignores: ['dist', 'node_modules', '.turbo', '.astro', '.vercel', 'api/generate.js']
   },
   // Astro files
   ...astro.configs.recommended,
@@ -73,7 +73,7 @@ export default [
   },
   {
     // Node.js environment for API files and test scripts
-    files: ['api/**/*.{js,ts}', 'test-api.ts', 'tests/**/*.ts'],
+    files: ['api/**/*.{js,ts}', 'test-api.ts', 'tests/**/*.ts', 'scripts/**/*.js'],
     languageOptions: {
       globals: {
         ...globals.node,

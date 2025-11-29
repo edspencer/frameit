@@ -1,6 +1,6 @@
 import { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react'
 import type { ThumbnailConfig, LayoutDefinition } from '../lib/types'
-import { renderToSvg, loadFonts } from '../lib/satori-renderer'
+import { renderToSvg, loadDefaultFont } from '../lib/satori-renderer'
 
 interface SatoriPreviewProps {
   config: ThumbnailConfig
@@ -26,9 +26,10 @@ export const SatoriPreview = forwardRef<SatoriPreviewHandle, SatoriPreviewProps>
       getConfig: () => config,
     }))
 
-    // Load fonts on mount
+    // Load only the default font (Inter) on mount
+    // Other fonts are loaded on-demand when selected
     useEffect(() => {
-      loadFonts().catch(err => {
+      loadDefaultFont().catch(err => {
         console.error('Failed to load fonts:', err)
         setError('Failed to load fonts')
       })

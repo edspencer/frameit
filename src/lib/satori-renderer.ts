@@ -7,115 +7,200 @@ interface FontWeight {
   bold: ArrayBuffer | null
 }
 
-interface FontCollection {
-  inter: FontWeight & { semibold: ArrayBuffer | null; light: ArrayBuffer | null }
-  arimo: FontWeight
-  comicNeue: FontWeight
-  cousine: FontWeight
-  merriweather: FontWeight
-  oswald: FontWeight
-  sourceCodePro: FontWeight
-  openSans: FontWeight
-  sourceSans3: FontWeight
-  tinos: FontWeight
+interface InterFontWeight extends FontWeight {
+  semibold: ArrayBuffer | null
+  light: ArrayBuffer | null
 }
 
-const fonts: FontCollection = {
-  inter: { regular: null, bold: null, semibold: null, light: null },
-  arimo: { regular: null, bold: null },
-  comicNeue: { regular: null, bold: null },
-  cousine: { regular: null, bold: null },
-  merriweather: { regular: null, bold: null },
-  oswald: { regular: null, bold: null },
-  sourceCodePro: { regular: null, bold: null },
-  openSans: { regular: null, bold: null },
-  sourceSans3: { regular: null, bold: null },
-  tinos: { regular: null, bold: null },
+// Font family definitions with their file paths
+const FONT_DEFINITIONS: Record<string, { regular: string; bold: string; semibold?: string; light?: string }> = {
+  Inter: {
+    regular: '/fonts/Inter-Regular.ttf',
+    bold: '/fonts/Inter-Bold.ttf',
+    semibold: '/fonts/Inter-SemiBold.ttf',
+    light: '/fonts/Inter-Light.ttf',
+  },
+  Arimo: {
+    regular: '/fonts/Arimo-Regular.ttf',
+    bold: '/fonts/Arimo-Bold.ttf',
+  },
+  'Comic Neue': {
+    regular: '/fonts/ComicNeue-Regular.ttf',
+    bold: '/fonts/ComicNeue-Bold.ttf',
+  },
+  Cousine: {
+    regular: '/fonts/Cousine-Regular.ttf',
+    bold: '/fonts/Cousine-Bold.ttf',
+  },
+  Merriweather: {
+    regular: '/fonts/Merriweather-Regular.ttf',
+    bold: '/fonts/Merriweather-Bold.ttf',
+  },
+  Oswald: {
+    regular: '/fonts/Oswald-Regular.ttf',
+    bold: '/fonts/Oswald-Bold.ttf',
+  },
+  'Source Code Pro': {
+    regular: '/fonts/SourceCodePro-Regular.ttf',
+    bold: '/fonts/SourceCodePro-Bold.ttf',
+  },
+  'Open Sans': {
+    regular: '/fonts/OpenSans-Regular.ttf',
+    bold: '/fonts/OpenSans-Bold.ttf',
+  },
+  'Source Sans 3': {
+    regular: '/fonts/SourceSans3-Regular.ttf',
+    bold: '/fonts/SourceSans3-Bold.ttf',
+  },
+  Tinos: {
+    regular: '/fonts/Tinos-Regular.ttf',
+    bold: '/fonts/Tinos-Bold.ttf',
+  },
 }
 
-let fontLoadPromise: Promise<void> | null = null
+// Loaded fonts cache
+const loadedFonts: Record<string, FontWeight | InterFontWeight> = {}
 
-export async function loadFonts(): Promise<void> {
-  if (fonts.inter.regular) return
-  if (fontLoadPromise) return fontLoadPromise
+// Track in-progress font loads to prevent duplicate fetches
+const fontLoadPromises: Map<string, Promise<void>> = new Map()
 
-  fontLoadPromise = (async () => {
-    const [
-      // Inter
-      interRegular, interBold, interSemibold, interLight,
-      // Arimo (Arial alternative)
-      arimoRegular, arimoBold,
-      // Comic Neue
-      comicNeueRegular, comicNeueBold,
-      // Cousine (Courier alternative)
-      cousineRegular, cousineBold,
-      // Merriweather (Georgia alternative)
-      merriweatherRegular, merriweatherBold,
-      // Oswald (Impact alternative)
-      oswaldRegular, oswaldBold,
-      // Source Code Pro (Monaco alternative)
-      sourceCodeProRegular, sourceCodeProBold,
-      // Open Sans (Verdana alternative)
-      openSansRegular, openSansBold,
-      // Source Sans 3 (Trebuchet alternative)
-      sourceSans3Regular, sourceSans3Bold,
-      // Tinos (Times New Roman alternative)
-      tinosRegular, tinosBold,
-    ] = await Promise.all([
-      // Inter
-      fetch('/fonts/Inter-Regular.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/Inter-Bold.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/Inter-SemiBold.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/Inter-Light.ttf').then(r => r.arrayBuffer()),
-      // Arimo
-      fetch('/fonts/Arimo-Regular.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/Arimo-Bold.ttf').then(r => r.arrayBuffer()),
-      // Comic Neue
-      fetch('/fonts/ComicNeue-Regular.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/ComicNeue-Bold.ttf').then(r => r.arrayBuffer()),
-      // Cousine
-      fetch('/fonts/Cousine-Regular.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/Cousine-Bold.ttf').then(r => r.arrayBuffer()),
-      // Merriweather
-      fetch('/fonts/Merriweather-Regular.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/Merriweather-Bold.ttf').then(r => r.arrayBuffer()),
-      // Oswald
-      fetch('/fonts/Oswald-Regular.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/Oswald-Bold.ttf').then(r => r.arrayBuffer()),
-      // Source Code Pro
-      fetch('/fonts/SourceCodePro-Regular.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/SourceCodePro-Bold.ttf').then(r => r.arrayBuffer()),
-      // Open Sans
-      fetch('/fonts/OpenSans-Regular.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/OpenSans-Bold.ttf').then(r => r.arrayBuffer()),
-      // Source Sans 3
-      fetch('/fonts/SourceSans3-Regular.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/SourceSans3-Bold.ttf').then(r => r.arrayBuffer()),
-      // Tinos
-      fetch('/fonts/Tinos-Regular.ttf').then(r => r.arrayBuffer()),
-      fetch('/fonts/Tinos-Bold.ttf').then(r => r.arrayBuffer()),
-    ])
+/**
+ * Load Inter font (the default) - called on initial page load
+ */
+export async function loadDefaultFont(): Promise<void> {
+  await loadFont('Inter')
+}
 
-    fonts.inter = { regular: interRegular, bold: interBold, semibold: interSemibold, light: interLight }
-    fonts.arimo = { regular: arimoRegular, bold: arimoBold }
-    fonts.comicNeue = { regular: comicNeueRegular, bold: comicNeueBold }
-    fonts.cousine = { regular: cousineRegular, bold: cousineBold }
-    fonts.merriweather = { regular: merriweatherRegular, bold: merriweatherBold }
-    fonts.oswald = { regular: oswaldRegular, bold: oswaldBold }
-    fonts.sourceCodePro = { regular: sourceCodeProRegular, bold: sourceCodeProBold }
-    fonts.openSans = { regular: openSansRegular, bold: openSansBold }
-    fonts.sourceSans3 = { regular: sourceSans3Regular, bold: sourceSans3Bold }
-    fonts.tinos = { regular: tinosRegular, bold: tinosBold }
+/**
+ * Load a specific font family on-demand
+ */
+export async function loadFont(fontFamily: string): Promise<void> {
+  // Already loaded
+  if (loadedFonts[fontFamily]) return
+
+  // Already loading
+  const existingPromise = fontLoadPromises.get(fontFamily)
+  if (existingPromise) {
+    return existingPromise
+  }
+
+  const fontDef = FONT_DEFINITIONS[fontFamily]
+  if (!fontDef) {
+    console.warn(`Unknown font family: ${fontFamily}`)
+    return
+  }
+
+  const loadPromise = (async () => {
+    const fetches = [
+      fetch(fontDef.regular).then(r => r.arrayBuffer()),
+      fetch(fontDef.bold).then(r => r.arrayBuffer()),
+    ]
+
+    // Inter has extra weights
+    if (fontDef.semibold) {
+      fetches.push(fetch(fontDef.semibold).then(r => r.arrayBuffer()))
+    }
+    if (fontDef.light) {
+      fetches.push(fetch(fontDef.light).then(r => r.arrayBuffer()))
+    }
+
+    const results = await Promise.all(fetches)
+
+    if (fontFamily === 'Inter') {
+      loadedFonts[fontFamily] = {
+        regular: results[0],
+        bold: results[1],
+        semibold: results[2] || null,
+        light: results[3] || null,
+      }
+    } else {
+      loadedFonts[fontFamily] = {
+        regular: results[0],
+        bold: results[1],
+      }
+    }
   })()
 
-  return fontLoadPromise
+  fontLoadPromises.set(fontFamily, loadPromise)
+  return loadPromise
+}
+
+/**
+ * Load multiple fonts at once (for batch loading)
+ */
+export async function loadFonts(fontFamilies: string[]): Promise<void> {
+  await Promise.all(fontFamilies.map(f => loadFont(f)))
+}
+
+/**
+ * Check if a font is already loaded
+ */
+export function isFontLoaded(fontFamily: string): boolean {
+  return !!loadedFonts[fontFamily]
+}
+
+// Satori weight type
+type SatoriWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
+
+interface SatoriFont {
+  name: string
+  data: ArrayBuffer
+  weight: SatoriWeight
+  style: 'normal' | 'italic'
+}
+
+/**
+ * Get all currently loaded fonts in Satori format
+ */
+function getSatoriFonts(): SatoriFont[] {
+  const fonts: SatoriFont[] = []
+
+  for (const [name, fontWeight] of Object.entries(loadedFonts)) {
+    if (fontWeight.regular) {
+      fonts.push({ name, data: fontWeight.regular, weight: 400, style: 'normal' })
+    }
+    if (fontWeight.bold) {
+      fonts.push({ name, data: fontWeight.bold, weight: 700, style: 'normal' })
+    }
+
+    // Inter has extra weights
+    if ('semibold' in fontWeight && fontWeight.semibold) {
+      fonts.push({ name, data: fontWeight.semibold, weight: 600, style: 'normal' })
+    }
+    if ('light' in fontWeight && fontWeight.light) {
+      fonts.push({ name, data: fontWeight.light, weight: 300, style: 'normal' })
+    }
+  }
+
+  return fonts
+}
+
+/**
+ * Extract all font families used in a config
+ */
+function getUsedFonts(config: ThumbnailConfig): string[] {
+  const usedFonts = new Set<string>()
+
+  // Always include Inter as the default/fallback
+  usedFonts.add('Inter')
+
+  // Check all text elements for custom font families
+  for (const textEl of config.textElements) {
+    if (textEl.fontFamily) {
+      usedFonts.add(textEl.fontFamily)
+    }
+  }
+
+  return Array.from(usedFonts)
 }
 
 export async function renderToSvg(
   layoutId: string,
   config: ThumbnailConfig
 ): Promise<string> {
-  await loadFonts()
+  // Load only the fonts that are actually used in this config
+  const usedFonts = getUsedFonts(config)
+  await loadFonts(usedFonts)
 
   const LayoutComponent = getLayoutComponent(layoutId)
 
@@ -130,39 +215,6 @@ export async function renderToSvg(
   return satori(element, {
     width: config.preset.width,
     height: config.preset.height,
-    fonts: [
-      // Inter (default)
-      { name: 'Inter', data: fonts.inter.light!, weight: 300, style: 'normal' },
-      { name: 'Inter', data: fonts.inter.regular!, weight: 400, style: 'normal' },
-      { name: 'Inter', data: fonts.inter.semibold!, weight: 600, style: 'normal' },
-      { name: 'Inter', data: fonts.inter.bold!, weight: 700, style: 'normal' },
-      // Arimo (Arial alternative)
-      { name: 'Arimo', data: fonts.arimo.regular!, weight: 400, style: 'normal' },
-      { name: 'Arimo', data: fonts.arimo.bold!, weight: 700, style: 'normal' },
-      // Comic Neue
-      { name: 'Comic Neue', data: fonts.comicNeue.regular!, weight: 400, style: 'normal' },
-      { name: 'Comic Neue', data: fonts.comicNeue.bold!, weight: 700, style: 'normal' },
-      // Cousine (Courier alternative)
-      { name: 'Cousine', data: fonts.cousine.regular!, weight: 400, style: 'normal' },
-      { name: 'Cousine', data: fonts.cousine.bold!, weight: 700, style: 'normal' },
-      // Merriweather (Georgia alternative)
-      { name: 'Merriweather', data: fonts.merriweather.regular!, weight: 400, style: 'normal' },
-      { name: 'Merriweather', data: fonts.merriweather.bold!, weight: 700, style: 'normal' },
-      // Oswald (Impact alternative)
-      { name: 'Oswald', data: fonts.oswald.regular!, weight: 400, style: 'normal' },
-      { name: 'Oswald', data: fonts.oswald.bold!, weight: 700, style: 'normal' },
-      // Source Code Pro (Monaco alternative)
-      { name: 'Source Code Pro', data: fonts.sourceCodePro.regular!, weight: 400, style: 'normal' },
-      { name: 'Source Code Pro', data: fonts.sourceCodePro.bold!, weight: 700, style: 'normal' },
-      // Open Sans (Verdana alternative)
-      { name: 'Open Sans', data: fonts.openSans.regular!, weight: 400, style: 'normal' },
-      { name: 'Open Sans', data: fonts.openSans.bold!, weight: 700, style: 'normal' },
-      // Source Sans 3 (Trebuchet alternative)
-      { name: 'Source Sans 3', data: fonts.sourceSans3.regular!, weight: 400, style: 'normal' },
-      { name: 'Source Sans 3', data: fonts.sourceSans3.bold!, weight: 700, style: 'normal' },
-      // Tinos (Times New Roman alternative)
-      { name: 'Tinos', data: fonts.tinos.regular!, weight: 400, style: 'normal' },
-      { name: 'Tinos', data: fonts.tinos.bold!, weight: 700, style: 'normal' },
-    ],
+    fonts: getSatoriFonts(),
   })
 }

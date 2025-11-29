@@ -23,7 +23,7 @@ import {
   trackConfigSectionCollapsed,
 } from '../lib/posthog'
 import { useExampleFromUrl } from '../hooks/useExampleFromUrl'
-import { initResvg, svgToPng } from '../lib/png-generator'
+import { svgToPng } from '../lib/png-generator'
 import { renderToSvg } from '../lib/satori-renderer'
 
 const STORAGE_KEY = 'thumbnailGeneratorConfig'
@@ -120,11 +120,6 @@ export function ThumbnailGenerator() {
   // Set initial mount flag to false after first render
   useEffect(() => {
     isInitialMount.current = false
-  }, [])
-
-  // Initialize resvg WASM on mount
-  useEffect(() => {
-    initResvg().catch(err => console.error('Failed to init resvg:', err))
   }, [])
 
   const savedConfig = loadConfigFromStorage()
