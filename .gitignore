@@ -41,3 +41,4 @@ img/
 # Playwright test artifacts
 test-results/
 .playwright/
+.env*.local

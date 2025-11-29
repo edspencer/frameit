@@ -1,5 +1,5 @@
-import { GRADIENTS } from '../constants'
-import type { BackgroundConfig } from '../types'
+import { GRADIENTS } from '../constants.js'
+import type { BackgroundConfig } from '../types.js'
 
 export function getBackgroundStyle(background: BackgroundConfig): string {
   switch (background.type) {

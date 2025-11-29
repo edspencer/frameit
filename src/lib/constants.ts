@@ -1,4 +1,4 @@
-import type { ThumbnailPlatform, BackgroundImage, BackgroundGradient, BackgroundSolidColor } from './types'
+import type { ThumbnailPlatform, BackgroundImage, BackgroundGradient, BackgroundSolidColor } from './types.js'
 
 // Note: Icons are provided separately in ui-constants.ts for UI components
 // This file only exports data constants that can be safely used in both browser and Node.js
