@@ -5,11 +5,12 @@ import { LayoutPreview } from './LayoutPreview'
 interface LayoutSelectorProps {
   selectedLayoutId: string
   onLayoutChange: (layoutId: string) => void
+  onPreview?: (layoutId: string) => void
   onSectionExpanded?: (sectionName: string) => void
   onSectionCollapsed?: (sectionName: string) => void
 }
 
-export function LayoutSelector({ selectedLayoutId, onLayoutChange, onSectionExpanded, onSectionCollapsed }: LayoutSelectorProps) {
+export function LayoutSelector({ selectedLayoutId, onLayoutChange, onPreview, onSectionExpanded, onSectionCollapsed }: LayoutSelectorProps) {
   const selectedLayout = LAYOUTS.find(l => l.id === selectedLayoutId)
   const preview = selectedLayout ? <span className="truncate">{selectedLayout.name}</span> : null
 
@@ -26,6 +27,8 @@ export function LayoutSelector({ selectedLayoutId, onLayoutChange, onSectionExpa
               key={layout.id}
               type="button"
               onClick={() => onLayoutChange(layout.id)}
+              onMouseEnter={() => onPreview?.(layout.id)}
+              onMouseLeave={() => onPreview?.(selectedLayoutId)}
               title={layout.description}
               className={`
                 p-1 sm:p-3 rounded-lg border transition-all text-left group relative

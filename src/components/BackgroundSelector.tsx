@@ -8,9 +8,10 @@ type BackgroundTab = 'gradients' | 'colors'
 interface BackgroundSelectorProps {
   background: BackgroundConfig
   onBackgroundChange: (config: BackgroundConfig) => void
+  onPreview?: (config: BackgroundConfig) => void
 }
 
-export function BackgroundSelector({ background, onBackgroundChange }: BackgroundSelectorProps) {
+export function BackgroundSelector({ background, onBackgroundChange, onPreview }: BackgroundSelectorProps) {
   const [activeTab, setActiveTab] = useState<BackgroundTab>('gradients')
 
   // Determine the preview content based on current background type
@@ -90,6 +91,8 @@ export function BackgroundSelector({ background, onBackgroundChange }: Backgroun
               type="button"
               key={gradient.id}
               onClick={() => onBackgroundChange({ type: 'gradient', gradientId: gradient.id })}
+              onMouseEnter={() => onPreview?.({ type: 'gradient', gradientId: gradient.id })}
+              onMouseLeave={() => onPreview?.(background)}
               className={`relative h-16 rounded-lg overflow-hidden border-2 transition-all ${
                 background.type === 'gradient' && background.gradientId === gradient.id
                   ? 'border-blue-500 ring-2 ring-blue-400'
@@ -131,6 +134,8 @@ export function BackgroundSelector({ background, onBackgroundChange }: Backgroun
                       type="button"
                       key={solidColor.id}
                       onClick={() => onBackgroundChange({ type: 'solid', solidColor: solidColor.color })}
+                      onMouseEnter={() => onPreview?.({ type: 'solid', solidColor: solidColor.color })}
+                      onMouseLeave={() => onPreview?.(background)}
                       className={`flex-1 h-8 rounded-md transition-all ${
                         background.type === 'solid' && background.solidColor === solidColor.color
                           ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-800 scale-105'

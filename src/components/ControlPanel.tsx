@@ -9,14 +9,17 @@ import type { ThumbnailPlatformWithIcon, ThumbnailConfig, BackgroundConfig } fro
 interface ControlPanelProps {
   selectedPreset: ThumbnailPlatformWithIcon
   onPresetChange: (preset: ThumbnailPlatformWithIcon) => void
+  onPresetPreview?: (preset: ThumbnailPlatformWithIcon) => void // For hover preview
   selectedLayoutId: string
   onLayoutChange: (layoutId: string) => void
+  onLayoutPreview?: (layoutId: string) => void // For hover preview
   config: ThumbnailConfig // Full config instead of individual props
   onTextElementChange: (id: string, updates: Partial<{ content: string; color: string; fontSize: string; fontWeight: number; fontFamily: string }>) => void
   onTextElementPreview?: (id: string, updates: { fontFamily?: string; color?: string; fontWeight?: number }) => void // For hover preview
   onImageElementChange: (id: string, updates: Partial<{ url: string | undefined; opacity: number; scale: number }>) => void
   background: BackgroundConfig
   onBackgroundChange: (config: BackgroundConfig) => void
+  onBackgroundPreview?: (config: BackgroundConfig) => void // For hover preview
   onSectionExpanded?: (sectionName: string) => void // Optional callback for section expand tracking
   onSectionCollapsed?: (sectionName: string) => void // Optional callback for section collapse tracking
 }
@@ -29,14 +32,17 @@ function getElementLabel(element: { id: string; name?: string }): string {
 export function ControlPanel({
   selectedPreset,
   onPresetChange,
+  onPresetPreview,
   selectedLayoutId,
   onLayoutChange,
+  onLayoutPreview,
   config,
   onTextElementChange,
   onTextElementPreview,
   onImageElementChange,
   background,
   onBackgroundChange,
+  onBackgroundPreview,
   onSectionExpanded,
   onSectionCollapsed,
 }: ControlPanelProps) {
@@ -46,9 +52,9 @@ export function ControlPanel({
   return (
     <div className="space-y-2 sm:space-y-6">
       {/* Global controls (always shown, layout-agnostic) */}
-      <PlatformSelector selectedPreset={selectedPreset} onPresetChange={onPresetChange} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
-      <LayoutSelector selectedLayoutId={selectedLayoutId} onLayoutChange={onLayoutChange} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
-      <BackgroundSelector background={background} onBackgroundChange={onBackgroundChange} />
+      <PlatformSelector selectedPreset={selectedPreset} onPresetChange={onPresetChange} onPreview={onPresetPreview} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
+      <LayoutSelector selectedLayoutId={selectedLayoutId} onLayoutChange={onLayoutChange} onPreview={onLayoutPreview} onSectionExpanded={onSectionExpanded} onSectionCollapsed={onSectionCollapsed} />
+      <BackgroundSelector background={background} onBackgroundChange={onBackgroundChange} onPreview={onBackgroundPreview} />
 
       {/* Dynamic controls from layout.elements (only text and image, not overlays) */}
       {selectedLayout.elements.map(layoutElement => {
