@@ -7,8 +7,8 @@ import satori from 'satori'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { Resvg } from '@resvg/resvg-js'
-import type { ThumbnailConfig } from '../src/lib/types.js'
-import { getLayoutComponent } from '../src/lib/layouts/index.js'
+import type { ThumbnailConfig } from '../src/lib/types'
+import { getLayoutComponent } from '../src/lib/layouts/index'
 
 // Load fonts synchronously at module load time for serverless cold start efficiency
 // Using readFileSync ensures fonts are available immediately when the function runs
