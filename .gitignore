@@ -41,10 +41,3 @@ img/
 # Playwright test artifacts
 test-results/
 .playwright/
-.env*.local
-
-# API test output
-test-output/
-
-# Built API bundle
-api/generate.js
