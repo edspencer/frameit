@@ -5,11 +5,12 @@ import { ConfigSection } from './ConfigSection'
 interface PlatformSelectorProps {
   selectedPreset: ThumbnailPlatformWithIcon
   onPresetChange: (preset: ThumbnailPlatformWithIcon) => void
+  onPreview?: (preset: ThumbnailPlatformWithIcon) => void
   onSectionExpanded?: (sectionName: string) => void
   onSectionCollapsed?: (sectionName: string) => void
 }
 
-export function PlatformSelector({ selectedPreset, onPresetChange, onSectionExpanded, onSectionCollapsed }: PlatformSelectorProps) {
+export function PlatformSelector({ selectedPreset, onPresetChange, onPreview, onSectionExpanded, onSectionCollapsed }: PlatformSelectorProps) {
   const videoPresets = PLATFORMS_WITH_ICONS.filter(p => p.category === 'video')
   const socialPresets = PLATFORMS_WITH_ICONS.filter(p => p.category === 'social')
 
@@ -34,6 +35,8 @@ export function PlatformSelector({ selectedPreset, onPresetChange, onSectionExpa
                 key={preset.name}
                 type="button"
                 onClick={() => onPresetChange(preset)}
+                onMouseEnter={() => onPreview?.(preset)}
+                onMouseLeave={() => onPreview?.(selectedPreset)}
                 className={`p-3 rounded-lg border-2 transition-all text-left ${
                   selectedPreset.name === preset.name
                     ? 'border-blue-500 bg-blue-500 bg-opacity-10'
@@ -64,6 +67,8 @@ export function PlatformSelector({ selectedPreset, onPresetChange, onSectionExpa
                 key={preset.name}
                 type="button"
                 onClick={() => onPresetChange(preset)}
+                onMouseEnter={() => onPreview?.(preset)}
+                onMouseLeave={() => onPreview?.(selectedPreset)}
                 className={`p-3 rounded-lg border-2 transition-all text-left ${
                   selectedPreset.name === preset.name
                     ? 'border-blue-500 bg-blue-500 bg-opacity-10'

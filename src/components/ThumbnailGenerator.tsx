@@ -181,6 +181,11 @@ export function ThumbnailGenerator() {
     fontWeight?: number
   } | null>(null)
 
+  // Preview states for background, layout, and preset hover
+  const [backgroundPreview, setBackgroundPreview] = useState<typeof config.background | null>(null)
+  const [layoutPreview, setLayoutPreview] = useState<string | null>(null)
+  const [presetPreview, setPresetPreview] = useState<ThumbnailPlatformWithIcon | null>(null)
+
   const previewTextElement = (id: string, updates: { fontFamily?: string; color?: string; fontWeight?: number }) => {
     setPreviewState(prev => {
       // If same element, merge updates
@@ -190,6 +195,18 @@ export function ThumbnailGenerator() {
       // New element, replace
       return { id, ...updates }
     })
+  }
+
+  const previewBackground = (background: typeof config.background) => {
+    setBackgroundPreview(background)
+  }
+
+  const previewLayout = (layoutId: string) => {
+    setLayoutPreview(layoutId)
+  }
+
+  const previewPreset = (preset: ThumbnailPlatformWithIcon) => {
+    setPresetPreview(preset)
   }
 
   const updateImageElement = (id: string, updates: Partial<typeof config.imageElements[0]>) => {
@@ -393,24 +410,45 @@ export function ThumbnailGenerator() {
               <div ref={previewContainerRef} className="flex items-center justify-center" style={{ maxHeight: '80vh' }}>
                 <SatoriPreview
                   ref={previewRef}
-                  config={
-                    previewState
-                      ? {
-                          ...config,
-                          textElements: config.textElements.map(el =>
-                            el.id === previewState.id
-                              ? {
-                                  ...el,
-                                  ...(previewState.fontFamily && { fontFamily: previewState.fontFamily }),
-                                  ...(previewState.color && { color: previewState.color }),
-                                  ...(previewState.fontWeight !== undefined && { fontWeight: previewState.fontWeight })
-                                }
-                              : el
-                          )
-                        }
-                      : config
-                  }
-                  layout={selectedLayout}
+                  config={(() => {
+                    // Build preview config with all preview states merged
+                    let previewConfig = { ...config }
+
+                    // Apply text element preview
+                    if (previewState) {
+                      previewConfig = {
+                        ...previewConfig,
+                        textElements: previewConfig.textElements.map(el =>
+                          el.id === previewState.id
+                            ? {
+                                ...el,
+                                ...(previewState.fontFamily && { fontFamily: previewState.fontFamily }),
+                                ...(previewState.color && { color: previewState.color }),
+                                ...(previewState.fontWeight !== undefined && { fontWeight: previewState.fontWeight })
+                              }
+                            : el
+                        )
+                      }
+                    }
+
+                    // Apply background preview
+                    if (backgroundPreview) {
+                      previewConfig = { ...previewConfig, background: backgroundPreview }
+                    }
+
+                    // Apply layout preview (update layoutId in config)
+                    if (layoutPreview) {
+                      previewConfig = { ...previewConfig, layoutId: layoutPreview }
+                    }
+
+                    // Apply preset preview
+                    if (presetPreview) {
+                      previewConfig = { ...previewConfig, preset: presetPreview }
+                    }
+
+                    return previewConfig
+                  })()}
+                  layout={layoutPreview ? (LAYOUTS.find(l => l.id === layoutPreview) || selectedLayout) : selectedLayout}
                 />
               </div>
             </div>
@@ -466,14 +504,17 @@ export function ThumbnailGenerator() {
             <ControlPanel
               selectedPreset={config.preset}
               onPresetChange={updatePreset}
+              onPresetPreview={previewPreset}
               selectedLayoutId={config.layoutId}
               onLayoutChange={updateLayoutId}
+              onLayoutPreview={previewLayout}
               config={config}
               onTextElementChange={updateTextElement}
               onTextElementPreview={previewTextElement}
               onImageElementChange={updateImageElement}
               background={config.background}
               onBackgroundChange={updateBackground}
+              onBackgroundPreview={previewBackground}
               onSectionExpanded={handleSectionExpanded}
               onSectionCollapsed={handleSectionCollapsed}
             />
