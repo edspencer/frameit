@@ -17,8 +17,8 @@ pnpm build
 # Preview production build
 pnpm preview
 
-# Type-check Astro and TypeScript files
-pnpm type-check
+# Typecheck Astro and TypeScript files
+pnpm typecheck
 ```
 
 **Note:** The development server runs on port 4321 (Astro's default), not port 5173 (Vite's default).
@@ -510,7 +510,7 @@ const guidesCollection = defineCollection({
 
 2. The guide will automatically appear on `/guides` and be accessible at `/guides/your-guide-slug`
 
-3. Run `pnpm type-check` to validate frontmatter against the schema
+3. Run `pnpm typecheck` to validate frontmatter against the schema
 
 ### Querying Guides
 

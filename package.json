@@ -6,16 +6,18 @@
   "license": "MIT",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/build-api.js && astro build",
+    "build:api": "node scripts/build-api.js",
     "preview": "astro preview",
     "lint": "eslint . --ext ts,tsx,astro --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx,astro --fix",
-    "type-check": "astro check && tsc --noEmit",
+    "typecheck": "astro check && tsc --noEmit",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
     "test:ui": "playwright test --ui",
-    "test:e2e:chrome": "playwright test --project=chromium"
+    "test:e2e:chrome": "playwright test --project=chromium",
+    "test:api": "npx tsx tests/api/image-generation.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.12",
@@ -51,6 +53,7 @@
     "@vitejs/plugin-react": "^4.2.0",
     "astro-eslint-parser": "^1.2.2",
     "autoprefixer": "^10.4.17",
+    "esbuild": "^0.27.0",
     "eslint": "^9.39.1",
     "eslint-plugin-astro": "^1.5.0",
     "eslint-plugin-react": "^7.37.5",
@@ -60,7 +63,7 @@
     "postcss": "^8.4.32",
     "tailwindcss": "^3.4.1",
     "tsx": "^4.20.6",
-    "typescript": "^5.3.3",
+    "typescript": "^5.5.4",
     "vite": "^5.0.8"
   }
 }

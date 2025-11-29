@@ -1,0 +1,315 @@
+{
+  "testCases": [
+    {
+      "name": "01-open-graph-default",
+      "description": "Basic open graph layout with default settings",
+      "params": {
+        "layout": "open-graph",
+        "title": "Welcome to FrameIt",
+        "subtitle": "Create stunning thumbnails with ease",
+        "format": "png"
+      }
+    },
+    {
+      "name": "02-youtube-gradient",
+      "description": "YouTube layout with default gradient",
+      "params": {
+        "layout": "youtube",
+        "title": "Amazing Tutorial",
+        "subtitle": "Learn something new today",
+        "background": "default",
+        "format": "png"
+      }
+    },
+    {
+      "name": "03-youtube-shorts-vertical",
+      "description": "YouTube Shorts vertical layout with custom colors",
+      "params": {
+        "layout": "youtube-shorts",
+        "title": "Quick Tips",
+        "subtitle": "In 60 seconds",
+        "titleColor": "ffd700",
+        "subtitleColor": "ffffff",
+        "format": "png"
+      }
+    },
+    {
+      "name": "04-linkedin-professional",
+      "description": "LinkedIn video layout with dark blue background",
+      "params": {
+        "layout": "linkedin-video",
+        "title": "Industry Insights",
+        "subtitle": "Expert Analysis",
+        "background": "dark-blue",
+        "format": "png"
+      }
+    },
+    {
+      "name": "05-twitter-engaging",
+      "description": "Twitter/X layout with brand color",
+      "params": {
+        "layout": "twitter-x",
+        "title": "Breaking News",
+        "subtitle": "Stay informed",
+        "titleColor": "1da1f2",
+        "format": "png"
+      }
+    },
+    {
+      "name": "06-tiktok-viral",
+      "description": "TikTok layout with brand colors",
+      "params": {
+        "layout": "tiktok",
+        "title": "Trending Now",
+        "subtitle": "Join the conversation",
+        "titleColor": "fe2c55",
+        "subtitleColor": "25f4ee",
+        "format": "png"
+      }
+    },
+    {
+      "name": "07-instagram-reels",
+      "description": "Instagram Reels with purple background",
+      "params": {
+        "layout": "instagram-reels",
+        "title": "Behind the Scenes",
+        "subtitle": "Exclusive content",
+        "background": "purple",
+        "format": "png"
+      }
+    },
+    {
+      "name": "08-instagram-feed-square",
+      "description": "Instagram feed square format",
+      "params": {
+        "layout": "instagram-feed",
+        "title": "Daily Inspiration",
+        "subtitle": "Motivational quotes",
+        "format": "png"
+      }
+    },
+    {
+      "name": "09-x-header-wide",
+      "description": "X/Twitter header wide format with ocean background",
+      "params": {
+        "layout": "x-header",
+        "title": "My Profile",
+        "subtitle": "Digital Creator & Developer",
+        "background": "ocean",
+        "format": "png"
+      }
+    },
+    {
+      "name": "10-pinterest-pin",
+      "description": "Pinterest pin layout with brand color",
+      "params": {
+        "layout": "pinterest-pin",
+        "title": "DIY Project Ideas",
+        "subtitle": "Creative crafts you can make",
+        "titleColor": "e60023",
+        "format": "png"
+      }
+    },
+    {
+      "name": "11-classic-layout",
+      "description": "Classic layout style with top-left positioning",
+      "params": {
+        "layout": "open-graph",
+        "layoutId": "classic",
+        "title": "Classic Design",
+        "subtitle": "Traditional top-left layout",
+        "format": "png"
+      }
+    },
+    {
+      "name": "12-minimal-layout",
+      "description": "Minimal layout style",
+      "params": {
+        "layout": "open-graph",
+        "layoutId": "minimal",
+        "title": "Clean and Simple",
+        "subtitle": "Minimalist aesthetic",
+        "format": "png"
+      }
+    },
+    {
+      "name": "13-photo-essay-layout",
+      "description": "Photo essay layout with centered text",
+      "params": {
+        "layout": "open-graph",
+        "layoutId": "photo-essay",
+        "title": "Visual Storytelling",
+        "subtitle": "Centered and prominent",
+        "format": "png"
+      }
+    },
+    {
+      "name": "14-gradient-sunset",
+      "description": "Sunset gradient background",
+      "params": {
+        "layout": "open-graph",
+        "title": "Sunset Vibes",
+        "subtitle": "Warm and inviting",
+        "background": "sunset",
+        "format": "png"
+      }
+    },
+    {
+      "name": "15-gradient-ocean",
+      "description": "Ocean gradient background",
+      "params": {
+        "layout": "open-graph",
+        "title": "Ocean Depths",
+        "subtitle": "Cool and calming",
+        "background": "ocean",
+        "format": "png"
+      }
+    },
+    {
+      "name": "16-gradient-forest",
+      "description": "Forest gradient background",
+      "params": {
+        "layout": "open-graph",
+        "title": "Forest Green",
+        "subtitle": "Natural and fresh",
+        "background": "forest",
+        "format": "png"
+      }
+    },
+    {
+      "name": "17-gradient-purple",
+      "description": "Purple gradient background",
+      "params": {
+        "layout": "open-graph",
+        "title": "Purple Dreams",
+        "subtitle": "Vibrant and bold",
+        "background": "purple",
+        "format": "png"
+      }
+    },
+    {
+      "name": "18-custom-colors-bright",
+      "description": "Custom bright colors",
+      "params": {
+        "layout": "youtube",
+        "title": "Bright and Bold",
+        "subtitle": "Stand out from the crowd",
+        "titleColor": "ff6b6b",
+        "subtitleColor": "4ecdc4",
+        "format": "png"
+      }
+    },
+    {
+      "name": "19-custom-colors-pastel",
+      "description": "Custom pastel colors",
+      "params": {
+        "layout": "youtube",
+        "title": "Soft and Gentle",
+        "subtitle": "Pastel color scheme",
+        "titleColor": "ffd3b6",
+        "subtitleColor": "ffaaa5",
+        "format": "png"
+      }
+    },
+    {
+      "name": "20-custom-colors-neon",
+      "description": "Neon colors with slate background",
+      "params": {
+        "layout": "youtube-shorts",
+        "title": "NEON LIGHTS",
+        "subtitle": "Electric energy",
+        "titleColor": "00ff00",
+        "subtitleColor": "ff00ff",
+        "background": "slate",
+        "format": "png"
+      }
+    },
+    {
+      "name": "21-webp-format",
+      "description": "WebP output format",
+      "params": {
+        "layout": "open-graph",
+        "title": "WebP Format",
+        "subtitle": "Smaller file size, same quality",
+        "format": "webp"
+      }
+    },
+    {
+      "name": "22-logo-full-opacity",
+      "description": "Logo with full opacity",
+      "params": {
+        "layout": "open-graph",
+        "title": "Logo Visible",
+        "subtitle": "Full opacity",
+        "logoOpacity": "1.0",
+        "format": "png"
+      }
+    },
+    {
+      "name": "23-logo-half-opacity",
+      "description": "Logo with 50% opacity",
+      "params": {
+        "layout": "open-graph",
+        "title": "Logo Subtle",
+        "subtitle": "Medium opacity",
+        "logoOpacity": "0.5",
+        "format": "png"
+      }
+    },
+    {
+      "name": "24-logo-minimal-opacity",
+      "description": "Logo with minimal opacity (watermark)",
+      "params": {
+        "layout": "open-graph",
+        "title": "Logo Watermark",
+        "subtitle": "Minimal opacity",
+        "logoOpacity": "0.1",
+        "format": "png"
+      }
+    },
+    {
+      "name": "25-long-title-wrapping",
+      "description": "Long title that wraps across multiple lines",
+      "params": {
+        "layout": "open-graph",
+        "title": "This is a Very Long Title That Should Wrap Across Multiple Lines to Test the Text Wrapping Functionality",
+        "subtitle": "Testing word wrap",
+        "format": "png"
+      }
+    },
+    {
+      "name": "26-long-subtitle-wrapping",
+      "description": "Long subtitle that wraps across multiple lines",
+      "params": {
+        "layout": "open-graph",
+        "title": "Short Title",
+        "subtitle": "This is a much longer subtitle that contains quite a bit of text and should wrap nicely across multiple lines while maintaining good readability and proper spacing between each line",
+        "format": "png"
+      }
+    },
+    {
+      "name": "27-custom-logo-react",
+      "description": "Custom logo from external URL (React)",
+      "params": {
+        "layout": "youtube",
+        "title": "React Tutorial",
+        "subtitle": "Building modern UIs",
+        "logoUrl": "https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/react/react.png",
+        "logoOpacity": "0.9",
+        "format": "png"
+      }
+    },
+    {
+      "name": "28-custom-logo-typescript",
+      "description": "Custom logo from external URL (TypeScript)",
+      "params": {
+        "layout": "open-graph",
+        "title": "TypeScript Guide",
+        "subtitle": "Type-safe development",
+        "logoUrl": "https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/typescript/typescript.png",
+        "logoOpacity": "0.8",
+        "format": "png"
+      }
+    }
+  ]
+}

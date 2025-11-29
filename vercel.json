@@ -3,8 +3,8 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
-    "api/generate.ts": {
-      "includeFiles": "src/lib/**"
+    "api/generate.js": {
+      "includeFiles": "api/fonts/**"
     }
   }
 }

@@ -1,6 +1,6 @@
 import type React from 'react'
-import type { LayoutProps } from './types'
-import { findElement } from './utils'
+import type { LayoutProps } from './types.js'
+import { findElement } from './utils.js'
 
 export function PhotoEssayLayout({
   width,
