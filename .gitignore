@@ -45,3 +45,6 @@ test-results/
 
 # API test output
 test-output/
+
+# Built API bundle
+api/generate.js

@@ -7,10 +7,10 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { renderToSvgServer, svgToPngServer, svgToWebpServer } from './satori-server'
-import { validateParams, generateCacheKey, type ImageGenerationParams } from '../src/lib/api-types'
-import { PLATFORMS, GRADIENTS, LAYOUTS } from '../src/lib/constants'
-import type { ThumbnailConfig, BackgroundConfig, TextElement, ImageElement } from '../src/lib/types'
+import { renderToSvgServer, svgToPngServer, svgToWebpServer } from './satori-server.js'
+import { validateParams, generateCacheKey, type ImageGenerationParams } from '../src/lib/api-types.js'
+import { PLATFORMS, GRADIENTS, LAYOUTS } from '../src/lib/constants.js'
+import type { ThumbnailConfig, BackgroundConfig, TextElement, ImageElement } from '../src/lib/types.js'
 
 /**
  * Decodes query parameters, converting + to spaces
