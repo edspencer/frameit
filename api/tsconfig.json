@@ -5,6 +5,8 @@
     "moduleResolution": "node",
     "lib": ["ES2020", "DOM"],
     "types": ["node"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
