@@ -40,4 +40,5 @@ img/
 
 # Playwright test artifacts
 test-results/
+test-output/
 .playwright/
