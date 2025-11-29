@@ -10,12 +10,13 @@
     "preview": "astro preview",
     "lint": "eslint . --ext ts,tsx,astro --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx,astro --fix",
-    "type-check": "astro check && tsc --noEmit",
+    "typecheck": "astro check && tsc --noEmit",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
     "test:ui": "playwright test --ui",
-    "test:e2e:chrome": "playwright test --project=chromium"
+    "test:e2e:chrome": "playwright test --project=chromium",
+    "test:api": "npx tsx tests/api/image-generation.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.12",

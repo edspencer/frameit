@@ -42,3 +42,6 @@ img/
 test-results/
 .playwright/
 .env*.local
+
+# API test output
+test-output/

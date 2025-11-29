@@ -8,8 +8,8 @@ import { writeFile, mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 
 // Configuration
-const HOST = 'http://localhost:3000'
-// const HOST = 'https://frameit.dev'  // Production
+// const HOST = 'http://localhost:3000'
+const HOST = 'https://frameit.dev'  // Production
 const OUTPUT_DIR = './img'
 
 interface TestCase {
