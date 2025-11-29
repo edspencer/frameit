@@ -73,7 +73,7 @@ export default [
   },
   {
     // Node.js environment for API files and test scripts
-    files: ['api/**/*.{js,ts}', 'test-api.ts'],
+    files: ['api/**/*.{js,ts}', 'test-api.ts', 'tests/**/*.ts'],
     languageOptions: {
       globals: {
         ...globals.node,

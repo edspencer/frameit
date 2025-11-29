@@ -151,7 +151,7 @@ async function generateImage(
       return {
         name: testCase.name,
         success: false,
-        error: `Invalid image data received (expected PNG or WebP)`,
+        error: 'Invalid image data received (expected PNG or WebP)',
         duration: Date.now() - startTime,
       }
     }
@@ -182,7 +182,7 @@ async function main() {
   const testCases = await loadTestCases()
 
   if (!jsonOutput) {
-    console.log(`\n🧪 FrameIt API Image Generation Tests\n`)
+    console.log('\n🧪 FrameIt API Image Generation Tests\n')
     console.log(`   Host: ${host}`)
     console.log(`   Output: ${outputDir}`)
     console.log(`   Tests: ${testCases.length}\n`)
@@ -205,7 +205,9 @@ async function main() {
 
     if (!jsonOutput) {
       if (result.success) {
-        console.log(`✓ (${(result.fileSize! / 1024).toFixed(1)} KB, ${result.duration}ms)`)
+        const sizeKb =
+          typeof result.fileSize === 'number' ? (result.fileSize / 1024).toFixed(1) : 'unknown'
+        console.log(`✓ (${sizeKb} KB, ${result.duration}ms)`)
       } else {
         console.log(`✗ ${result.error}`)
       }
@@ -228,7 +230,7 @@ async function main() {
   if (jsonOutput) {
     console.log(JSON.stringify(summary, null, 2))
   } else {
-    console.log(`\n   ────────────────────────────────────`)
+    console.log('\n   ────────────────────────────────────')
     console.log(`   ✓ Passed: ${passed}`)
     if (failed > 0) {
       console.log(`   ✗ Failed: ${failed}`)
@@ -237,7 +239,7 @@ async function main() {
     console.log(`   📊 Average: ${(totalDuration / testCases.length).toFixed(0)}ms per image\n`)
 
     if (failed > 0) {
-      console.log(`   Failed tests:`)
+      console.log('   Failed tests:')
       for (const result of results.filter((r) => !r.success)) {
         console.log(`     - ${result.name}: ${result.error}`)
       }
