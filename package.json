@@ -37,7 +37,8 @@
     "react-dom": "^19.0.0-rc.1",
     "react-dropzone": "^14.3.8",
     "satori": "^0.18.3",
-    "simple-icons": "^15.19.0"
+    "simple-icons": "^15.19.0",
+    "sitemap": "^9.0.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.5",
